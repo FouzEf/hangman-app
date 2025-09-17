@@ -26,7 +26,6 @@ const Style = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
-    backgroundImage: 'linear-gradient(180deg, #80C2F3 0%, #C8E6C9 100%)'
   }
 })
 
