@@ -31,6 +31,7 @@ const Style = StyleSheet.create({
     alignItems: "center",
     padding: 20,
     position: "relative",
+    width: '100%'
   },
   img: {
     position: "absolute",
