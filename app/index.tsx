@@ -1,9 +1,9 @@
+import Cloud from "@/assets/images/Cloud.png";
+import Home from "@/assets/images/HomeImage.png";
+import InvertedCloud from "@/assets/images/InvertedCloud.png";
+import SunWithCloud from "@/assets/images/SunWithCloud.png";
 import { LinearGradient } from "expo-linear-gradient";
 import { Image, StyleSheet, View } from "react-native";
-import Cloud from "../assets/images/Cloud.png";
-import Home from "../assets/images/HomeImage.png";
-import InvertedCloud from "../assets/images/InvertedCloud.png";
-import SunWithCloud from "../assets/images/SunWithCloud.png";
 
 export default function Index() {
   return (
@@ -35,34 +35,41 @@ const Style = StyleSheet.create({
   },
   img: {
     position: "absolute",
-    width: 300,
-    height: 200,
+    width: '100%',
+    height: '100%',
+    objectFit:'contain',
+    top: '-10%',
+    zIndex:1
   },
   sun: {
     position: "absolute",
-    top: -30,
-    height: 170,
-    width: 170,
+    top: '-40%',
+    height: '100%',
+    width: '70%',
+    objectFit:'contain'
   },
   cloud1: {
     position: "absolute",
-    height: 80,
-    width: 80,
-    right: 0,
-    top: 100,
+    height: '100%',
+    width: '35%',
+    right: '0%',
+    top: '-28%',
+    objectFit:'contain'
   },
   cloud2: {
     position: "absolute",
-    height: 80,
-    width: 80,
-    left: 0,
-    top: 70,
+    height: '100%',
+    width: '40%',
+    left: '0%',
+    top: '-28%',
+    objectFit:'contain'
   },
   cloud3: {
     position: "absolute",
-    height: 80,
-    width: 80,
-    left: 80,
-    top: 125,
+    height: '100%',
+    width: '35%',
+    left: '40%',
+    top: '-20%',
+    objectFit:'contain'
   },
 });
