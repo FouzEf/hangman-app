@@ -37,16 +37,16 @@ const Style = StyleSheet.create({
     position: "absolute",
     width: '100%',
     height: '100%',
-    objectFit:'contain',
+    objectFit: 'contain',
     top: '-10%',
-    zIndex:1
+    zIndex: 1
   },
   sun: {
     position: "absolute",
     top: '-40%',
     height: '100%',
     width: '70%',
-    objectFit:'contain'
+    objectFit: 'contain'
   },
   cloud1: {
     position: "absolute",
@@ -54,7 +54,7 @@ const Style = StyleSheet.create({
     width: '35%',
     right: '0%',
     top: '-28%',
-    objectFit:'contain'
+    objectFit: 'contain'
   },
   cloud2: {
     position: "absolute",
@@ -62,7 +62,7 @@ const Style = StyleSheet.create({
     width: '40%',
     left: '0%',
     top: '-28%',
-    objectFit:'contain'
+    objectFit: 'contain'
   },
   cloud3: {
     position: "absolute",
@@ -70,6 +70,6 @@ const Style = StyleSheet.create({
     width: '35%',
     left: '40%',
     top: '-20%',
-    objectFit:'contain'
+    objectFit: 'contain'
   },
 });
