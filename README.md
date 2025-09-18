@@ -13,6 +13,16 @@ It was built using **TypeScript** and **React Native** with Expo.
 - **TypeScript** for type safety and maintainable code
 - **Figma** for prototyping and design
 
+# Screenshots
+
+---
+
+## Home screen
+
+![alt text](home-screen.png)
+
+---
+
 ## How to run it
 
 1. Install dependencies
