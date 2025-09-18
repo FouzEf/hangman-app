@@ -5,7 +5,7 @@ import SunWithCloud from "@/assets/images/SunWithCloud.png";
 import { Nunito_800ExtraBold, useFonts } from '@expo-google-fonts/nunito';
 import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useRef } from "react";
-import { Animated, Image, StyleSheet, Text, View } from "react-native";
+import { Animated, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 // import AppLoading from 'expo-app-loading';
 
 export default function Index() {
@@ -57,6 +57,12 @@ export default function Index() {
         <Animated.Image source={InvertedCloud} style={[Style.cloud3, { transform: [{ translateX: cloud3X }] }]} />
         <Image source={Home} style={Style.img} />
         <Text style={Style.text}>HangMan</Text>
+        <TouchableOpacity style={Style.btn}>
+          <Text style={Style.btnText}>Start Game</Text>
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <Text style={Style.btnPlay}>How to Play?</Text>
+        </TouchableOpacity>
       </View>
     </LinearGradient>
   );
@@ -113,15 +119,50 @@ const Style = StyleSheet.create({
   text: {
     fontFamily: 'Nunito_800ExtraBold',
     fontStyle: 'normal',
-    fontWeight: 800,   
+    fontWeight: 800,
     lineHeight: 87,
     textAlign: 'center',
-    marginTop: 100,
+    marginTop: 160,
     fontSize: 64,
-    color: '#263238',  
+    color: '#263238',
     textShadowColor: 'rgba(0, 0, 0, 0.25)',
     textShadowOffset: { width: 4, height: 4 },
     textShadowRadius: 8,
 
-  }
+  },
+  btn: {
+    backgroundColor: '#FF6F61',
+    textShadowColor: 'rgba(0, 0, 0, 0.25)',
+    textShadowOffset: { width: 4, height: 4 },
+    textShadowRadius: 8,
+    borderRadius: 50,
+    width: 150,
+    height: 50,
+    display: 'flex',
+    justifyContent: 'center',
+    alignContent: 'center',
+    marginTop:10
+
+  },
+  btnText: {
+    fontFamily: 'Nunito',
+    fontStyle: 'normal',
+    fontWeight: 400,
+    fontSize: 18,
+    textAlign: 'center',
+    color: '#FFFFFF',
+  },
+  btnPlay: {
+fontFamily: 'Nunito',
+fontStyle: 'normal',
+fontWeight: 400,
+fontSize: 12,
+display: 'flex',
+alignItems: 'center',
+textAlign: 'center',
+textDecorationLine: 'underline',
+    color: '#263238',
+    marginTop: 10,
+  },
+
 });
