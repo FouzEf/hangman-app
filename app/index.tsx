@@ -2,10 +2,17 @@ import Cloud from "@/assets/images/Cloud.png";
 import Home from "@/assets/images/HomeImage.png";
 import InvertedCloud from "@/assets/images/InvertedCloud.png";
 import SunWithCloud from "@/assets/images/SunWithCloud.png";
-import { Nunito_800ExtraBold, useFonts } from '@expo-google-fonts/nunito';
+import { Nunito_800ExtraBold, useFonts } from "@expo-google-fonts/nunito";
 import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useRef } from "react";
-import { Animated, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Animated,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 // import AppLoading from 'expo-app-loading';
 
 export default function Index() {
@@ -14,7 +21,11 @@ export default function Index() {
   const cloud3X = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    const animateCloud = (cloudAnim: Animated.Value | Animated.ValueXY, toValue: number, duration: number) => {
+    const animateCloud = (
+      cloudAnim: Animated.Value | Animated.ValueXY,
+      toValue: number,
+      duration: number
+    ) => {
       Animated.loop(
         Animated.sequence([
           Animated.timing(cloudAnim, {
@@ -29,7 +40,7 @@ export default function Index() {
           }),
         ])
       ).start();
-    }
+    };
     animateCloud(cloud1X, 50, 6000);
     animateCloud(cloud2X, -40, 8000);
     animateCloud(cloud3X, 30, 7000);
@@ -52,9 +63,18 @@ export default function Index() {
     >
       <View style={Style.container}>
         <Image source={SunWithCloud} style={Style.sun} />
-        <Animated.Image source={Cloud} style={[Style.cloud1, { transform: [{ translateX: cloud1X }] }]} />
-        <Animated.Image source={InvertedCloud} style={[Style.cloud2, { transform: [{ translateX: cloud2X }] }]} />
-        <Animated.Image source={InvertedCloud} style={[Style.cloud3, { transform: [{ translateX: cloud3X }] }]} />
+        <Animated.Image
+          source={Cloud}
+          style={[Style.cloud1, { transform: [{ translateX: cloud1X }] }]}
+        />
+        <Animated.Image
+          source={InvertedCloud}
+          style={[Style.cloud2, { transform: [{ translateX: cloud2X }] }]}
+        />
+        <Animated.Image
+          source={InvertedCloud}
+          style={[Style.cloud3, { transform: [{ translateX: cloud3X }] }]}
+        />
         <Image source={Home} style={Style.img} />
         <Text style={Style.text}>HangMan</Text>
         <TouchableOpacity style={Style.btn}>
@@ -75,94 +95,91 @@ const Style = StyleSheet.create({
     alignItems: "center",
     padding: 20,
     position: "relative",
-    width: '100%'
+    width: "100%",
   },
   img: {
     position: "absolute",
-    width: '100%',
-    height: '100%',
-    objectFit: 'contain',
-    top: '-10%',
-    zIndex: 1
+    width: "100%",
+    height: "100%",
+    objectFit: "contain",
+    top: "-10%",
+    zIndex: 1,
   },
   sun: {
     position: "absolute",
-    top: '-40%',
-    height: '100%',
-    width: '70%',
-    objectFit: 'contain'
+    top: "-40%",
+    height: "100%",
+    width: "70%",
+    objectFit: "contain",
   },
   cloud1: {
     position: "absolute",
-    height: '100%',
-    width: '35%',
-    right: '0%',
-    top: '-28%',
-    objectFit: 'contain'
+    height: "100%",
+    width: "35%",
+    right: "0%",
+    top: "-28%",
+    objectFit: "contain",
   },
   cloud2: {
     position: "absolute",
-    height: '100%',
-    width: '40%',
-    left: '0%',
-    top: '-28%',
-    objectFit: 'contain'
+    height: "100%",
+    width: "40%",
+    left: "0%",
+    top: "-28%",
+    objectFit: "contain",
   },
   cloud3: {
     position: "absolute",
-    height: '100%',
-    width: '35%',
-    left: '40%',
-    top: '-20%',
-    objectFit: 'contain'
+    height: "100%",
+    width: "35%",
+    left: "40%",
+    top: "-20%",
+    objectFit: "contain",
   },
   text: {
-    fontFamily: 'Nunito_800ExtraBold',
-    fontStyle: 'normal',
+    fontFamily: "Nunito_800ExtraBold",
+    fontStyle: "normal",
     fontWeight: 800,
     lineHeight: 87,
-    textAlign: 'center',
+    textAlign: "center",
     marginTop: 160,
     fontSize: 64,
-    color: '#263238',
-    textShadowColor: 'rgba(0, 0, 0, 0.25)',
+    color: "#263238",
+    textShadowColor: "rgba(0, 0, 0, 0.25)",
     textShadowOffset: { width: 4, height: 4 },
     textShadowRadius: 8,
-
   },
   btn: {
-    backgroundColor: '#FF6F61',
-    textShadowColor: 'rgba(0, 0, 0, 0.25)',
+    backgroundColor: "#FF6F61",
+    textShadowColor: "rgba(0, 0, 0, 0.25)",
     textShadowOffset: { width: 4, height: 4 },
     textShadowRadius: 8,
     borderRadius: 50,
     width: 150,
     height: 50,
-    display: 'flex',
-    justifyContent: 'center',
-    alignContent: 'center',
-    marginTop:10
-
-  },
-  btnText: {
-    fontFamily: 'Nunito',
-    fontStyle: 'normal',
-    fontWeight: 400,
-    fontSize: 18,
-    textAlign: 'center',
-    color: '#FFFFFF',
-  },
-  btnPlay: {
-fontFamily: 'Nunito',
-fontStyle: 'normal',
-fontWeight: 400,
-fontSize: 12,
-display: 'flex',
-alignItems: 'center',
-textAlign: 'center',
-textDecorationLine: 'underline',
-    color: '#263238',
+    display: "flex",
+    justifyContent: "center",
+    alignContent: "center",
     marginTop: 10,
   },
-
+  btnText: {
+    fontFamily: "Nunito",
+    fontStyle: "normal",
+    fontWeight: 400,
+    fontSize: 18,
+    textAlign: "center",
+    color: "#FFFFFF",
+  },
+  btnPlay: {
+    fontFamily: "Nunito",
+    fontStyle: "normal",
+    fontWeight: 400,
+    fontSize: 12,
+    display: "flex",
+    alignItems: "center",
+    textAlign: "center",
+    textDecorationLine: "underline",
+    color: "#263238",
+    marginTop: 10,
+  },
 });
