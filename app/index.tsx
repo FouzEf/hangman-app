@@ -4,6 +4,7 @@ import InvertedCloud from "@/assets/images/InvertedCloud.png";
 import SunWithCloud from "@/assets/images/SunWithCloud.png";
 import { Nunito_800ExtraBold, useFonts } from "@expo-google-fonts/nunito";
 import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
 import { useEffect, useRef } from "react";
 import {
   Animated,
@@ -16,11 +17,13 @@ import {
 // import AppLoading from 'expo-app-loading';
 
 export default function Index() {
+  const router = useRouter();
   const cloud1X = useRef(new Animated.Value(0)).current;
   const cloud2X = useRef(new Animated.Value(0)).current;
   const cloud3X = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
+    console.log("useEffect called");
     const animateCloud = (
       cloudAnim: Animated.Value | Animated.ValueXY,
       toValue: number,
@@ -79,7 +82,7 @@ export default function Index() {
         <Text style={Style.text}>HangMan</Text>
         <TouchableOpacity
           style={Style.btn}
-          onPress={() => console.log("Pressed")}
+          onPress={() => router.push("/gamePage")}
         >
           <Text style={Style.btnText}>Start Game</Text>
         </TouchableOpacity>
@@ -164,6 +167,7 @@ const Style = StyleSheet.create({
     justifyContent: "center",
     alignContent: "center",
     marginTop: 10,
+    zIndex: 10,
   },
   btnText: {
     fontFamily: "Nunito",
