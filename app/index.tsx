@@ -4,6 +4,7 @@ import InvertedCloud from "@/assets/images/InvertedCloud.png";
 import SunWithCloud from "@/assets/images/SunWithCloud.png";
 import { Nunito_800ExtraBold, useFonts } from "@expo-google-fonts/nunito";
 import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
 import { useEffect, useRef } from "react";
 import {
   Animated,
@@ -16,11 +17,13 @@ import {
 // import AppLoading from 'expo-app-loading';
 
 export default function Index() {
+  const router = useRouter();
   const cloud1X = useRef(new Animated.Value(0)).current;
   const cloud2X = useRef(new Animated.Value(0)).current;
   const cloud3X = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
+    console.log("useEffect called");
     const animateCloud = (
       cloudAnim: Animated.Value | Animated.ValueXY,
       toValue: number,
@@ -51,7 +54,7 @@ export default function Index() {
   });
 
   if (!fontsLoaded) {
-    return;
+    return null;
   }
 
   return (
@@ -77,7 +80,10 @@ export default function Index() {
         />
         <Image source={Home} style={Style.img} />
         <Text style={Style.text}>HangMan</Text>
-        <TouchableOpacity style={Style.btn}>
+        <TouchableOpacity
+          style={Style.btn}
+          onPress={() => router.push("/gamePage")}
+        >
           <Text style={Style.btnText}>Start Game</Text>
         </TouchableOpacity>
         <TouchableOpacity>
@@ -101,7 +107,7 @@ const Style = StyleSheet.create({
     position: "absolute",
     width: "100%",
     height: "100%",
-    objectFit: "contain",
+    resizeMode: "contain",
     top: "-10%",
     zIndex: 1,
   },
@@ -110,7 +116,7 @@ const Style = StyleSheet.create({
     top: "-40%",
     height: "100%",
     width: "70%",
-    objectFit: "contain",
+    resizeMode: "contain",
   },
   cloud1: {
     position: "absolute",
@@ -118,7 +124,7 @@ const Style = StyleSheet.create({
     width: "35%",
     right: "0%",
     top: "-28%",
-    objectFit: "contain",
+    resizeMode: "contain",
   },
   cloud2: {
     position: "absolute",
@@ -126,7 +132,7 @@ const Style = StyleSheet.create({
     width: "40%",
     left: "0%",
     top: "-28%",
-    objectFit: "contain",
+    resizeMode: "contain",
   },
   cloud3: {
     position: "absolute",
@@ -134,7 +140,7 @@ const Style = StyleSheet.create({
     width: "35%",
     left: "40%",
     top: "-20%",
-    objectFit: "contain",
+    resizeMode: "contain",
   },
   text: {
     fontFamily: "Nunito_800ExtraBold",
@@ -161,6 +167,7 @@ const Style = StyleSheet.create({
     justifyContent: "center",
     alignContent: "center",
     marginTop: 10,
+    zIndex: 10,
   },
   btnText: {
     fontFamily: "Nunito",
