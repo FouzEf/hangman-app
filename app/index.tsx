@@ -51,7 +51,7 @@ export default function Index() {
   });
 
   if (!fontsLoaded) {
-    return;
+    return null;
   }
 
   return (
@@ -77,7 +77,10 @@ export default function Index() {
         />
         <Image source={Home} style={Style.img} />
         <Text style={Style.text}>HangMan</Text>
-        <TouchableOpacity style={Style.btn}>
+        <TouchableOpacity
+          style={Style.btn}
+          onPress={() => console.log("Pressed")}
+        >
           <Text style={Style.btnText}>Start Game</Text>
         </TouchableOpacity>
         <TouchableOpacity>
@@ -101,7 +104,7 @@ const Style = StyleSheet.create({
     position: "absolute",
     width: "100%",
     height: "100%",
-    objectFit: "contain",
+    resizeMode: "contain",
     top: "-10%",
     zIndex: 1,
   },
@@ -110,7 +113,7 @@ const Style = StyleSheet.create({
     top: "-40%",
     height: "100%",
     width: "70%",
-    objectFit: "contain",
+    resizeMode: "contain",
   },
   cloud1: {
     position: "absolute",
@@ -118,7 +121,7 @@ const Style = StyleSheet.create({
     width: "35%",
     right: "0%",
     top: "-28%",
-    objectFit: "contain",
+    resizeMode: "contain",
   },
   cloud2: {
     position: "absolute",
@@ -126,7 +129,7 @@ const Style = StyleSheet.create({
     width: "40%",
     left: "0%",
     top: "-28%",
-    objectFit: "contain",
+    resizeMode: "contain",
   },
   cloud3: {
     position: "absolute",
@@ -134,7 +137,7 @@ const Style = StyleSheet.create({
     width: "35%",
     left: "40%",
     top: "-20%",
-    objectFit: "contain",
+    resizeMode: "contain",
   },
   text: {
     fontFamily: "Nunito_800ExtraBold",
