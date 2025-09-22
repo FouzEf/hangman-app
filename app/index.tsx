@@ -1,53 +1,21 @@
-import Cloud from "@/assets/images/Cloud.png";
-import Home from "@/assets/images/HomeImage.png";
-import InvertedCloud from "@/assets/images/InvertedCloud.png";
-import SunWithCloud from "@/assets/images/SunWithCloud.png";
 import { Nunito_800ExtraBold, useFonts } from "@expo-google-fonts/nunito";
 import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router";
-import { useEffect, useRef } from "react";
 import {
-  Animated,
   Image,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
-// import AppLoading from 'expo-app-loading';
+
+import Cloud from "@/components/Cloud";
+import { useRouter } from "expo-router";
 
 export default function Index() {
-  const router = useRouter();
-  const cloud1X = useRef(new Animated.Value(0)).current;
-  const cloud2X = useRef(new Animated.Value(0)).current;
-  const cloud3X = useRef(new Animated.Value(0)).current;
 
-  useEffect(() => {
-    console.log("useEffect called");
-    const animateCloud = (
-      cloudAnim: Animated.Value | Animated.ValueXY,
-      toValue: number,
-      duration: number
-    ) => {
-      Animated.loop(
-        Animated.sequence([
-          Animated.timing(cloudAnim, {
-            toValue,
-            duration,
-            useNativeDriver: true,
-          }),
-          Animated.timing(cloudAnim, {
-            toValue: 0,
-            duration,
-            useNativeDriver: true,
-          }),
-        ])
-      ).start();
-    };
-    animateCloud(cloud1X, 50, 6000);
-    animateCloud(cloud2X, -40, 8000);
-    animateCloud(cloud3X, 30, 7000);
-  }, [cloud1X, cloud2X, cloud3X]);
+  const Home: any = require('./assets/images/HomeImage.png');
+
+  const navigate = useRouter();
 
   const [fontsLoaded] = useFonts({
     Nunito_800ExtraBold,
@@ -65,24 +33,12 @@ export default function Index() {
       style={Style.container}
     >
       <View style={Style.container}>
-        <Image source={SunWithCloud} style={Style.sun} />
-        <Animated.Image
-          source={Cloud}
-          style={[Style.cloud1, { transform: [{ translateX: cloud1X }] }]}
-        />
-        <Animated.Image
-          source={InvertedCloud}
-          style={[Style.cloud2, { transform: [{ translateX: cloud2X }] }]}
-        />
-        <Animated.Image
-          source={InvertedCloud}
-          style={[Style.cloud3, { transform: [{ translateX: cloud3X }] }]}
-        />
+        <Cloud/>
         <Image source={Home} style={Style.img} />
         <Text style={Style.text}>HangMan</Text>
         <TouchableOpacity
           style={Style.btn}
-          onPress={() => router.push("/gamePage")}
+          onPress={() => navigate.push('/gamePage')}
         >
           <Text style={Style.btnText}>Start Game</Text>
         </TouchableOpacity>
@@ -110,37 +66,6 @@ const Style = StyleSheet.create({
     resizeMode: "contain",
     top: "-10%",
     zIndex: 1,
-  },
-  sun: {
-    position: "absolute",
-    top: "-40%",
-    height: "100%",
-    width: "70%",
-    resizeMode: "contain",
-  },
-  cloud1: {
-    position: "absolute",
-    height: "100%",
-    width: "35%",
-    right: "0%",
-    top: "-28%",
-    resizeMode: "contain",
-  },
-  cloud2: {
-    position: "absolute",
-    height: "100%",
-    width: "40%",
-    left: "0%",
-    top: "-28%",
-    resizeMode: "contain",
-  },
-  cloud3: {
-    position: "absolute",
-    height: "100%",
-    width: "35%",
-    left: "40%",
-    top: "-20%",
-    resizeMode: "contain",
   },
   text: {
     fontFamily: "Nunito_800ExtraBold",
