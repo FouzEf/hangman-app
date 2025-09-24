@@ -8,13 +8,12 @@ import {
   View
 } from "react-native";
 
-import Cloud from "@/components/Cloud";
+import Home from '@assets/images/HomeImage.png';
+import Cloud from "@components/Cloud";
 import { useRouter } from "expo-router";
 
 export default function Index() {
-
-  const Home: any = require('./assets/images/HomeImage.png');
-
+ 
   const navigate = useRouter();
 
   const [fontsLoaded] = useFonts({
@@ -33,7 +32,7 @@ export default function Index() {
       style={Style.container}
     >
       <View style={Style.container}>
-        <Cloud/>
+        <Cloud />
         <Image source={Home} style={Style.img} />
         <Text style={Style.text}>HangMan</Text>
         <TouchableOpacity
@@ -62,10 +61,12 @@ const Style = StyleSheet.create({
   img: {
     position: "absolute",
     width: "100%",
-    height: "100%",
+    height: "50%",
     resizeMode: "contain",
-    top: "-10%",
+    top: 80,
     zIndex: 1,
+    //borderColor: 'black',
+   // borderWidth:5
   },
   text: {
     fontFamily: "Nunito_800ExtraBold",
@@ -73,7 +74,7 @@ const Style = StyleSheet.create({
     fontWeight: 800,
     lineHeight: 87,
     textAlign: "center",
-    marginTop: 160,
+    marginTop: 0,
     fontSize: 64,
     color: "#263238",
     textShadowColor: "rgba(0, 0, 0, 0.25)",
