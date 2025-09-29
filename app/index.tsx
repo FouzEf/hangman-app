@@ -2,6 +2,7 @@ import { Nunito_800ExtraBold, useFonts } from "@expo-google-fonts/nunito";
 import { LinearGradient } from "expo-linear-gradient";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
+import HowToPlayModal from "@/components/HowToPLay";
 import Home from "@assets/images/HomeImage.png";
 import Cloud from "@components/Cloud";
 import { Audio } from "expo-av";
@@ -61,6 +62,7 @@ export default function Index() {
         <TouchableOpacity>
           <Text style={Style.btnPlay}>How to Play?</Text>
         </TouchableOpacity>
+        <HowToPlayModal />
       </View>
     </LinearGradient>
   );
