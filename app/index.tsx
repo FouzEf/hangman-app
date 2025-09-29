@@ -1,20 +1,37 @@
 import { Nunito_800ExtraBold, useFonts } from "@expo-google-fonts/nunito";
 import { LinearGradient } from "expo-linear-gradient";
-import {
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View
-} from "react-native";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-import Home from '@assets/images/HomeImage.png';
+import Home from "@assets/images/HomeImage.png";
 import Cloud from "@components/Cloud";
+import { Audio } from "expo-av";
 import { useRouter } from "expo-router";
+import { useEffect } from "react";
 
 export default function Index() {
- 
   const navigate = useRouter();
+
+  useEffect(() => {
+    let sound: Audio.Sound;
+
+    const playLoopingSound = async () => {
+      const { sound: loadedSound } = await Audio.Sound.createAsync(
+        require("../assets/sounds/gameHome.mp3")
+      );
+      sound = loadedSound;
+      await sound.setIsLoopingAsync(true); // 🔁 Enable looping
+      await sound.playAsync();
+    };
+
+    playLoopingSound();
+
+    // Optional cleanup
+    return () => {
+      if (sound) {
+        sound.unloadAsync();
+      }
+    };
+  }, []);
 
   const [fontsLoaded] = useFonts({
     Nunito_800ExtraBold,
@@ -37,7 +54,7 @@ export default function Index() {
         <Text style={Style.text}>HangMan</Text>
         <TouchableOpacity
           style={Style.btn}
-          onPress={() => navigate.push('/gamePage')}
+          onPress={() => navigate.push("/gamePage")}
         >
           <Text style={Style.btnText}>Start Game</Text>
         </TouchableOpacity>
@@ -66,7 +83,7 @@ const Style = StyleSheet.create({
     top: 80,
     zIndex: 1,
     //borderColor: 'black',
-   // borderWidth:5
+    // borderWidth:5
   },
   text: {
     fontFamily: "Nunito_800ExtraBold",
