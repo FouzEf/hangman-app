@@ -53,7 +53,7 @@ export default function Index() {
       colors={["#80C2F3", "#C8E6C9"]}
       start={{ x: 0.5, y: 0 }}
       end={{ x: 0.5, y: 1 }}
-      style={Style.container}
+      style={[Style.container, { zIndex: 100 }]}
     >
       <View style={Style.container}>
         <Cloud />
@@ -68,7 +68,7 @@ export default function Index() {
         <TouchableOpacity onPress={toggleModal} style={{ zIndex: 10 }}>
           <Text style={Style.btnPlay}>How to Play?</Text>
         </TouchableOpacity>
-        {modalVisible && <HowToPlay onClose={toggleModal} />}
+        {modalVisible && <HowToPlay onClose={toggleModal} modalVisible />}
       </View>
     </LinearGradient>
   );

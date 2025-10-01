@@ -6,86 +6,102 @@ import {
   Pressable,
   StyleSheet,
   Text,
+  TouchableWithoutFeedback,
   View,
 } from "react-native";
 
 type Props = {
   onClose: () => void;
+  modalVisible: boolean;
 };
 
-const HowToPlay = ({ onClose }: Props) => {
+const HowToPlay = ({ modalVisible, onClose }: Props) => {
   return (
-    <Modal style={styles.modal} transparent animationType="slide">
-      <View style={styles.container}>
-        <Pressable onPress={onClose}>
-          <AntDesign
-            name="close"
-            style={styles.closeIcon}
-            size={15}
-            color="black"
-          />
-        </Pressable>
-        <Text style={styles.title}>
-          Hey, it&#39;s <Text style={{ fontWeight: "bold" }}>Hangman!</Text>{" "}
-          Your favourite all-time classic game.
-        </Text>
-        <Text
-          style={{
-            fontSize: 15,
-            marginBottom: 5,
-            textDecorationLine: "underline",
-          }}
-        >
-          How to play:
-        </Text>
-        <FlatList
-          data={[
-            {
-              key: " The App picks a secret word and draws blank spaces for each letter.",
-            },
-            { key: "The player guesses letters, one at a time." },
-            {
-              key: "If the letter is in the word, it is placed in the right spot(s).",
-            },
-            {
-              key: "If the letter is not in the word, add a piece to the stick figure (head, body, arms, legs, etc.).",
-            },
-            { key: " Keep guessing until: " },
-          ]}
-          renderItem={({ item, index }) => (
-            <Text style={styles.item}>
-              {index + 1}.{item.key}
-            </Text>
-          )}
-        />
-        <FlatList
-          data={[
-            { key: "You figure out the whole word (you win), or" },
-            { key: "The stick figure is fully drawn (you lose)." },
-          ]}
-          renderItem={({ item }: { item: { key: string } }) => (
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                marginBottom: 5,
-              }}
-            >
-              <View style={styles.dot} />
-              <Text style={styles.item2}>{item.key}</Text>
+    <Modal transparent animationType="slide" visible={modalVisible}>
+      <TouchableWithoutFeedback onPress={onClose}>
+        <View style={styles.overlay}>
+          <TouchableWithoutFeedback>
+            <View style={styles.container}>
+              <Pressable onPress={onClose}>
+                <AntDesign
+                  name="close"
+                  style={styles.closeIcon}
+                  size={15}
+                  color="black"
+                />
+              </Pressable>
+              <Text style={styles.title}>
+                Hey, it&#39;s{" "}
+                <Text style={{ fontWeight: "bold" }}>Hangman!</Text> Your
+                favourite all-time classic game.
+              </Text>
+              <Text
+                style={{
+                  fontSize: 15,
+                  marginBottom: 5,
+                  textDecorationLine: "underline",
+                }}
+              >
+                How to play:
+              </Text>
+              <FlatList
+                data={[
+                  {
+                    key: " The App picks a secret word and draws blank spaces for each letter.",
+                  },
+                  { key: " The player guesses letters, one at a time." },
+                  {
+                    key: " If the letter is in the word, it is placed in the right spot(s).",
+                  },
+                  {
+                    key: " If the letter is not in the word, add a piece to the stick figure (head, body, arms, legs, etc.).",
+                  },
+                  { key: " Keep guessing until: " },
+                ]}
+                renderItem={({ item, index }) => (
+                  <Text style={styles.item}>
+                    {index + 1}.{item.key}
+                  </Text>
+                )}
+              />
+              <FlatList
+                data={[
+                  { key: "You figure out the whole word (you win), or" },
+                  { key: "The stick figure is fully drawn (you lose)." },
+                ]}
+                renderItem={({ item }: { item: { key: string } }) => (
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      marginBottom: 5,
+                    }}
+                  >
+                    <View style={styles.dot} />
+                    <Text style={styles.item2}>{item.key}</Text>
+                  </View>
+                )}
+              />
+              <Text style={{ fontSize: 15, marginTop: 10 }}>
+                It’s a race between your brain and the hangman’s noose—guess
+                smart, or swing!
+              </Text>
             </View>
-          )}
-        />
-        <Text style={{ fontSize: 15, marginTop: 10 }}>
-          It’s a race between your brain and the hangman’s noose guess smart, or
-          swing!
-        </Text>
-      </View>
+          </TouchableWithoutFeedback>
+        </View>
+      </TouchableWithoutFeedback>
     </Modal>
   );
 };
 
 const styles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.2)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
   modal: {
     backgroundColor: "white",
     margin: 20,
@@ -117,11 +133,8 @@ const styles = StyleSheet.create({
     height: 5,
     backgroundColor: "black",
     borderRadius: 50,
-    verticalAlign: "middle",
-    display: "flex",
-    alignItems: "center",
-    alignSelf: "center",
-    alignContent: "center",
+    marginRight: 3,
+    marginLeft: 6,
   },
   item2: {
     marginBottom: 5,

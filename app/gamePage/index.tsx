@@ -1,6 +1,6 @@
 import Cloud from "@/components/Cloud";
-import Gallow from "@/components/Gallow";
 import Grass from "@/components/Grass";
+import Input from "@/components/Input";
 import { LinearGradient } from "expo-linear-gradient";
 import { StyleSheet, View } from "react-native";
 
@@ -14,8 +14,8 @@ const gamePage = () => {
     >
       <View style={Style.container}>
         <Cloud />
-        <Gallow />
         <Grass />
+        <Input />
       </View>
     </LinearGradient>
   );
