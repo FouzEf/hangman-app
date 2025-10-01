@@ -68,7 +68,7 @@ export default function Index() {
         <TouchableOpacity onPress={toggleModal} style={{ zIndex: 10 }}>
           <Text style={Style.btnPlay}>How to Play?</Text>
         </TouchableOpacity>
-        {modalVisible && <HowToPlay />}
+        {modalVisible && <HowToPlay onClose={toggleModal} />}
       </View>
     </LinearGradient>
   );

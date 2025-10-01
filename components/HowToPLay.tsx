@@ -9,26 +9,15 @@ import {
   View,
 } from "react-native";
 
-{
-  /*type Props = {
-  visible: boolean;
+type Props = {
   onClose: () => void;
-}; 
-*/
-}
+};
 
-const HowToPlay = () => {
+const HowToPlay = ({ onClose }: Props) => {
   return (
-    <Modal
-      style={styles.modal}
-      //visible={visible}
-      transparent
-      animationType="slide"
-      //onRequestClose={onClose}
-    >
+    <Modal style={styles.modal} transparent animationType="slide">
       <View style={styles.container}>
-        <Pressable //onPress={onClose}
-        >
+        <Pressable onPress={onClose}>
           <AntDesign
             name="close"
             style={styles.closeIcon}
@@ -113,8 +102,8 @@ const styles = StyleSheet.create({
   },
   closeIcon: {
     position: "absolute",
-    top: 10,
-    right: 8,
+    top: -15,
+    right: -15,
   },
   title: {
     fontSize: 15,
