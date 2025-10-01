@@ -2,14 +2,16 @@ import { Nunito_800ExtraBold, useFonts } from "@expo-google-fonts/nunito";
 import { LinearGradient } from "expo-linear-gradient";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-import HowToPlayModal from "@/components/HowToPLay";
 import Home from "@assets/images/HomeImage.png";
 import Cloud from "@components/Cloud";
 import { Audio } from "expo-av";
 import { useRouter } from "expo-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+
+import HowToPlay from "@components/HowToPLay";
 
 export default function Index() {
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
   const navigate = useRouter();
 
   useEffect(() => {
@@ -42,6 +44,10 @@ export default function Index() {
     return null;
   }
 
+  const toggleModal = () => {
+    setModalVisible(!modalVisible);
+  };
+
   return (
     <LinearGradient
       colors={["#80C2F3", "#C8E6C9"]}
@@ -59,10 +65,10 @@ export default function Index() {
         >
           <Text style={Style.btnText}>Start Game</Text>
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={toggleModal} style={{ zIndex: 10 }}>
           <Text style={Style.btnPlay}>How to Play?</Text>
         </TouchableOpacity>
-        <HowToPlayModal />
+        {modalVisible && <HowToPlay />}
       </View>
     </LinearGradient>
   );

@@ -1,6 +1,13 @@
 import AntDesign from "@expo/vector-icons/AntDesign";
 import React from "react";
-import { FlatList, Modal, StyleSheet, Text, View } from "react-native";
+import {
+  FlatList,
+  Modal,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
 {
   /*type Props = {
@@ -10,7 +17,7 @@ import { FlatList, Modal, StyleSheet, Text, View } from "react-native";
 */
 }
 
-const HowToPlayModal = () => {
+const HowToPlay = () => {
   return (
     <Modal
       style={styles.modal}
@@ -20,12 +27,15 @@ const HowToPlayModal = () => {
       //onRequestClose={onClose}
     >
       <View style={styles.container}>
-        <AntDesign
-          name="close"
-          style={styles.closeIcon}
-          size={15}
-          color="black"
-        />
+        <Pressable //onPress={onClose}
+        >
+          <AntDesign
+            name="close"
+            style={styles.closeIcon}
+            size={15}
+            color="black"
+          />
+        </Pressable>
         <Text style={styles.title}>
           Hey, it&#39;s <Text style={{ fontWeight: "bold" }}>Hangman!</Text>{" "}
           Your favourite all-time classic game.
@@ -130,4 +140,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HowToPlayModal;
+export default HowToPlay;
