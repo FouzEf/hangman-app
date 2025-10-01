@@ -4,5 +4,12 @@
     "source.organizeImports": "explicit",
     "source.sortMembers": "explicit"
   },
-  "cSpell.words": ["favourite", "gallow", "nunito", "Pressable", "worklets"]
+  "cSpell.words": [
+    "favourite",
+    "gallow",
+    "inpt",
+    "nunito",
+    "Pressable",
+    "worklets"
+  ]
 }

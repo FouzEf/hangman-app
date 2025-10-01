@@ -1,4 +1,4 @@
-import Cloud from "@/components/Cloud";
+import CloudGamePage from "@/components/CloudGamePage";
 import Grass from "@/components/Grass";
 import Input from "@/components/Input";
 import { LinearGradient } from "expo-linear-gradient";
@@ -13,7 +13,7 @@ const gamePage = () => {
       style={Style.container}
     >
       <View style={Style.container}>
-        <Cloud />
+        <CloudGamePage />
         <Grass />
         <Input />
       </View>
