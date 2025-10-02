@@ -1,56 +1,42 @@
 import { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
+import TextInpt from "./TextInpt";
 
 const Input = () => {
-  const [text, setText] = useState("apple");
-  const [answer, setAnswer] = useState("a");
+  const [text, setText] = useState<string>("apple");
+  const [answer, setAnswer] = useState<string>("a");
 
   const letters = text.split("");
-
   return (
     <View style={styles.container}>
       {letters.map((letter, index) => {
-        const isMatch = letter === answer;
         return (
-          <View key={index} style={styles.letterBox}>
-            <Text style={[styles.letter, !isMatch && styles.hiddenLetter]}>
-              {letter}
-            </Text>
-            <View
-              style={[
-                styles.underline,
-                { borderBottomColor: isMatch ? "green" : "black" },
-              ]}
-            />
+          <View
+            key={index}
+            style={{
+              display: "flex",
+              borderBottomColor: letter === answer ? "green" : "black",
+              borderBottomWidth: 2,
+            }}
+          >
+            <TextInpt value={letter} answer={answer} />
           </View>
         );
       })}
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
+    display: "flex",
     flexDirection: "row",
     paddingHorizontal: 20,
     width: "80%",
     justifyContent: "space-between",
   },
-  letterBox: {
-    alignItems: "center",
-  },
-  letter: {
+  inpt: {
     fontSize: 18,
-    marginBottom: 4,
-    color: "black",
-  },
-  hiddenLetter: {
-    color: "transparent",
-  },
-  underline: {
-    borderBottomWidth: 2,
-    width: 20,
+    //fontWeight: "bold",
   },
 });
-
 export default Input;
