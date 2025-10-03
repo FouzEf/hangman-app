@@ -2,9 +2,12 @@ import CloudGamePage from "@/components/CloudGamePage";
 import Grass from "@/components/Grass";
 import Input from "@/components/Input";
 import { LinearGradient } from "expo-linear-gradient";
+import { useState } from "react";
 import { StyleSheet, View } from "react-native";
 
 const gamePage = () => {
+  // State to keep a list of ALL letters guessed wrongly
+  const [wrongGuesses, setWrongGuesses] = useState<string[]>([]);
   return (
     <LinearGradient
       colors={["#80C2F3", "#C8E6C9"]}
@@ -14,8 +17,8 @@ const gamePage = () => {
     >
       <View style={Style.container}>
         <CloudGamePage />
-        <Grass />
-        <Input />
+        <Grass wrongGuesses={wrongGuesses} />
+        <Input wrongGuesses={wrongGuesses} setWrongGuesses={setWrongGuesses} />
       </View>
     </LinearGradient>
   );

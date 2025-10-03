@@ -7,6 +7,7 @@ type Props = {
   onGuess: (guess: string) => void;
   currentGuess: string;
   setCurrentGuess: (text: string) => void;
+  isWordSolved: boolean;
 };
 
 const TextInpt = ({
@@ -14,11 +15,16 @@ const TextInpt = ({
   onGuess,
   currentGuess,
   setCurrentGuess,
+  isWordSolved,
 }: Props) => {
   const inputRef = useRef<TextInput>(null);
   useEffect(() => {
-    inputRef.current?.focus();
-  }, [displayValue]);
+    const timeout = setTimeout(() => {
+      inputRef.current?.focus();
+    }, 100);
+    return () => clearTimeout(timeout);
+  }, [currentGuess]);
+
   if (displayValue !== "") {
     return (
       <TextInput
@@ -51,6 +57,7 @@ const TextInpt = ({
         maxLength={1}
         autoCapitalize="none"
         keyboardType="default"
+        autoFocus={!isWordSolved}
       />
     </View>
   );

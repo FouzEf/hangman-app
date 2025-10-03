@@ -1,11 +1,16 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import TextInpt from "./TextInpt";
 
-const WORD = "parrot";
-const letters = WORD.split("");
+//const WORD = "parrot";
+const letters = "parrot".split("");
+type Props = {
+  wrongGuesses: string[];
+  setWrongGuesses: (guesses: string[]) => void;
+};
 
-const Input = () => {
+const Input = ({ wrongGuesses, setWrongGuesses }: Props) => {
+  const [WORD, setWord] = useState<string[]>([]);
   // State to track the solved word, initialized with empty slots
   const [solvedWord, setSolvedWord] = useState<string[]>(
     Array(WORD.length).fill("")
@@ -17,15 +22,31 @@ const Input = () => {
   // State to keep a list of ALL letters successfully found
   // const [correctGuesses, setCorrectGuesses] = useState<string[]>([]);
 
-  // State to keep a list of ALL letters guessed wrongly
-  const [wrongGuesses, setWrongGuesses] = useState<string[]>([]);
+  // Determine if the word is completely guessed
+  const isWordSolved = !solvedWord.includes("");
+
+  useEffect(() => {
+    const fetchWord = async () => {
+      try {
+        const response = await fetch(
+          "https://random-word-api.herokuapp.com/word"
+        );
+        const data = await response.json();
+        setWord(data[0]);
+        console.log("Fetched word:", data[0]);
+      } catch (error) {
+        console.error("Error fetching word:", error);
+      }
+    };
+    fetchWord();
+  }, []);
 
   // This function is called from the TextInpt component when the user types a character.
   const handleGuess = useCallback(
     (guess: string) => {
       const letter = guess.toLowerCase();
       if (!WORD.includes(letter) && !wrongGuesses.includes(letter)) {
-        setWrongGuesses((prev) => [...prev, letter]);
+        setWrongGuesses((prev: any) => [...prev, letter]);
       }
       if (WORD.includes(letter)) {
         // if (!correctGuesses.includes(letter)) {
@@ -47,7 +68,7 @@ const Input = () => {
       }
       setCurrentGuess("");
     },
-    [solvedWord, wrongGuesses]
+    [solvedWord, setWrongGuesses, wrongGuesses]
   );
   return (
     <View>
@@ -73,6 +94,7 @@ const Input = () => {
                 onGuess={handleGuess}
                 currentGuess={currentGuess}
                 setCurrentGuess={setCurrentGuess}
+                isWordSolved={isWordSolved}
               />
             </View>
           );
@@ -83,7 +105,7 @@ const Input = () => {
         Guessed Letters: {correctGuesses.join(", ").toUpperCase()}
       </Text> */}
       <Text style={styles.guessList}>
-        Guessed Letters:{" "}
+        Wrong Letters:{" "}
         <Text style={{ color: "red" }}>
           {wrongGuesses.join(", ").toLowerCase()}
         </Text>
