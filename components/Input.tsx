@@ -17,12 +17,13 @@ const Input = ({ wrongGuesses, setWrongGuesses }: Props) => {
   );
 
   // State for the single letter the user is currently typing/guessing in the input field
+
   const [currentGuess, setCurrentGuess] = useState<string>("");
 
   // State to keep a list of ALL letters successfully found
   // const [correctGuesses, setCorrectGuesses] = useState<string[]>([]);
-
   // Determine if the word is completely guessed
+
   const isWordSolved = !solvedWord.includes("");
 
   useEffect(() => {
@@ -40,13 +41,13 @@ const Input = ({ wrongGuesses, setWrongGuesses }: Props) => {
     };
     fetchWord();
   }, []);
-
+  console.log("WORD", WORD);
   // This function is called from the TextInpt component when the user types a character.
   const handleGuess = useCallback(
     (guess: string) => {
       const letter = guess.toLowerCase();
       if (!WORD.includes(letter) && !wrongGuesses.includes(letter)) {
-        setWrongGuesses((prev: any) => [...prev, letter]);
+        setWrongGuesses([...wrongGuesses, letter]);
       }
       if (WORD.includes(letter)) {
         // if (!correctGuesses.includes(letter)) {
@@ -68,7 +69,7 @@ const Input = ({ wrongGuesses, setWrongGuesses }: Props) => {
       }
       setCurrentGuess("");
     },
-    [solvedWord, setWrongGuesses, wrongGuesses]
+    [solvedWord, setWrongGuesses, wrongGuesses, WORD]
   );
   return (
     <View>
