@@ -10,7 +10,6 @@ const Cloud = () => {
   const cloud3X = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    console.log("useEffect called");
     const animateCloud = (
       cloudAnim: Animated.Value | Animated.ValueXY,
       toValue: number,

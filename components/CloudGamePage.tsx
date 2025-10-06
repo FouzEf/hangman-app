@@ -10,7 +10,6 @@ const CloudGamePage = () => {
   const cloud3X = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    console.log("useEffect called");
     const animateCloud = (
       cloudAnim: Animated.Value | Animated.ValueXY,
       toValue: number,
@@ -58,7 +57,7 @@ const CloudGamePage = () => {
 const Style = StyleSheet.create({
   sun: {
     position: "absolute",
-    top: -200,
+    top: -250,
     left: "30%",
     height: "100%",
     width: "80%",
@@ -69,7 +68,7 @@ const Style = StyleSheet.create({
     height: "100%",
     width: "20%",
     right: "10%",
-    top: -150,
+    top: -180,
     resizeMode: "contain",
   },
   cloud2: {
@@ -77,7 +76,7 @@ const Style = StyleSheet.create({
     height: "100%",
     width: "30%",
     left: "10%",
-    top: -150,
+    top: -200,
     resizeMode: "contain",
   },
   cloud3: {
@@ -85,7 +84,7 @@ const Style = StyleSheet.create({
     height: "100%",
     width: "32%",
     left: "40%",
-    top: -120,
+    top: -150,
     resizeMode: "contain",
   },
   container: {
