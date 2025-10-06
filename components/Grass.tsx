@@ -24,37 +24,37 @@ const Grass = ({ wrongGuesses }: Props) => {
   const rotate1 = useRef(
     Stage1.interpolate({
       inputRange: [-2, 2],
-      outputRange: ["-5deg", "5deg"],
+      outputRange: ["-1deg", "1deg"],
     })
   ).current;
   const rotate2 = useRef(
     Stage2.interpolate({
       inputRange: [-2, 2],
-      outputRange: ["-6deg", "6deg"],
+      outputRange: ["-1deg", "1deg"],
     })
   ).current;
   const rotate3 = useRef(
     Stage3.interpolate({
       inputRange: [-2, 2],
-      outputRange: ["-7deg", "7deg"],
+      outputRange: ["-1deg", "1deg"],
     })
   ).current;
   const rotate4 = useRef(
     Stage4.interpolate({
       inputRange: [-2, 2],
-      outputRange: ["-5deg", "5deg"],
+      outputRange: ["-1deg", "1deg"],
     })
   ).current;
   const rotate5 = useRef(
     Stage5.interpolate({
       inputRange: [-2, 2],
-      outputRange: ["-6deg", "6deg"],
+      outputRange: ["-1deg", "1deg"],
     })
   ).current;
   const rotate6 = useRef(
     Stage6.interpolate({
       inputRange: [-2, 2],
-      outputRange: ["-4deg", "4deg"],
+      outputRange: ["-1deg", "1deg"],
     })
   ).current;
 
@@ -80,12 +80,12 @@ const Grass = ({ wrongGuesses }: Props) => {
       ).start();
     };
 
-    oscillatePendulum(Stage1, 5, 3000);
-    oscillatePendulum(Stage2, 3, 3000);
-    oscillatePendulum(Stage3, 3, 3000);
-    oscillatePendulum(Stage4, 3, 3000);
-    oscillatePendulum(Stage5, 3, 3000);
-    oscillatePendulum(Stage6, 3, 3000);
+    oscillatePendulum(Stage1, 1, 3000);
+    oscillatePendulum(Stage2, 1, 3000);
+    oscillatePendulum(Stage3, 1, 3000);
+    oscillatePendulum(Stage4, 1, 3000);
+    oscillatePendulum(Stage5, 1, 3000);
+    oscillatePendulum(Stage6, 1, 3000);
   }, [Stage1, Stage2, Stage3, Stage4, Stage5, Stage6]);
 
   return (
@@ -201,27 +201,29 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
     position: "absolute",
     top: -300,
+    zIndex: 10,
   },
   image: {
-    height: 50,
+    height: 80,
     resizeMode: "contain",
     position: "absolute",
-    top: -245,
-    left: 165,
+    top: -290,
+    left: 160,
+    zIndex: 0,
   },
   imageStage2: {
-    height: 120,
+    height: 140,
     resizeMode: "contain",
     position: "absolute",
-    top: -245,
-    left: 145,
+    top: -290,
+    left: 135,
   },
   imageStage3: {
-    height: 150,
+    height: 160,
     resizeMode: "contain",
     position: "absolute",
-    top: -250,
-    left: 145,
+    top: -290,
+    left: 135,
   },
 });
 

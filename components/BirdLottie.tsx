@@ -2,12 +2,12 @@ import LottieView from "lottie-react-native";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 
-const LottieLeavesTwo = () => {
+const BirdLottie = () => {
   return (
     <View style={styles.container}>
       <LottieView
         source={{
-          uri: "https://lottie.host/d7d28837-a01a-4346-b5c8-b1665f10b084/NcGNUfivEa.lottie",
+          uri: "https://lottie.host/bee877ff-946e-4288-b6de-5e75ef8d6f2c/5MPLR1oaz6.lottie",
         }}
         autoPlay
         loop
@@ -20,16 +20,15 @@ const LottieLeavesTwo = () => {
 
 const styles = StyleSheet.create({
   container: {
-    position: "absolute",
     backgroundColor: "transparent",
-    top: 230,
-    left: 100,
-    zIndex: 10,
+    position: "absolute",
+    top: "-50%",
   },
   animation: {
-    width: 300,
-    height: 100,
+    width: 500,
+    height: 500,
+    backgroundColor: "transparent", // ensures animation view is transparent
   },
 });
 
-export default LottieLeavesTwo;
+export default BirdLottie;

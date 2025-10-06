@@ -1,8 +1,9 @@
+import BirdLottie from "@/components/BirdLottie";
 import CloudGamePage from "@/components/CloudGamePage";
 import Grass from "@/components/Grass";
 import Input from "@/components/Input";
-import LottieLeaves from "@/components/LottieLeaves";
-import LottieLeavesTwo from "@/components/LottieLeavesTwo";
+import LottieLeaves, { LottieLeavesTwo } from "@/components/LottieLeaves";
+import WindMillLottie, { WindMillLottieTwo } from "@/components/WindMillLottie";
 import { LinearGradient } from "expo-linear-gradient";
 import { useState } from "react";
 import { StyleSheet, View } from "react-native";
@@ -19,6 +20,9 @@ const GamePage = () => {
     >
       <View style={Style.container}>
         <CloudGamePage />
+        <WindMillLottie />
+        <WindMillLottieTwo />
+        <BirdLottie />
         <LottieLeaves />
         <LottieLeavesTwo />
         <Grass wrongGuesses={wrongGuesses} />

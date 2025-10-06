@@ -2,31 +2,30 @@ import LottieView from "lottie-react-native";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 
-const LottieLeaves = () => {
+const WindMillLottie = () => {
   return (
     <View style={styles.container}>
       <LottieView
         source={{
-          uri: "https://lottie.host/d7d28837-a01a-4346-b5c8-b1665f10b084/NcGNUfivEa.lottie",
+          uri: "https://lottie.host/72fc9fef-e715-46a4-b4cd-51a91220af26/IBul1azdJK.lottie",
         }}
         autoPlay
         loop
-        speed={1}
         style={styles.animation}
       />
     </View>
   );
 };
-const LottieLeavesTwo = () => {
+
+const WindMillLottieTwo = () => {
   return (
     <View style={styles.containerTwo}>
       <LottieView
         source={{
-          uri: "https://lottie.host/d7d28837-a01a-4346-b5c8-b1665f10b084/NcGNUfivEa.lottie",
+          uri: "https://lottie.host/72fc9fef-e715-46a4-b4cd-51a91220af26/IBul1azdJK.lottie",
         }}
         autoPlay
         loop
-        speed={1}
         style={styles.animation}
       />
     </View>
@@ -35,24 +34,22 @@ const LottieLeavesTwo = () => {
 
 const styles = StyleSheet.create({
   container: {
-    position: "absolute",
     backgroundColor: "transparent",
+    position: "absolute",
     top: "15%",
-    left: 0,
-    zIndex: 10,
+    left: -10,
   },
   animation: {
-    width: 300,
-    height: 100,
+    width: 150,
+    height: 150,
   },
   containerTwo: {
-    position: "absolute",
     backgroundColor: "transparent",
-    top: "20%",
-    left: 100,
-    zIndex: 10,
+    position: "absolute",
+    top: "18%",
+    left: 50,
   },
 });
 
-export default LottieLeaves;
-export { LottieLeavesTwo };
+export default WindMillLottie;
+export { WindMillLottieTwo };
