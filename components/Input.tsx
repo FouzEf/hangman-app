@@ -2,17 +2,22 @@ import { useCallback, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import TextInpt from "./TextInpt";
 
-const WORD = "parrot";
-const letters = WORD.split("");
 type props = {
   wrongGuesses: string[];
   setWrongGuesses: (letters: string[]) => void;
+  WORD: string;
+  letters: string[];
+  solvedWord: string[];
+  setSolvedWord: React.Dispatch<React.SetStateAction<string[]>>;
 };
-const Input = ({ wrongGuesses, setWrongGuesses }: props) => {
-  const [solvedWord, setSolvedWord] = useState<string[]>(
-    Array(WORD.length).fill("")
-  );
-
+const Input = ({
+  wrongGuesses,
+  setWrongGuesses,
+  WORD,
+  letters,
+  solvedWord,
+  setSolvedWord,
+}: props) => {
   const [currentGuess, setCurrentGuess] = useState<string>("");
 
   const handleGuess = useCallback(
@@ -38,7 +43,7 @@ const Input = ({ wrongGuesses, setWrongGuesses }: props) => {
       }
       setCurrentGuess("");
     },
-    [setWrongGuesses, solvedWord, wrongGuesses]
+    [setWrongGuesses, solvedWord, wrongGuesses, WORD, setSolvedWord]
   );
   return (
     <View>

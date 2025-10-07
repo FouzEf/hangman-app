@@ -12,6 +12,7 @@ const WindMillLottie = () => {
         autoPlay
         loop
         style={styles.animation}
+        speed={0.5}
       />
     </View>
   );
@@ -27,6 +28,7 @@ const WindMillLottieTwo = () => {
         autoPlay
         loop
         style={styles.animation}
+        speed={0.5}
       />
     </View>
   );
@@ -36,7 +38,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: "transparent",
     position: "absolute",
-    top: "15%",
+    top: "18%",
     left: -10,
   },
   animation: {
@@ -46,7 +48,7 @@ const styles = StyleSheet.create({
   containerTwo: {
     backgroundColor: "transparent",
     position: "absolute",
-    top: "18%",
+    top: "20%",
     left: 50,
   },
 });

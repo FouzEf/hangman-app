@@ -11,7 +11,7 @@ const LottieLeaves = () => {
         }}
         autoPlay
         loop
-        speed={1}
+        speed={0.5}
         style={styles.animation}
       />
     </View>
@@ -26,7 +26,7 @@ const LottieLeavesTwo = () => {
         }}
         autoPlay
         loop
-        speed={1}
+        speed={0.5}
         style={styles.animation}
       />
     </View>

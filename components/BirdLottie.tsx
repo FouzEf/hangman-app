@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: "transparent",
     position: "absolute",
-    top: "-50%",
+    top: "-20%",
   },
   animation: {
     width: 500,

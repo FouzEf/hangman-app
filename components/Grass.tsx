@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
     position: "absolute",
     top: -290,
-    left: 160,
+    left: "40%",
     zIndex: 0,
   },
   imageStage2: {
@@ -216,14 +216,14 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
     position: "absolute",
     top: -290,
-    left: 135,
+    left: "35%",
   },
   imageStage3: {
     height: 160,
     resizeMode: "contain",
     position: "absolute",
     top: -290,
-    left: 135,
+    left: "35%",
   },
 });
 
