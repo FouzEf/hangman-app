@@ -1,33 +1,18 @@
-import { useState } from "react";
-
-import { collection, getDocs } from "firebase/firestore";
-
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { collection, getDocs } from "firebase/firestore";
 import { DB } from "./fireBaseConfig";
 
-const FireStore = () => {
-  const [data, setData] = useState<string[]>([]);
+export const fetchWordsOnce = async (level: "easy" | "medium" | "hard"): Promise<string[]> => {
+  const cacheKey = `words_${level}`;
+  const cached = await AsyncStorage.getItem(cacheKey);
+  if (cached) {
+    console.log("Using cached data");
+    return JSON.parse(cached);
+  }
 
-  const FetchWords = async (level: "easy") => {
-    const cacheKey = `words_${level}`;
-    //check local cache
-    const cacheData = await AsyncStorage.getItem(cacheKey);
-    if (cacheData) {
-      console.log("Using cached data");
-      return JSON.parse(cacheData);
-    }
-    //fetch data from Firestore
-    console.log("fetching from FireStore");
-
-    const Snapshot = await getDocs(collection(DB, level));
-    setData(Snapshot.docs.map((doc) => doc.data().word));
-    //save to local cache
-    await AsyncStorage.setItem(
-      cacheKey,
-      JSON.stringify(Snapshot.docs.map((doc) => doc.data().word))
-    );
-    console.log(data);
-  };
-  return { FetchWords, data };
+  console.log("Fetching from Firestore");
+  const snapshot = await getDocs(collection(DB, level));
+  const words = snapshot.docs.map(doc => doc.data().word);
+  await AsyncStorage.setItem(cacheKey, JSON.stringify(words));
+  return words;
 };
-export default FireStore;
