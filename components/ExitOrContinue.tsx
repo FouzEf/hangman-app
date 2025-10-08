@@ -1,7 +1,5 @@
-import React, { JSX, useEffect } from "react";
-
 import AntDesign from "@expo/vector-icons/AntDesign";
-
+import React, { JSX, useEffect } from "react";
 import {
   BackHandler,
   Modal,
@@ -28,9 +26,9 @@ const ExitOrContinue = ({
     const onBackPress = () => {
       if (modalVisible) {
         onModalClose();
-        return true; // handle the bck press
+        return true;
       }
-      return false; // default behavior
+      return false;
     };
 
     const sub = BackHandler.addEventListener("hardwareBackPress", onBackPress);
@@ -45,26 +43,26 @@ const ExitOrContinue = ({
       animationType="slide"
       onRequestClose={onModalClose}
     >
-      {/* Backdrop behind the card 
-      <Pressable style={styles.backdrop} onPress={onModalClose} />*/}
+      <Pressable style={styles.backdrop} onPress={onModalClose} />
 
-      {/* Card centered above backdrop */}
       <View style={styles.card}>
         <Pressable onPress={onModalClose} style={styles.closeIconHit}>
           <AntDesign name="close" size={16} color="black" />
         </Pressable>
 
         <Text style={styles.emoji}>😢</Text>
+
         <Text style={styles.message}>Do you really want to leave?</Text>
+
         <View style={styles.actions}>
           <Pressable
             style={[styles.btn, styles.btnSecondary]}
             onPress={onContinue}
           >
-            <Text style={styles.btnTextSecondary}>Continue</Text>
+            <Text style={styles.btnText}>Continue</Text>
           </Pressable>
-          {/*<Pressable onModalVisible={onModalClose}></Pressable>*/}
-          <Pressable style={styles.backdrop} onPress={onModalClose} />
+
+          {/* <Pressable style={styles.backdrop} onPress={onModalClose} /> */}
 
           <Pressable
             style={[styles.btn, styles.btnPrimary]}
@@ -72,7 +70,7 @@ const ExitOrContinue = ({
             accessibilityRole="button"
             accessibilityLabel="Exit app"
           >
-            <Text style={styles.btnTextPrimary}>Exit</Text>
+            <Text style={styles.btnText}>Exit</Text>
           </Pressable>
         </View>
       </View>
@@ -95,36 +93,35 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   message: {
-    fontSize: 16,
+    fontSize: 20,
+    fontWeight: "600",
     textAlign: "center",
     marginBottom: 16,
     paddingHorizontal: 8,
   },
   actions: {
     flexDirection: "row",
-    justifyContent: "flex-end",
     gap: 12,
+    justifyContent: "space-between",
+    marginTop: 4,
   },
   btn: {
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    minWidth: 110,
+    flex: 1,
+    height: 44,
+    borderRadius: 10,
     alignItems: "center",
+    justifyContent: "center",
   },
   btnPrimary: {
-    backgroundColor: "#111",
+    backgroundColor: "#FF6B6B",
   },
   btnSecondary: {
-    backgroundColor: "#eee",
+    backgroundColor: "#26D95C",
   },
-  btnTextPrimary: {
-    color: "white",
-    fontWeight: "600",
-  },
-  btnTextSecondary: {
-    color: "#111",
-    fontWeight: "600",
+  btnText: {
+    fontSize: 16,
+    color: "#FFFFFF",
+    fontWeight: "700",
   },
   closeIconHit: {
     position: "absolute",
