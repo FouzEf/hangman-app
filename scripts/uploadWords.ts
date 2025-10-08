@@ -26,7 +26,7 @@ const uploadHangmanWords = async () => {
       });
     }
 
-    console.log("✅ All words uploaded successfully!");
+   // console.log("✅ All words uploaded successfully!");
 
     // Delete local file
    fs.unlink("./words.json", (err: NodeJS.ErrnoException | null) => {

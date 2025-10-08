@@ -3,7 +3,7 @@ import { collection, getDocs } from "firebase/firestore";
 import { DB } from "./fireBaseConfig";
 
 export const fetchWordsOnce = async (
-  level: "easy" | "medium" | "hard"
+  level: "Easy" | "medium" | "hard"
 ): Promise<string[]> => {
   const cacheKey = `words_${level}`;
   const cached = await AsyncStorage.getItem(cacheKey);

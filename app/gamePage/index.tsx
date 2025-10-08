@@ -10,18 +10,18 @@ import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { fetchWordsOnce } from "../../FIreStore";
-
-const WORD = "parrot";
+const WORD = "duck";
 const letters = WORD.split("");
-const GamePage = ({ level }: { level: "easy" | "medium" | "hard" }) => {
+const GamePage = ({ level }: { level: "Easy" | "medium" | "hard" }) => {
+  const WORD = "duck";
   const [words, setWords] = useState<string[]>([]);
   useEffect(() => {
     const getWords = async () => {
-      const fetchedWords = await fetchWordsOnce("easy");
+      const fetchedWords = await fetchWordsOnce("Easy");
       setWords(fetchedWords);
     };
     getWords();
-  }, [level]);
+  }, [level, WORD]);
   console.log(words);
   // State to keep a list of ALL letters guessed wrongly
   const [wrongGuesses, setWrongGuesses] = useState<string[]>([]);

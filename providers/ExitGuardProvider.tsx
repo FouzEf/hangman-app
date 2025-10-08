@@ -44,7 +44,7 @@ export default function ExitGuardProvider({ children }: Props) {
       const canGoBack = navigation.canGoBack?.() ?? false;
 
       if (!canGoBack) {
-        console.log("At root - showing exit modal");
+        // console.log("At root - showing exit modal");
         askToExit(() => BackHandler.exitApp());
         return true;
       }

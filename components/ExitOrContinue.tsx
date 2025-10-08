@@ -35,7 +35,7 @@ const ExitOrContinue = ({
 
     const sub = BackHandler.addEventListener("hardwareBackPress", onBackPress);
     return () => sub.remove();
-  }, [modalVisible]);
+  }, [modalVisible, onModalClose]);
 
   return (
     <Modal
@@ -151,4 +151,4 @@ const styles = StyleSheet.create({
 
 export default ExitOrContinue;
 
-//logic: needs to "intercept" leaving attemps and trigger the modal pop up
+//logic: needs to "intercept" leaving attempts and trigger the modal pop up
