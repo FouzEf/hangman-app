@@ -22,7 +22,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-export function ExitGuardProvider({ children }: Props) {
+export default function ExitGuardProvider({ children }: Props) {
   console.log("ExitGuardProvider mounted");
   const [visible, setVisible] = useState(false);
   /*  useEffect(() => {
@@ -53,7 +53,7 @@ export function ExitGuardProvider({ children }: Props) {
     });
 
     return () => sub.remove();
-  }, [askToExit, navigation]);
+  }, [askToExit, navigation, visible]);
 
   const onExit = () => {
     setVisible(false);

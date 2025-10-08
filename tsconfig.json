@@ -4,6 +4,8 @@
     "jsx": "react-native",
     "strict": true,
     "baseUrl": ".",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "paths": {
       "@/*": ["./*"],
       "@assets/*": ["assets/*"],

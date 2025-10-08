@@ -1,5 +1,5 @@
 import { Stack } from "expo-router";
-import { ExitGuardProvider } from "../providers/ExitGuardProvider";
+import ExitGuardProvider from "../providers/ExitGuardProvider";
 
 export default function RootLayout() {
   return (
