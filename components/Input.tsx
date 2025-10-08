@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
+import Keyboard from "./Keyboard";
 import TextInpt from "./TextInpt";
 
 type props = {
@@ -46,7 +47,7 @@ const Input = ({
     [setWrongGuesses, solvedWord, wrongGuesses, WORD, setSolvedWord]
   );
   return (
-    <View>
+    <View style={{ width: "100%" }}>
       <View style={styles.container}>
         {letters.map((letter, index) => {
           const displayValue = solvedWord[index];
@@ -84,6 +85,12 @@ const Input = ({
           {wrongGuesses.join(", ").toLowerCase()}
         </Text>
       </Text>
+      <Keyboard
+        onKeyPress={handleGuess}
+        // correctGuesses={correctGuesses}
+        wrongGuesses={wrongGuesses}
+        isGameOver={wrongGuesses.length >= 6} // Add your game over condition
+      />
     </View>
   );
 };

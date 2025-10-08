@@ -1,4 +1,3 @@
-import { useEffect, useRef } from "react";
 import { TextInput, View } from "react-native";
 
 type Props = {
@@ -15,10 +14,10 @@ const TextInpt = ({
   currentGuess,
   setCurrentGuess,
 }: Props) => {
-  const inputRef = useRef<TextInput>(null);
-  useEffect(() => {
-    inputRef.current?.focus();
-  }, [displayValue]);
+  // const inputRef = useRef<TextInput>(null);
+  // useEffect(() => {
+  //   inputRef.current?.focus();
+  // }, [displayValue]);
   if (displayValue !== "") {
     return (
       <TextInput
@@ -38,7 +37,7 @@ const TextInpt = ({
   return (
     <View>
       <TextInput
-        ref={inputRef}
+        // ref={inputRef}
         value={currentGuess}
         onChangeText={(text) => {
           const newText = text.slice(-1).toLowerCase();
