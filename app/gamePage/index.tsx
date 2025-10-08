@@ -7,12 +7,22 @@ import WindMillLottie, { WindMillLottieTwo } from "@/components/WindMillLottie";
 import WinOrLose from "@/components/WinOrLose";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
+import { fetchWordsOnce } from "../../FIreStore";
 
 const WORD = "parrot";
 const letters = WORD.split("");
-const GamePage = () => {
+const GamePage = ({ level }: { level: "easy" | "medium" | "hard" }) => {
+  const [words, setWords] = useState<string[]>([]);
+  useEffect(() => {
+    const getWords = async () => {
+      const fetchedWords = await fetchWordsOnce("easy");
+      setWords(fetchedWords);
+    };
+    getWords();
+  }, [level]);
+  console.log(words);
   // State to keep a list of ALL letters guessed wrongly
   const [wrongGuesses, setWrongGuesses] = useState<string[]>([]);
   const [solvedWord, setSolvedWord] = useState<string[]>(
