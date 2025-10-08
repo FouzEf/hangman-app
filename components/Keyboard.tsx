@@ -9,15 +9,15 @@ const KEYBOARD_LAYOUT = [
 ];
 
 type CustomKeyboardProps = {
-  onKeyPress: (letter: string) => void; // Function to call when a letter is pressed
-  //   correctGuesses: string[]; // List of correctly guessed letters
-  wrongGuesses: string[]; // List of incorrectly guessed letters
-  isGameOver: boolean; // To disable keyboard when game is over
+  onKeyPress: (letter: string) => void;
+  correctGuesses: string[];
+  wrongGuesses: string[];
+  isGameOver: boolean;
 };
 
 const Keyboard = ({
   onKeyPress,
-  //   correctGuesses,
+  correctGuesses,
   wrongGuesses,
   isGameOver,
 }: CustomKeyboardProps) => {
@@ -25,9 +25,9 @@ const Keyboard = ({
     if (isGameOver) {
       return "disabled";
     }
-    // if (correctGuesses.includes(letter)) {
-    //   return "correct";
-    // }
+    if (correctGuesses.includes(letter)) {
+      return "correct";
+    }
     if (wrongGuesses.includes(letter)) {
       return "wrong";
     }
@@ -37,22 +37,27 @@ const Keyboard = ({
   const getButtonStyle = (state: string) => {
     switch (state) {
       case "correct":
-        return { backgroundColor: "#C8E6C9" }; // Soft green (like top game area)
+        return { backgroundColor: "#5aa02c" };
       case "wrong":
-        return { backgroundColor: "#FFCDD2" }; // Soft red/pink
+        return { backgroundColor: "#FFAB91" };
       case "disabled":
-        return { backgroundColor: "#E0E0E0" }; // Light grey
+        return { backgroundColor: "#EBEBEB" };
       default:
-        return { backgroundColor: "transparent" }; // White/default background
+        // Use the light yellow/cream for the default keys
+        return { backgroundColor: "#FFFDE0" };
     }
   };
 
   const getButtonTextStyle = (state: string) => {
     switch (state) {
       case "disabled":
-        return { color: "#9E9E9E" }; // Darker grey for disabled text
+        return { color: "#9E9E9E" };
+      case "correct":
+        return { color: "#fff" };
+      case "wrong":
+        return { color: "#a3a3a3" };
       default:
-        return { color: "#333333" }; // Dark text
+        return { color: "#424242" };
     }
   };
 
@@ -60,9 +65,15 @@ const Keyboard = ({
     <View style={styles.keyboardContainer}>
       {KEYBOARD_LAYOUT.map((row, rowIndex) => (
         <View key={rowIndex} style={styles.keyboardRow}>
+          {/* Add a slight spacer for the middle row alignment (A-row) */}
+          {rowIndex === 1 && <View style={styles.rowSpacer} />}
+
           {row.map((letter) => {
             const buttonState = getButtonState(letter);
-            const isDisabled = buttonState !== "default" || isGameOver;
+            const isGuessed =
+              wrongGuesses.includes(letter) || correctGuesses.includes(letter);
+            const isDisabled = isGuessed || isGameOver;
+
             return (
               <TouchableOpacity
                 key={letter}
@@ -76,6 +87,9 @@ const Keyboard = ({
               </TouchableOpacity>
             );
           })}
+
+          {/* Add a slight spacer for the middle row alignment */}
+          {rowIndex === 1 && <View style={styles.rowSpacer} />}
         </View>
       ))}
     </View>
@@ -84,30 +98,39 @@ const Keyboard = ({
 
 const styles = StyleSheet.create({
   keyboardContainer: {
-    position: "absolute", // Assuming you added this property
-    top: "150%",
-    left: 0, // Anchor to the left edge
-    right: 0, // Anchor to the right edge (Forces 100% width)
+    position: "absolute",
+    left: 0, // Forces 100% width
+    right: 0, // Forces 100% width
+    top: "100%",
+    marginTop: "50%",
+    padding: 8,
   },
   keyboardRow: {
     flexDirection: "row",
     justifyContent: "center",
-    marginBottom: 8,
+    marginBottom: 6,
+  },
+  rowSpacer: {
+    width: 15,
   },
   keyButton: {
-    width: "8%", // Adjust size as needed for different screen sizes
-    height: 45,
+    flex: 1,
+    maxWidth: 40,
+    height: 48,
+    borderRadius: 12,
     justifyContent: "center",
     alignItems: "center",
-    marginHorizontal: 3, // Space between buttons in a row
-    elevation: 0,
-    backgroundColor: "transparent",
-    borderRadius: 10,
-    boxShadow: "2px 2px 4px rgba(0,0,0,0.5)",
+    marginHorizontal: 2.5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 1,
+    elevation: 3,
   },
   keyText: {
     fontSize: 18,
-    fontWeight: "500",
+    fontWeight: "600",
+    color: "#424242",
   },
 });
 

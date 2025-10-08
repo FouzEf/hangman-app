@@ -20,12 +20,18 @@ const Input = ({
   setSolvedWord,
 }: props) => {
   const [currentGuess, setCurrentGuess] = useState<string>("");
+  const [correctGuesses, setCorrectGuesses] = useState<string[]>([]);
 
   const handleGuess = useCallback(
     (guess: string) => {
       const letter = guess.toLowerCase();
       if (!WORD.includes(letter) && !wrongGuesses.includes(letter)) {
         setWrongGuesses([...wrongGuesses, letter]);
+      }
+      if (WORD.includes(letter)) {
+        if (!correctGuesses.includes(letter)) {
+          setCorrectGuesses((prev) => [...prev, letter]);
+        }
       }
       if (WORD.includes(letter)) {
         const newSolvedWord = [...solvedWord];
@@ -44,7 +50,14 @@ const Input = ({
       }
       setCurrentGuess("");
     },
-    [setWrongGuesses, solvedWord, wrongGuesses, WORD, setSolvedWord]
+    [
+      setWrongGuesses,
+      solvedWord,
+      wrongGuesses,
+      WORD,
+      setSolvedWord,
+      correctGuesses,
+    ]
   );
   return (
     <View style={{ width: "100%" }}>
@@ -87,7 +100,7 @@ const Input = ({
       </Text>
       <Keyboard
         onKeyPress={handleGuess}
-        // correctGuesses={correctGuesses}
+        correctGuesses={correctGuesses}
         wrongGuesses={wrongGuesses}
         isGameOver={wrongGuesses.length >= 6} // Add your game over condition
       />
