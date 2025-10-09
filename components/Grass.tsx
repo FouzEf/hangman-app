@@ -6,8 +6,16 @@ import Stage3Img from "@assets/images/Stage3.png";
 import Stage4Img from "@assets/images/Stage4.png";
 import Stage5Img from "@assets/images/Stage5.png";
 import Stage6Img from "@assets/images/Stage6.png";
+import { useRouter } from "expo-router";
 import { useEffect, useRef } from "react";
-import { Animated, Image, StyleSheet, View } from "react-native";
+import {
+  Animated,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 type Props = {
   wrongGuesses: string[];
@@ -88,8 +96,26 @@ const Grass = ({ wrongGuesses }: Props) => {
     oscillatePendulum(Stage6, 1, 3000);
   }, [Stage1, Stage2, Stage3, Stage4, Stage5, Stage6]);
 
+  const router = useRouter();
+
   return (
     <View style={{ width: "100%" }}>
+      <TouchableOpacity
+        style={{
+          position: "absolute",
+          top: 65,
+          left: 20,
+          zIndex: 999,
+          elevation: 5,
+          backgroundColor: "rgba(255,255,255,0.8)",
+          paddingHorizontal: 12,
+          paddingVertical: 6,
+          borderRadius: 8,
+        }}
+        onPress={() => router.replace("/")}
+      >
+        <Text>Home</Text>
+      </TouchableOpacity>
       <Image source={grass3} style={[styles.grass, { left: -80 }]} />
       <Image source={grass3} style={[styles.grass, { left: 80 }]} />
       <Image source={gallow} style={styles.gallow} />

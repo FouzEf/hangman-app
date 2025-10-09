@@ -1,4 +1,4 @@
-import { useNavigation } from "expo-router";
+import { useNavigation, usePathname, useRouter } from "expo-router";
 import React, {
   createContext,
   useCallback,
@@ -23,37 +23,37 @@ type Props = {
 };
 
 export default function ExitGuardProvider({ children }: Props) {
-  console.log("ExitGuardProvider mounted");
   const [visible, setVisible] = useState(false);
-  /*  useEffect(() => {
-    console.log("HARD DISABLED MODAL");
-    setVisible(false); // force-disable
-  }, []); */
   const pending = useRef<Pending>(null);
+
   const navigation = useNavigation();
+  const router = useRouter();
+  const pathname = usePathname(); // "/", "/gamePage"
+  const isGamePage = pathname === "/gamePage";
 
   const askToExit = useCallback((onConfirm: () => void) => {
-    console.log("askToExit CALLED");
     pending.current = onConfirm;
     setVisible(true);
   }, []);
 
   useEffect(() => {
-    console.log("MODAL visible?", visible);
     const sub = BackHandler.addEventListener("hardwareBackPress", () => {
-      const canGoBack = navigation.canGoBack?.() ?? false;
+      if (isGamePage) {
+        askToExit(() => router.replace("/"));
+        return true;
+      }
 
+      const canGoBack = navigation.canGoBack?.() ?? false;
       if (!canGoBack) {
-        // console.log("At root - showing exit modal");
         askToExit(() => BackHandler.exitApp());
         return true;
       }
 
-      return false; // allow navigation to handle back
+      return false; // let navigation handle normal back
     });
 
     return () => sub.remove();
-  }, [askToExit, navigation, visible]);
+  }, [askToExit, isGamePage, router, navigation]);
 
   const onExit = () => {
     setVisible(false);
@@ -75,6 +75,14 @@ export default function ExitGuardProvider({ children }: Props) {
         onModalClose={() => setVisible(false)}
         onExit={onExit}
         onContinue={onContinue}
+        title={
+          isGamePage
+            ? "Do you want to quit this attempt?"
+            : "Do you want to exit the app?"
+        }
+        continueLabel="Continue"
+        exitLabel={isGamePage ? "Quit Attempt" : "Exit App"}
+        showEmoji={false}
       />
     </ExitGuardCtx.Provider>
   );

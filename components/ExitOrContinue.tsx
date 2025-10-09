@@ -10,10 +10,14 @@ import {
 } from "react-native";
 
 type Props = {
-  onModalClose: () => void;
   modalVisible: boolean;
+  onModalClose: () => void;
   onExit: () => void;
   onContinue: () => void;
+  title?: string;
+  exitLabel?: string;
+  continueLabel?: string;
+  showEmoji?: boolean;
 };
 
 const ExitOrContinue = ({
@@ -21,12 +25,17 @@ const ExitOrContinue = ({
   modalVisible,
   onExit,
   onContinue,
+  title,
+  exitLabel,
+  continueLabel,
+  showEmoji = true,
 }: Props): JSX.Element => {
+  // Close modal if HW back is pressed while modal is open
   useEffect(() => {
     const onBackPress = () => {
       if (modalVisible) {
         onModalClose();
-        return true;
+        return true; // block default
       }
       return false;
     };
@@ -50,27 +59,22 @@ const ExitOrContinue = ({
           <AntDesign name="close" size={16} color="black" />
         </Pressable>
 
-        <Text style={styles.emoji}>😢</Text>
+        {showEmoji ? <Text style={styles.emoji}>😢</Text> : null}
 
-        <Text style={styles.message}>Do you really want to leave?</Text>
+        <Text style={styles.message}>
+          {title ?? "Do you really want to leave?"}
+        </Text>
 
         <View style={styles.actions}>
           <Pressable
             style={[styles.btn, styles.btnSecondary]}
             onPress={onContinue}
           >
-            <Text style={styles.btnText}>Continue</Text>
+            <Text style={styles.btnText}>{continueLabel ?? "Continue"}</Text>
           </Pressable>
 
-          {/* <Pressable style={styles.backdrop} onPress={onModalClose} /> */}
-
-          <Pressable
-            style={[styles.btn, styles.btnPrimary]}
-            onPress={onExit}
-            accessibilityRole="button"
-            accessibilityLabel="Exit app"
-          >
-            <Text style={styles.btnText}>Exit</Text>
+          <Pressable style={[styles.btn, styles.btnPrimary]} onPress={onExit}>
+            <Text style={styles.btnText}>{exitLabel ?? "Exit"}</Text>
           </Pressable>
         </View>
       </View>
@@ -147,5 +151,3 @@ const styles = StyleSheet.create({
 });
 
 export default ExitOrContinue;
-
-//logic: needs to "intercept" leaving attempts and trigger the modal pop up
