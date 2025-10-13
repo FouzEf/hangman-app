@@ -1,3 +1,5 @@
+import { useLocalSearchParams, useRouter } from "expo-router";
+
 import BirdLottie from "@/components/BirdLottie";
 import CloudGamePage from "@/components/CloudGamePage";
 import Grass from "@/components/Grass";
@@ -6,22 +8,29 @@ import LottieLeaves, { LottieLeavesTwo } from "@/components/LottieLeaves";
 import WindMillLottie, { WindMillLottieTwo } from "@/components/WindMillLottie";
 import WinOrLose from "@/components/WinOrLose";
 import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router";
+
 import { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { fetchWordsOnce } from "../../FIreStore";
 const WORD = "duck";
 const letters = WORD.split("");
-const GamePage = ({ level }: { level: "Easy" | "medium" | "hard" }) => {
+type Level = "Easy" | "medium" | "hard";
+
+const GamePage = () => {
+  const params = useLocalSearchParams();
+  const selectedLevel = params.selectedLevel as Level;
+  console.log("Starting game at level:", selectedLevel);
   const WORD = "duck";
   const [words, setWords] = useState<string[]>([]);
   useEffect(() => {
     const getWords = async () => {
-      const fetchedWords = await fetchWordsOnce("Easy");
+      const fetchedWords = await fetchWordsOnce(selectedLevel);
       setWords(fetchedWords);
     };
-    getWords();
-  }, [level, WORD]);
+    if (selectedLevel) {
+      getWords();
+    }
+  }, [selectedLevel, WORD]);
   console.log(words);
   // State to keep a list of ALL letters guessed wrongly
   const [wrongGuesses, setWrongGuesses] = useState<string[]>([]);

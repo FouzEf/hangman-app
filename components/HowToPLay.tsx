@@ -1,3 +1,8 @@
+import {
+  Nunito_400Regular,
+  Nunito_800ExtraBold,
+  useFonts,
+} from "@expo-google-fonts/nunito";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import React from "react";
 import {
@@ -16,6 +21,15 @@ type Props = {
 };
 
 const HowToPlay = ({ modalVisible, onClose }: Props) => {
+  const [fontsLoaded] = useFonts({
+    Nunito_800ExtraBold,
+    Nunito_400Regular,
+  });
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
   return (
     <Modal transparent animationType="slide" visible={modalVisible}>
       <TouchableWithoutFeedback onPress={onClose}>
@@ -124,6 +138,8 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 15,
     marginBottom: 10,
+    fontWeight: 800,
+    fontFamily: "Nunito_800ExtraBold",
   },
   item: {
     marginBottom: 5,

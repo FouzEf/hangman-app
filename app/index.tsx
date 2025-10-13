@@ -1,18 +1,49 @@
 import { Nunito_800ExtraBold, useFonts } from "@expo-google-fonts/nunito";
 import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import Home from "@assets/images/HomeImage.png";
 import Cloud from "@components/Cloud";
 import { Audio } from "expo-av";
-import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 
+import Level from "@/components/Level";
 import HowToPlay from "@components/HowToPLay";
 
 export default function Index() {
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const navigate = useRouter();
+
+  //level selection
+  const [levelVisible, setLevelVisible] = useState<boolean>(false);
+  const [levelValue, setLevelValue] = useState<string>("");
+
+  const startGame = () => {
+    setLevelVisible(true);
+    navigate.push({
+      pathname: "/gamePage",
+      params: { selectedLevel: levelValue }, // 👈 This is how you pass the data!
+    });
+    setLevelValue("");
+    // 1. Hide the Level selection component
+    //setLevelVisible(true); // Assuming you want to hide it before routing
+
+    // 2. Navigate to '/gamePage' and pass the levelValue in a params object
+    //if (levelValue) {
+    // Check if a level has been selected/set
+    // navigate.push({
+    //pathname: "/gamePage",
+    //params: { selectedLevel: levelValue }, // 👈 This is how you pass the data!
+    //});
+    //} else {
+    // If levelValue isn't set yet, you might still want to show the selection
+    //setLevelVisible(true);
+    //console.log("Level not selected, showing selection.");
+    //}
+
+    //console.log(levelValue);
+  };
 
   useEffect(() => {
     let sound: Audio.Sound;
@@ -59,16 +90,20 @@ export default function Index() {
         <Cloud />
         <Image source={Home} style={Style.img} />
         <Text style={Style.text}>HangMan</Text>
-        <TouchableOpacity
-          style={Style.btn}
-          onPress={() => navigate.push("/gamePage")}
-        >
+        <TouchableOpacity style={Style.btn} onPress={startGame}>
           <Text style={Style.btnText}>Start Game</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={toggleModal} style={{ zIndex: 10 }}>
           <Text style={Style.btnPlay}>How to Play?</Text>
         </TouchableOpacity>
         {modalVisible && <HowToPlay onClose={toggleModal} modalVisible />}
+        {levelVisible && (
+          <Level
+            levelVisible={levelVisible}
+            setLevelValue={setLevelValue}
+            setLevelVisible={setLevelVisible}
+          />
+        )}
       </View>
     </LinearGradient>
   );
