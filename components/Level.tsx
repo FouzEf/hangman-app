@@ -12,6 +12,8 @@ import {
   View,
 } from "react-native";
 
+import { useRouter } from "expo-router";
+
 type Props = {
   setLevelValue: (value: string) => void;
   setLevelVisible: (visible: boolean) => void;
@@ -19,6 +21,7 @@ type Props = {
 };
 
 const Level = ({ setLevelVisible, setLevelValue, levelVisible }: Props) => {
+  const navigate = useRouter();
   const [fontsLoaded] = useFonts({
     Nunito_800ExtraBold,
     Nunito_400Regular,
@@ -29,8 +32,11 @@ const Level = ({ setLevelVisible, setLevelValue, levelVisible }: Props) => {
 
   const handleLevel = (level: string) => {
     setLevelValue(level);
-
     setLevelVisible(false);
+    navigate.push({
+      pathname: "/gamePage",
+      params: { selectedLevel: level },
+    });
   };
 
   return (

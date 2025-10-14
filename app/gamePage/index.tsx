@@ -12,32 +12,43 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { fetchWordsOnce } from "../../FIreStore";
-const WORD = "duck";
-const letters = WORD.split("");
+
+// to check the solved words
+import { getSolvedWords } from "@/utils/storage";
+
+// const letters = WORD.split("");
 type Level = "Easy" | "medium" | "hard";
 
 const GamePage = () => {
   const params = useLocalSearchParams();
   const selectedLevel = params.selectedLevel as Level;
-  console.log("Starting game at level:", selectedLevel);
-  const WORD = "duck";
+  // console.log("Starting game at level:", selectedLevel);
+  // const WORD = "duck";
   const [words, setWords] = useState<string[]>([]);
   useEffect(() => {
-    const getWords = async () => {
+    const getUnsolvedWords = async () => {
       const fetchedWords = await fetchWordsOnce(selectedLevel);
-      setWords(fetchedWords);
+      const solved = await getSolvedWords();
+      const unsolved = fetchedWords.filter((word) => !solved.includes(word));
+      setWords(unsolved); // ✅ Only unsolved words go into state
     };
+
     if (selectedLevel) {
-      getWords();
+      getUnsolvedWords();
     }
-  }, [selectedLevel, WORD]);
+  }, [selectedLevel]);
+
   console.log(words);
+
+  const WORD = words[0] ?? "";
+  const letters = WORD.split("");
+
   // State to keep a list of ALL letters guessed wrongly
   const [wrongGuesses, setWrongGuesses] = useState<string[]>([]);
   const [solvedWord, setSolvedWord] = useState<string[]>(
     Array(WORD.length).fill("")
   );
-  console.log(solvedWord);
+  console.log("solvedWord", solvedWord);
 
   const [modalVisible, setModalVisible] = useState<boolean>(false);
 
