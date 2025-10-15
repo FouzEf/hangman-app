@@ -7,14 +7,18 @@ export const fetchWordsOnce = async (
 ): Promise<string[]> => {
   const cacheKey = `words_${level}`;
   const cached = await AsyncStorage.getItem(cacheKey);
-  if (cached) {
-    console.log("Using cached data");
-    return JSON.parse(cached);
+  const cachedWords = cached ? JSON.parse(cached) : [];
+
+  const snapshot = await getDocs(collection(DB, level));
+  const firestoreWords = snapshot.docs.map((doc) => doc.data().word);
+
+  // ✅ Update cache only if Firestore has more words
+  if (firestoreWords.length > cachedWords.length) {
+    console.log("Updating cache with new words from Firestore");
+    await AsyncStorage.setItem(cacheKey, JSON.stringify(firestoreWords));
+    return firestoreWords;
   }
 
-  console.log("Fetching from Firestore");
-  const snapshot = await getDocs(collection(DB, level));
-  const words = snapshot.docs.map((doc) => doc.data().word);
-  await AsyncStorage.setItem(cacheKey, JSON.stringify(words));
-  return words;
+  console.log("Using cached data");
+  return cachedWords;
 };

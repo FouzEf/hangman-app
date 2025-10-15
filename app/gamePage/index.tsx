@@ -54,7 +54,7 @@ const GamePage = () => {
       const fetched = await fetchWordsOnce(selectedLevel);
       const solved = await getSolvedWords();
       const unsolved = fetched.filter((w) => !solved.includes(w));
-
+      console.log(solved);
       if (!active) return;
       setWords(unsolved);
       setCurrentIndex(0);
