@@ -45,6 +45,24 @@ const GamePage = () => {
 
   const [modalVisible, setModalVisible] = useState(false);
 
+  //CHECKS WIN
+
+  //useEffect(() => {
+  //const getWords = async () => {
+  //const fetchedWords = await fetchWordsOnce(selectedLevel); // ✅ uses smart cache
+  //const solved = await getSolvedWords();
+  //const unsolved = fetchedWords.filter((word) => !solved.includes(word));
+  //setWords(unsolved);
+  //console.log(solved, "line 56");
+  //};
+
+  //if (selectedLevel) {
+  //getWords();
+  //}
+  //}, [selectedLevel]);
+
+  //TRIGGERS CELEBRATION
+
   // Load words for the chosen level, removing already-solved ones
   useEffect(() => {
     if (!selectedLevel) return;
@@ -53,8 +71,16 @@ const GamePage = () => {
     (async () => {
       const fetched = await fetchWordsOnce(selectedLevel);
       const solved = await getSolvedWords();
+      console.log(solved, "SOLVED 74");
       const unsolved = fetched.filter((w) => !solved.includes(w));
       console.log(solved);
+      console.log(
+        fetched.every((word) => solved.includes(word)),
+        "test"
+      );
+      if (fetched.every((word) => solved.includes(word))) {
+        navigate.push("/winPage");
+      }
       if (!active) return;
       setWords(unsolved);
       setCurrentIndex(0);

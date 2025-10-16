@@ -14,6 +14,10 @@ export default function RootLayout() {
           name="gamePage"
           options={{ headerTitle: "Game", headerShown: false }}
         />
+        <Stack.Screen
+          name="winPage"
+          options={{ headerTitle: "Win", headerShown: false }}
+        />
       </Stack>
     </ExitGuardProvider>
   );
