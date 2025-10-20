@@ -1,9 +1,21 @@
 import WinLottie, { WinCup } from "@components/WinLottie";
 import { Nunito_800ExtraBold, useFonts } from "@expo-google-fonts/nunito";
 import { LinearGradient } from "expo-linear-gradient";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { Pressable, StyleSheet, Text } from "react-native";
 
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { fetchWordsOnce } from "../../FIreStore";
+
+// storage utilities
+import { getSolvedWords } from "@/utils/storage";
+
+type Level = "Easy" | "medium" | "hard";
 export default function Index() {
+  const params = useLocalSearchParams();
+  const level = params.selectedLevel as Level;
+  console.log(level, "levelValue");
+  const navigate = useRouter();
   const [fontsLoaded] = useFonts({
     Nunito_800ExtraBold,
   });
@@ -11,6 +23,28 @@ export default function Index() {
   if (!fontsLoaded) {
     return null;
   }
+  const handleRestart = async (level: "Easy" | "medium" | "hard") => {
+    const SOLVED_WORDS_KEY = "solved_words";
+
+    const fetched = await fetchWordsOnce(level);
+    const solved = await getSolvedWords();
+
+    // Filter out solved words that belong to this level
+    const remainingSolved = solved.filter((word) => !fetched.includes(word));
+
+    // Update AsyncStorage with the filtered list using the correct key
+    try {
+      await AsyncStorage.setItem(
+        SOLVED_WORDS_KEY,
+        JSON.stringify(remainingSolved)
+      );
+    } catch (error) {
+      console.error("Error updating solved words on restart:", error);
+    }
+
+    console.log(solved, remainingSolved);
+    return navigate.push("/gamePage");
+  };
 
   return (
     <LinearGradient
@@ -20,15 +54,21 @@ export default function Index() {
       style={[Style.container, { zIndex: 100 }]}
     >
       <Text style={Style.text}>
-        Yaay! You&apos;ve completed the <Text style={Style.level}>easy</Text>{" "}
+        Yaay! You&apos;ve completed the <Text style={Style.level}>{level}</Text>{" "}
         level
       </Text>
       <WinLottie />
       <WinCup />
-      <Pressable style={[Style.buttonRestart, Style.button]}>
+      <Pressable
+        style={[Style.buttonRestart, Style.button]}
+        onPress={() => handleRestart(level)}
+      >
         <Text style={Style.buttonText}>Restart Level</Text>
       </Pressable>
-      <Pressable style={[Style.buttonHome, Style.button]}>
+      <Pressable
+        style={[Style.buttonHome, Style.button]}
+        onPress={() => navigate.push("/")}
+      >
         <Text style={Style.buttonText}>Go Home</Text>
       </Pressable>
     </LinearGradient>
@@ -58,6 +98,7 @@ const Style = StyleSheet.create({
   },
   level: {
     fontSize: 25,
+    textTransform: "lowercase",
   },
   buttonRestart: {
     backgroundColor: "#ff6f61",

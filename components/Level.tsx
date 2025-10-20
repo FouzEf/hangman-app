@@ -13,6 +13,10 @@ import {
 } from "react-native";
 
 import { useRouter } from "expo-router";
+import { fetchWordsOnce } from "../FIreStore";
+
+// storage utilities
+import { getSolvedWords } from "@/utils/storage";
 
 type Props = {
   setLevelValue: (value: string) => void;
@@ -30,9 +34,20 @@ const Level = ({ setLevelVisible, setLevelValue, levelVisible }: Props) => {
     return null;
   }
 
-  const handleLevel = (level: string) => {
+  const handleLevel = async (level: any) => {
     setLevelValue(level);
     setLevelVisible(false);
+
+    const fetched = await fetchWordsOnce(level);
+    const solved = await getSolvedWords();
+    if (fetched.every((word) => solved.includes(word))) {
+      navigate.push({
+        pathname: "/winPage",
+        params: { selectedLevel: level },
+      });
+      return;
+    }
+
     navigate.push({
       pathname: "/gamePage",
       params: { selectedLevel: level },

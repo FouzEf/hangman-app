@@ -71,7 +71,6 @@ const GamePage = () => {
     (async () => {
       const fetched = await fetchWordsOnce(selectedLevel);
       const solved = await getSolvedWords();
-      console.log(solved, "SOLVED 74");
       const unsolved = fetched.filter((w) => !solved.includes(w));
       console.log(solved);
       console.log(
@@ -90,7 +89,7 @@ const GamePage = () => {
     return () => {
       active = false;
     };
-  }, [selectedLevel]);
+  }, [selectedLevel, navigate]);
 
   // Initialize/reset per-round state when the current WORD changes
   useEffect(() => {

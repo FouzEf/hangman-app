@@ -16,7 +16,6 @@ export default function Index() {
   //level selection
   const [levelVisible, setLevelVisible] = useState<boolean>(false);
   const [levelValue, setLevelValue] = useState<string>("");
-  console.log("level", levelValue);
 
   const startGame = () => {
     setLevelVisible(true);
