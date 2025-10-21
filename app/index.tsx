@@ -8,16 +8,20 @@ import Cloud from "@components/Cloud";
 import { useState } from "react";
 
 import Level from "@/components/Level";
-import SoundButton from "@/components/SoundButton";
+import useClickSound from "@/utils/useClickSound";
 import HowToPlay from "@components/HowToPLay";
 
 export default function Index() {
   const [modalVisible, setModalVisible] = useState<boolean>(false);
 
-  const playSound = SoundButton();
   //level selection
   const [levelVisible, setLevelVisible] = useState<boolean>(false);
   const [levelValue, setLevelValue] = useState<string>("");
+  const playSound = useClickSound();
+  const toggleModal = () => {
+    playSound();
+    setModalVisible(!modalVisible);
+  };
 
   const startGame = () => {
     setLevelVisible(true);
@@ -30,11 +34,6 @@ export default function Index() {
   if (!fontsLoaded) {
     return null;
   }
-
-  const toggleModal = () => {
-    playSound();
-    setModalVisible(!modalVisible);
-  };
 
   return (
     <LinearGradient
