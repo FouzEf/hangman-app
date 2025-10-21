@@ -1,7 +1,9 @@
 import WinLottie, { WinCup } from "@components/WinLottie";
 import { Nunito_800ExtraBold, useFonts } from "@expo-google-fonts/nunito";
+import { Audio } from "expo-av";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { useEffect } from "react";
 import { Pressable, StyleSheet, Text } from "react-native";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -16,6 +18,28 @@ export default function Index() {
   const level = params.selectedLevel as Level;
   console.log(level, "levelValue");
   const navigate = useRouter();
+
+  useEffect(() => {
+    let sound: Audio.Sound;
+
+    const playLoopingSound = async () => {
+      const { sound: loadedSound } = await Audio.Sound.createAsync(
+        require("../../assets/sounds/winPage.mp3")
+      );
+      sound = loadedSound;
+      await sound.setIsLoopingAsync(true); // 🔁 Enable looping
+      await sound.playAsync();
+    };
+
+    playLoopingSound();
+
+    // Optional cleanup
+    return () => {
+      if (sound) {
+        sound.unloadAsync();
+      }
+    };
+  }, []);
   const [fontsLoaded] = useFonts({
     Nunito_800ExtraBold,
   });
@@ -23,6 +47,7 @@ export default function Index() {
   if (!fontsLoaded) {
     return null;
   }
+
   const handleRestart = async (level: "Easy" | "medium" | "hard") => {
     const SOLVED_WORDS_KEY = "solved_words";
 

@@ -40,16 +40,16 @@ const Level = ({ setLevelVisible, setLevelValue, levelVisible }: Props) => {
 
     const fetched = await fetchWordsOnce(level);
     const solved = await getSolvedWords();
-    if (fetched.every((word) => solved.includes(word))) {
-      navigate.push({
-        pathname: "/winPage",
-        params: { selectedLevel: level },
-      });
-      return;
-    }
+    //if (fetched.every((word) => solved.includes(word))) {
+    //navigate.push({
+    //pathname: "/winPage",
+    //params: { selectedLevel: level },
+    //});
+    //return;
+    //}
 
     navigate.push({
-      pathname: "/gamePage",
+      pathname: "/winPage",
       params: { selectedLevel: level },
     });
   };

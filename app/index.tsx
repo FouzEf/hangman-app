@@ -4,8 +4,8 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import Home from "@assets/images/HomeImage.png";
 import Cloud from "@components/Cloud";
-import { Audio } from "expo-av";
-import { useEffect, useState } from "react";
+
+import { useState } from "react";
 
 import Level from "@/components/Level";
 import HowToPlay from "@components/HowToPLay";
@@ -20,28 +20,6 @@ export default function Index() {
   const startGame = () => {
     setLevelVisible(true);
   };
-
-  useEffect(() => {
-    let sound: Audio.Sound;
-
-    const playLoopingSound = async () => {
-      const { sound: loadedSound } = await Audio.Sound.createAsync(
-        require("../assets/sounds/gameHome.mp3")
-      );
-      sound = loadedSound;
-      await sound.setIsLoopingAsync(true); // 🔁 Enable looping
-      await sound.playAsync();
-    };
-
-    playLoopingSound();
-
-    // Optional cleanup
-    return () => {
-      if (sound) {
-        sound.unloadAsync();
-      }
-    };
-  }, []);
 
   const [fontsLoaded] = useFonts({
     Nunito_800ExtraBold,

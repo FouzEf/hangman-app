@@ -1,7 +1,7 @@
-import React from "react";
+import { Audio } from "expo-av";
+import React, { useEffect, useRef } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-// Define the keyboard layout (QWERTY for simplicity)
 const KEYBOARD_LAYOUT = [
   ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
   ["a", "s", "d", "f", "g", "h", "j", "k", "l"],
@@ -21,16 +21,40 @@ const Keyboard = ({
   wrongGuesses,
   isGameOver,
 }: CustomKeyboardProps) => {
+  const clickSound = useRef<Audio.Sound | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+
+    (async () => {
+      const { sound } = await Audio.Sound.createAsync(
+        require("../assets/sounds/singleTap.wav")
+      );
+      if (mounted) clickSound.current = sound;
+    })();
+
+    return () => {
+      mounted = false;
+      clickSound.current?.unloadAsync();
+    };
+  }, []);
+
+  const playClick = async () => {
+    const s = clickSound.current;
+    if (!s) return;
+    try {
+      await s.stopAsync().catch(() => {});
+      await s.setPositionAsync(0);
+      await s.playAsync();
+    } catch (err) {
+      console.log("Sound error:", err);
+    }
+  };
+
   const getButtonState = (letter: string) => {
-    if (isGameOver) {
-      return "disabled";
-    }
-    if (correctGuesses.includes(letter)) {
-      return "correct";
-    }
-    if (wrongGuesses.includes(letter)) {
-      return "wrong";
-    }
+    if (isGameOver) return "disabled";
+    if (correctGuesses.includes(letter)) return "correct";
+    if (wrongGuesses.includes(letter)) return "wrong";
     return "default";
   };
 
@@ -43,7 +67,6 @@ const Keyboard = ({
       case "disabled":
         return { backgroundColor: "#EBEBEB" };
       default:
-        // Use the light yellow/cream for the default keys
         return { backgroundColor: "#FFFDE0" };
     }
   };
@@ -65,7 +88,6 @@ const Keyboard = ({
     <View style={styles.keyboardContainer}>
       {KEYBOARD_LAYOUT.map((row, rowIndex) => (
         <View key={rowIndex} style={styles.keyboardRow}>
-          {/* Add a slight spacer for the middle row alignment (A-row) */}
           {rowIndex === 1 && <View style={styles.rowSpacer} />}
 
           {row.map((letter) => {
@@ -78,7 +100,12 @@ const Keyboard = ({
               <TouchableOpacity
                 key={letter}
                 style={[styles.keyButton, getButtonStyle(buttonState)]}
-                onPress={() => onKeyPress(letter)}
+                onPress={() => {
+                  if (!isDisabled) {
+                    playClick();
+                    onKeyPress(letter);
+                  }
+                }}
                 disabled={isDisabled}
               >
                 <Text style={[styles.keyText, getButtonTextStyle(buttonState)]}>
@@ -88,7 +115,6 @@ const Keyboard = ({
             );
           })}
 
-          {/* Add a slight spacer for the middle row alignment */}
           {rowIndex === 1 && <View style={styles.rowSpacer} />}
         </View>
       ))}
@@ -99,8 +125,8 @@ const Keyboard = ({
 const styles = StyleSheet.create({
   keyboardContainer: {
     position: "absolute",
-    left: 0, // Forces 100% width
-    right: 0, // Forces 100% width
+    left: 0,
+    right: 0,
     top: "100%",
     marginTop: "50%",
     padding: 8,
