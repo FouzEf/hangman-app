@@ -2,7 +2,7 @@ import WinLottie, { WinCup } from "@components/WinLottie";
 import { Audio } from "expo-av";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Pressable, StyleSheet, Text } from "react-native";
 
 import { Nunito_800ExtraBold, useFonts } from "@expo-google-fonts/nunito";
@@ -21,6 +21,8 @@ export default function Index() {
 
   const soundRef = useRef<Audio.Sound | null>(null);
 
+  const [isSoundReady, setIsSoundReady] = useState(false);
+
   useEffect(() => {
     const playLoopingSound = async () => {
       const { sound } = await Audio.Sound.createAsync(
@@ -29,6 +31,7 @@ export default function Index() {
       soundRef.current = sound;
       await sound.setIsLoopingAsync(true);
       await sound.playAsync();
+      setIsSoundReady(true); // ✅ mark as ready
     };
 
     playLoopingSound();
@@ -38,6 +41,7 @@ export default function Index() {
         soundRef.current.unloadAsync();
         soundRef.current = null;
       }
+      setIsSoundReady(false);
     };
   }, []);
 
@@ -49,6 +53,12 @@ export default function Index() {
   }
 
   const handleRestart = async (level: "Easy" | "medium" | "hard") => {
+    if (isSoundReady && soundRef.current) {
+      await soundRef.current.stopAsync();
+      await soundRef.current.unloadAsync();
+      soundRef.current = null;
+      setIsSoundReady(false);
+    }
     const SOLVED_WORDS_KEY = "solved_words";
 
     const fetched = await fetchWordsOnce(level);
@@ -92,7 +102,15 @@ export default function Index() {
       </Pressable>
       <Pressable
         style={[Style.buttonHome, Style.button]}
-        onPress={() => navigate.push("/")}
+        onPress={async () => {
+          if (isSoundReady && soundRef.current) {
+            await soundRef.current.stopAsync();
+            await soundRef.current.unloadAsync();
+            soundRef.current = null;
+            setIsSoundReady(false);
+          }
+          navigate.push("/");
+        }}
       >
         <Text style={Style.buttonText}>Go Home</Text>
       </Pressable>

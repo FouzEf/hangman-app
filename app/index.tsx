@@ -8,11 +8,13 @@ import Cloud from "@components/Cloud";
 import { useState } from "react";
 
 import Level from "@/components/Level";
+import SoundButton from "@/components/SoundButton";
 import HowToPlay from "@components/HowToPLay";
 
 export default function Index() {
   const [modalVisible, setModalVisible] = useState<boolean>(false);
 
+  const playSound = SoundButton();
   //level selection
   const [levelVisible, setLevelVisible] = useState<boolean>(false);
   const [levelValue, setLevelValue] = useState<string>("");
@@ -30,6 +32,7 @@ export default function Index() {
   }
 
   const toggleModal = () => {
+    playSound();
     setModalVisible(!modalVisible);
   };
 
