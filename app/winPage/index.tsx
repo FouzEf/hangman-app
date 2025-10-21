@@ -1,11 +1,11 @@
 import WinLottie, { WinCup } from "@components/WinLottie";
-import { Nunito_800ExtraBold, useFonts } from "@expo-google-fonts/nunito";
 import { Audio } from "expo-av";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Pressable, StyleSheet, Text } from "react-native";
 
+import { Nunito_800ExtraBold, useFonts } from "@expo-google-fonts/nunito";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { fetchWordsOnce } from "../../FIreStore";
 
@@ -19,31 +19,31 @@ export default function Index() {
   console.log(level, "levelValue");
   const navigate = useRouter();
 
-  useEffect(() => {
-    let sound: Audio.Sound;
+  const soundRef = useRef<Audio.Sound | null>(null);
 
+  useEffect(() => {
     const playLoopingSound = async () => {
-      const { sound: loadedSound } = await Audio.Sound.createAsync(
+      const { sound } = await Audio.Sound.createAsync(
         require("../../assets/sounds/winPage.mp3")
       );
-      sound = loadedSound;
-      await sound.setIsLoopingAsync(true); // 🔁 Enable looping
+      soundRef.current = sound;
+      await sound.setIsLoopingAsync(true);
       await sound.playAsync();
     };
 
     playLoopingSound();
 
-    // Optional cleanup
     return () => {
-      if (sound) {
-        sound.unloadAsync();
+      if (soundRef.current) {
+        soundRef.current.unloadAsync();
+        soundRef.current = null;
       }
     };
   }, []);
+
   const [fontsLoaded] = useFonts({
     Nunito_800ExtraBold,
   });
-
   if (!fontsLoaded) {
     return null;
   }
