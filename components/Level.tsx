@@ -17,6 +17,7 @@ import { fetchWordsOnce } from "../FIreStore";
 
 // storage utilities
 import { getSolvedWords } from "@/utils/storage";
+import useClickSound from "@/utils/useClickSound";
 
 type Props = {
   setLevelValue: (value: string) => void;
@@ -32,6 +33,7 @@ const Level = ({
   levelValue,
 }: Props) => {
   const navigate = useRouter();
+  const playSound = useClickSound();
   const [fontsLoaded] = useFonts({
     Nunito_800ExtraBold,
     Nunito_400Regular,
@@ -41,6 +43,7 @@ const Level = ({
   }
 
   const handleLevel = async (level: any) => {
+    playSound();
     setLevelValue(level);
     setLevelVisible(false);
 
@@ -54,13 +57,10 @@ const Level = ({
       return;
     }
 
-    if (levelValue) {
-      navigate.push({
-        pathname: "/gamePage",
-        params: { selectedLevel: level },
-      });
-      return;
-    }
+    navigate.push({
+      pathname: "/gamePage",
+      params: { selectedLevel: level },
+    });
   };
 
   return (

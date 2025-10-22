@@ -16,16 +16,11 @@ export default function Index() {
   //level selection
   const [levelVisible, setLevelVisible] = useState<boolean>(false);
   const [levelValue, setLevelValue] = useState<string>("");
-  const playSound = useClickSound();
-  const toggleModal = () => {
-    playSound();
-    setModalVisible(!modalVisible);
-  };
 
   const startGame = () => {
     setLevelVisible(true);
   };
-  const playSound = SoundButton();
+  const playSound = useClickSound();
   const toggleModal = () => {
     playSound();
     setModalVisible(!modalVisible);

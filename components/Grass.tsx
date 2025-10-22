@@ -1,5 +1,6 @@
 import gallow from "@assets/images/gallow.png";
 import grass3 from "@assets/images/grass3.png";
+import Home from "@assets/images/HomButton.png";
 import Stage1Img from "@assets/images/Stage1.png";
 import Stage2Img from "@assets/images/Stage2.png";
 import Stage3Img from "@assets/images/Stage3.png";
@@ -12,7 +13,6 @@ import {
   Animated,
   Image,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -106,15 +106,13 @@ const Grass = ({ wrongGuesses }: Props) => {
           top: 65,
           left: 20,
           zIndex: 999,
-          elevation: 5,
-          backgroundColor: "rgba(255,255,255,0.8)",
-          paddingHorizontal: 12,
-          paddingVertical: 6,
-          borderRadius: 8,
         }}
         onPress={() => router.replace("/")}
       >
-        <Text>Home</Text>
+        <Image
+          source={Home}
+          style={{ width: 50, height: 50, backgroundColor: "transparent" }}
+        />
       </TouchableOpacity>
       <Image source={grass3} style={[styles.grass, { left: -80 }]} />
       <Image source={grass3} style={[styles.grass, { left: 80 }]} />
