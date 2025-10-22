@@ -31,6 +31,7 @@ const ExitOrContinue = ({
   showEmoji = true,
 }: Props): JSX.Element => {
   // Close modal if HW back is pressed while modal is open
+
   useEffect(() => {
     const onBackPress = () => {
       if (modalVisible) {

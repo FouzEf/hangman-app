@@ -1,8 +1,8 @@
-import React from "react";
-
 import ContinueImage from "@assets/images/continue.png";
 import HomeModal from "@assets/images/HomeModal.png";
 import Retry from "@assets/images/retry.png";
+import { Audio } from "expo-av";
+import { useEffect, useRef } from "react";
 import {
   Image,
   Modal,
@@ -12,20 +12,41 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-
 type Props = {
   modalVisible: boolean;
   wrongGuesses: string[];
   toHome: () => void;
   continueOrRetry: () => void;
 };
-
 const WinOrLose = ({
   modalVisible,
   wrongGuesses,
   toHome,
   continueOrRetry,
 }: Props) => {
+  const soundRef = useRef<Audio.Sound | null>(null);
+  useEffect(() => {
+    const playWinSound = async () => {
+      if (modalVisible && wrongGuesses.length <= 6) {
+        const { sound } = await Audio.Sound.createAsync(
+          require("../assets/sounds/winLevel.mp3")
+        );
+        soundRef.current = sound;
+        await sound.setIsLoopingAsync(false);
+        await sound.playAsync();
+      }
+    };
+
+    playWinSound();
+
+    return () => {
+      if (soundRef.current) {
+        soundRef.current.unloadAsync();
+        soundRef.current = null;
+      }
+    };
+  }, [modalVisible, wrongGuesses]);
+
   return (
     <Modal transparent animationType="slide" visible={modalVisible}>
       <View style={styles.overlay}>
