@@ -9,6 +9,7 @@ import { Nunito_800ExtraBold, useFonts } from "@expo-google-fonts/nunito";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { fetchWordsOnce } from "../../FIreStore";
 
+
 // storage utilities
 import { getSolvedWords } from "@/utils/storage";
 
