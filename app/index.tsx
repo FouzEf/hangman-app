@@ -7,7 +7,7 @@ import Home from "@assets/images/HomeImage.png";
 import Cloud from "@components/Cloud";
 
 import Level from "@/components/Level";
-import SoundButton from "@/components/SoundButton";
+import useClickSound from "@/utils/useClickSound";
 import HowToPlay from "@components/HowToPLay";
 
 export default function Index() {
@@ -16,6 +16,11 @@ export default function Index() {
   //level selection
   const [levelVisible, setLevelVisible] = useState<boolean>(false);
   const [levelValue, setLevelValue] = useState<string>("");
+  const playSound = useClickSound();
+  const toggleModal = () => {
+    playSound();
+    setModalVisible(!modalVisible);
+  };
 
   const startGame = () => {
     setLevelVisible(true);
