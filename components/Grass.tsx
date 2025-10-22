@@ -1,3 +1,4 @@
+import useClickSound from "@/utils/useClickSound";
 import gallow from "@assets/images/gallow.png";
 import grass3 from "@assets/images/grass3.png";
 import Home from "@assets/images/HomButton.png";
@@ -22,6 +23,7 @@ type Props = {
 };
 
 const Grass = ({ wrongGuesses }: Props) => {
+  const playSound = useClickSound();
   const Stage1 = useRef(new Animated.Value(0)).current;
   const Stage2 = useRef(new Animated.Value(0)).current;
   const Stage3 = useRef(new Animated.Value(0)).current;
@@ -103,11 +105,18 @@ const Grass = ({ wrongGuesses }: Props) => {
       <TouchableOpacity
         style={{
           position: "absolute",
-          top: 65,
+          top: 60,
           left: 20,
           zIndex: 999,
+          boxShadow: "2px 2px 4px rgba(0,0,0,0.5)",
+          borderRadius: 50,
+          padding: 5,
+          backgroundColor: "#fafee1",
         }}
-        onPress={() => router.replace("/")}
+        onPress={() => {
+          playSound();
+          return router.replace("/");
+        }}
       >
         <Image
           source={Home}

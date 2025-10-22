@@ -14,7 +14,7 @@ import { fetchWordsOnce } from "../../FIreStore";
 
 // storage utilities
 import { addSolvedWord, getSolvedWords } from "@/utils/storage";
-
+import useClickSound from "@/utils/useClickSound";
 type Level = "Easy" | "medium" | "hard";
 const MAX_ERRORS = 6;
 
@@ -44,7 +44,7 @@ const GamePage = () => {
   const [solvedWord, setSolvedWord] = useState<string[]>([]);
 
   const [modalVisible, setModalVisible] = useState(false);
-
+  const playSound = useClickSound();
   //CHECKS WIN
 
   //useEffect(() => {
@@ -117,12 +117,14 @@ const GamePage = () => {
 
   // navigate home helper
   const toHome = () => {
+    playSound();
     setModalVisible(false);
     navigate.push("./");
   };
 
   // Continue after win or retry after loss
   const continueOrRetry = async () => {
+    playSound();
     setModalVisible(false);
 
     if (isWin) {

@@ -1,3 +1,4 @@
+import useClickSound from "@/utils/useClickSound";
 import { useNavigation, usePathname, useRouter } from "expo-router";
 import React, {
   createContext,
@@ -23,6 +24,7 @@ type Props = {
 };
 
 export default function ExitGuardProvider({ children }: Props) {
+  const playSound = useClickSound();
   const [visible, setVisible] = useState(false);
   const pending = useRef<Pending>(null);
 
@@ -39,12 +41,14 @@ export default function ExitGuardProvider({ children }: Props) {
   useEffect(() => {
     const sub = BackHandler.addEventListener("hardwareBackPress", () => {
       if (isGamePage) {
+        playSound();
         askToExit(() => router.replace("/"));
         return true;
       }
 
       const canGoBack = navigation.canGoBack?.() ?? false;
       if (!canGoBack) {
+        playSound();
         askToExit(() => BackHandler.exitApp());
         return true;
       }
@@ -53,7 +57,7 @@ export default function ExitGuardProvider({ children }: Props) {
     });
 
     return () => sub.remove();
-  }, [askToExit, isGamePage, router, navigation]);
+  }, [askToExit, isGamePage, router, navigation, playSound]);
 
   const onExit = () => {
     setVisible(false);
