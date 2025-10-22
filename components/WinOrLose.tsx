@@ -18,6 +18,7 @@ type Props = {
   toHome: () => void;
   continueOrRetry: () => void;
 };
+
 const WinOrLose = ({
   modalVisible,
   wrongGuesses,
@@ -25,15 +26,19 @@ const WinOrLose = ({
   continueOrRetry,
 }: Props) => {
   const soundRef = useRef<Audio.Sound | null>(null);
+
   useEffect(() => {
     const playWinSound = async () => {
       if (modalVisible && wrongGuesses.length <= 6) {
-        const { sound } = await Audio.Sound.createAsync(
-          require("../assets/sounds/winLevel.mp3")
-        );
-        soundRef.current = sound;
-        await sound.setIsLoopingAsync(false);
-        await sound.playAsync();
+        try {
+          const { sound } = await Audio.Sound.createAsync(
+            require("../assets/sounds/winLevel.mp3")
+          );
+          soundRef.current = sound;
+          await sound.playAsync(); // And here
+        } catch (error) {
+          console.error("Sound playback failed:", error);
+        }
       }
     };
 
