@@ -22,9 +22,15 @@ type Props = {
   setLevelValue: (value: string) => void;
   setLevelVisible: (visible: boolean) => void;
   levelVisible: boolean;
+  levelValue: string;
 };
 
-const Level = ({ setLevelVisible, setLevelValue, levelVisible }: Props) => {
+const Level = ({
+  setLevelVisible,
+  setLevelValue,
+  levelVisible,
+  levelValue,
+}: Props) => {
   const navigate = useRouter();
   const [fontsLoaded] = useFonts({
     Nunito_800ExtraBold,
@@ -40,18 +46,21 @@ const Level = ({ setLevelVisible, setLevelValue, levelVisible }: Props) => {
 
     const fetched = await fetchWordsOnce(level);
     const solved = await getSolvedWords();
-    //if (fetched.every((word) => solved.includes(word))) {
-    //navigate.push({
-    //pathname: "/winPage",
-    //params: { selectedLevel: level },
-    //});
-    //return;
-    //}
+    if (fetched.every((word) => solved.includes(word))) {
+      navigate.push({
+        pathname: "/winPage",
+        params: { selectedLevel: level },
+      });
+      return;
+    }
 
-    navigate.push({
-      pathname: "/winPage",
-      params: { selectedLevel: level },
-    });
+    if (levelValue) {
+      navigate.push({
+        pathname: "/gamePage",
+        params: { selectedLevel: level },
+      });
+      return;
+    }
   };
 
   return (
