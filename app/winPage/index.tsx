@@ -3,12 +3,12 @@ import { Audio } from "expo-av";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
-import { Pressable, StyleSheet, Text } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import { Nunito_800ExtraBold, useFonts } from "@expo-google-fonts/nunito";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { fetchWordsOnce } from "../../FIreStore";
-
+import HeadphoneButton from "../../audio/HeadphoneButton";
 
 // storage utilities
 import { getSolvedWords } from "@/utils/storage";
@@ -92,6 +92,10 @@ export default function Index() {
       end={{ x: 0.5, y: 1 }}
       style={[Style.container, { zIndex: 100 }]}
     >
+      <View style={{ position: "absolute", top: 40, right: 30, zIndex: 50 }}>
+        <HeadphoneButton />
+      </View>
+
       <Text style={Style.text}>
         Yaay! You&apos;ve completed the <Text style={Style.level}>{level}</Text>{" "}
         level

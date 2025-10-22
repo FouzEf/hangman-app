@@ -3,17 +3,17 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-import Home from "@assets/images/HomeImage.png";
-import Cloud from "@components/Cloud";
-
 import Level from "@/components/Level";
 import useClickSound from "@/utils/useClickSound";
+import Home from "@assets/images/HomeImage.png";
+import Cloud from "@components/Cloud";
 import HowToPlay from "@components/HowToPLay";
+import HeadphoneButton from "../audio/HeadphoneButton";
 
 export default function Index() {
   const [modalVisible, setModalVisible] = useState<boolean>(false);
 
-  //level selection
+  // level selection
   const [levelVisible, setLevelVisible] = useState<boolean>(false);
   const [levelValue, setLevelValue] = useState<string>("");
 
@@ -41,6 +41,11 @@ export default function Index() {
       style={[Style.container, { zIndex: 100 }]}
     >
       <View style={Style.container}>
+        {/* Floating headphone button (top-right corner) */}
+        <View style={{ position: "absolute", top: 40, right: 30, zIndex: 50 }}>
+          <HeadphoneButton />
+        </View>
+
         <Cloud />
         <Image source={Home} style={Style.img} />
         <Text style={Style.text}>HangMan</Text>
@@ -80,8 +85,6 @@ const Style = StyleSheet.create({
     resizeMode: "contain",
     top: 80,
     zIndex: 1,
-    //borderColor: 'black',
-    // borderWidth:5
   },
   text: {
     fontFamily: "Nunito_800ExtraBold",

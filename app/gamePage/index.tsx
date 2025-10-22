@@ -7,6 +7,7 @@ import WindMillLottie, { WindMillLottieTwo } from "@/components/WindMillLottie";
 import WinOrLose from "@/components/WinOrLose";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import HeadphoneButton from "../../audio/HeadphoneButton";
 
 import React, { useEffect, useMemo, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
@@ -171,6 +172,10 @@ const GamePage = () => {
     >
       <View style={Style.container}>
         <CloudGamePage />
+        <View style={{ position: "absolute", top: 40, right: 30, zIndex: 50 }}>
+          <HeadphoneButton />
+        </View>
+
         <WindMillLottie />
         <WindMillLottieTwo />
         <BirdLottie />
