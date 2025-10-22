@@ -17,15 +17,23 @@ import { fetchWordsOnce } from "../FIreStore";
 
 // storage utilities
 import { getSolvedWords } from "@/utils/storage";
+import useClickSound from "@/utils/useClickSound";
 
 type Props = {
   setLevelValue: (value: string) => void;
   setLevelVisible: (visible: boolean) => void;
   levelVisible: boolean;
+  levelValue: string;
 };
 
-const Level = ({ setLevelVisible, setLevelValue, levelVisible }: Props) => {
+const Level = ({
+  setLevelVisible,
+  setLevelValue,
+  levelVisible,
+  levelValue,
+}: Props) => {
   const navigate = useRouter();
+  const playSound = useClickSound();
   const [fontsLoaded] = useFonts({
     Nunito_800ExtraBold,
     Nunito_400Regular,
@@ -35,21 +43,22 @@ const Level = ({ setLevelVisible, setLevelValue, levelVisible }: Props) => {
   }
 
   const handleLevel = async (level: any) => {
+    playSound();
     setLevelValue(level);
     setLevelVisible(false);
 
     const fetched = await fetchWordsOnce(level);
     const solved = await getSolvedWords();
-    //if (fetched.every((word) => solved.includes(word))) {
-    //navigate.push({
-    //pathname: "/winPage",
-    //params: { selectedLevel: level },
-    //});
-    //return;
-    //}
+    if (fetched.every((word) => solved.includes(word))) {
+      navigate.push({
+        pathname: "/winPage",
+        params: { selectedLevel: level },
+      });
+      return;
+    }
 
     navigate.push({
-      pathname: "/winPage",
+      pathname: "/gamePage",
       params: { selectedLevel: level },
     });
   };

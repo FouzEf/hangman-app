@@ -1,11 +1,10 @@
 import { Nunito_800ExtraBold, useFonts } from "@expo-google-fonts/nunito";
 import { LinearGradient } from "expo-linear-gradient";
+import { useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import Home from "@assets/images/HomeImage.png";
 import Cloud from "@components/Cloud";
-
-import { useState } from "react";
 
 import Level from "@/components/Level";
 import useClickSound from "@/utils/useClickSound";
@@ -17,16 +16,15 @@ export default function Index() {
   //level selection
   const [levelVisible, setLevelVisible] = useState<boolean>(false);
   const [levelValue, setLevelValue] = useState<string>("");
+
+  const startGame = () => {
+    setLevelVisible(true);
+  };
   const playSound = useClickSound();
   const toggleModal = () => {
     playSound();
     setModalVisible(!modalVisible);
   };
-
-  const startGame = () => {
-    setLevelVisible(true);
-  };
-
   const [fontsLoaded] = useFonts({
     Nunito_800ExtraBold,
   });
@@ -55,6 +53,7 @@ export default function Index() {
         {modalVisible && <HowToPlay onClose={toggleModal} modalVisible />}
         {levelVisible && (
           <Level
+            levelValue={levelValue}
             levelVisible={levelVisible}
             setLevelValue={setLevelValue}
             setLevelVisible={setLevelVisible}

@@ -12,6 +12,7 @@ import { fetchWordsOnce } from "../../FIreStore";
 
 // storage utilities
 import { getSolvedWords } from "@/utils/storage";
+import useClickSound from "@/utils/useClickSound";
 
 type Level = "Easy" | "medium" | "hard";
 export default function Index() {
@@ -19,6 +20,7 @@ export default function Index() {
   const level = params.selectedLevel as Level;
   console.log(level, "levelValue");
   const navigate = useRouter();
+  const playSound = useClickSound();
 
   const soundRef = useRef<Audio.Sound | null>(null);
 
@@ -54,6 +56,7 @@ export default function Index() {
   }
 
   const handleRestart = async (level: "Easy" | "medium" | "hard") => {
+    playSound();
     if (isSoundReady && soundRef.current) {
       await soundRef.current.stopAsync();
       await soundRef.current.unloadAsync();
@@ -104,6 +107,7 @@ export default function Index() {
       <Pressable
         style={[Style.buttonHome, Style.button]}
         onPress={async () => {
+          playSound();
           if (isSoundReady && soundRef.current) {
             await soundRef.current.stopAsync();
             await soundRef.current.unloadAsync();
