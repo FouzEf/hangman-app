@@ -17,7 +17,7 @@ export default function HeadphoneButton() {
     >
       <View>
         <Text style={{ fontSize: 18, color: muted ? "#222" : "#fff" }}>
-          {muted ? "🔇" : "🎧"}
+          {muted ? "🔇" : "🔈"}
         </Text>
       </View>
     </Pressable>

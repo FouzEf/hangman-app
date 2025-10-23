@@ -1,8 +1,7 @@
 import ContinueImage from "@assets/images/continue.png";
 import HomeModal from "@assets/images/HomeModal.png";
 import Retry from "@assets/images/retry.png";
-import { Audio } from "expo-av";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import {
   Image,
   Modal,
@@ -12,6 +11,8 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
+import { soundManager } from "../audio/SoundManager";
+
 type Props = {
   modalVisible: boolean;
   wrongGuesses: string[];
@@ -25,42 +26,17 @@ const WinOrLose = ({
   toHome,
   continueOrRetry,
 }: Props) => {
-  const soundRef = useRef<Audio.Sound | null>(null);
-
+  // Play once when the modal opens, using global sound manager
   useEffect(() => {
-    const playWinSound = async () => {
-      if (modalVisible && wrongGuesses.length < 6) {
-        try {
-          const { sound } = await Audio.Sound.createAsync(
-            require("../assets/sounds/winLevel.mp3")
-          );
-          soundRef.current = sound;
-          await sound.playAsync(); // And here
-        } catch (error) {
-          console.error("Sound playback failed:", error);
-        }
-      } else if (modalVisible && wrongGuesses.length >= 6) {
-        try {
-          const { sound } = await Audio.Sound.createAsync(
-            require("../assets/sounds/failLevel.mp3")
-          );
-          soundRef.current = sound;
-          await sound.playAsync(); // And here
-        } catch (error) {
-          console.error("Sound playback failed:", error);
-        }
-      }
-    };
+    if (!modalVisible) return;
+    if (wrongGuesses.length >= 6) {
+      soundManager.play("failLevel");
+    } else {
+      soundManager.play("winLevel");
+    }
+  }, [modalVisible, wrongGuesses.length]);
 
-    playWinSound();
-
-    return () => {
-      if (soundRef.current) {
-        soundRef.current.unloadAsync();
-        soundRef.current = null;
-      }
-    };
-  }, [modalVisible, wrongGuesses]);
+  const lost = wrongGuesses.length >= 6;
 
   return (
     <Modal transparent animationType="slide" visible={modalVisible}>
@@ -70,8 +46,7 @@ const WinOrLose = ({
             style={[
               styles.container,
               {
-                backgroundColor:
-                  wrongGuesses.length >= 6 ? "#CFD8DC" : "#f8f4c8",
+                backgroundColor: lost ? "#CFD8DC" : "#f8f4c8",
               },
             ]}
           >
@@ -79,16 +54,14 @@ const WinOrLose = ({
               style={[
                 styles.text,
                 {
-                  color: wrongGuesses.length >= 6 ? "#333" : "#388E3C",
+                  color: lost ? "#333" : "#388E3C",
                 },
               ]}
             >
-              {wrongGuesses.length >= 6
-                ? `Oopps! You've Lost 😢`
-                : "Good Job !"}
+              {lost ? `Oopps! You've Lost 😢` : "Good Job !"}
             </Text>
             <Pressable onPress={continueOrRetry}>
-              {wrongGuesses.length >= 6 ? (
+              {lost ? (
                 <Image source={Retry} style={styles.continueImage} />
               ) : (
                 <Image source={ContinueImage} style={styles.continueImage} />

@@ -1,6 +1,6 @@
-import { Audio } from "expo-av";
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { soundManager } from "../audio/SoundManager";
 
 const KEYBOARD_LAYOUT = [
   ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
@@ -21,38 +21,6 @@ const Keyboard = ({
   wrongGuesses,
   isGameOver,
 }: CustomKeyboardProps) => {
-  //const play = useSound(soundMap);
-
-  const clickSound = useRef<Audio.Sound | null>(null);
-
-  useEffect(() => {
-    let mounted = true;
-
-    (async () => {
-      const { sound } = await Audio.Sound.createAsync(
-        require("../assets/sounds/singleTap.wav")
-      );
-      if (mounted) clickSound.current = sound;
-    })();
-
-    return () => {
-      mounted = false;
-      clickSound.current?.unloadAsync();
-    };
-  }, []);
-
-  const playClick = async () => {
-    const s = clickSound.current;
-    if (!s) return;
-    try {
-      await s.stopAsync().catch(() => {});
-      await s.setPositionAsync(0);
-      await s.playAsync();
-    } catch (err) {
-      console.log("Sound error:", err);
-    }
-  };
-
   const getButtonState = (letter: string) => {
     if (isGameOver) return "disabled";
     if (correctGuesses.includes(letter)) return "correct";
@@ -86,6 +54,13 @@ const Keyboard = ({
     }
   };
 
+  const onPressKey = (letter: string, disabled: boolean) => {
+    if (disabled) return;
+    // Global sound (respects mute/preload)
+    soundManager.play("singleTap");
+    onKeyPress(letter);
+  };
+
   return (
     <View style={styles.keyboardContainer}>
       {KEYBOARD_LAYOUT.map((row, rowIndex) => (
@@ -102,12 +77,7 @@ const Keyboard = ({
               <TouchableOpacity
                 key={letter}
                 style={[styles.keyButton, getButtonStyle(buttonState)]}
-                onPress={() => {
-                  if (!isDisabled) {
-                    playClick();
-                    onKeyPress(letter);
-                  }
-                }}
+                onPress={() => onPressKey(letter, isDisabled)}
                 disabled={isDisabled}
               >
                 <Text style={[styles.keyText, getButtonTextStyle(buttonState)]}>
