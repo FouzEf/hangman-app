@@ -15,6 +15,7 @@ import { fetchWordsOnce } from "../../FIreStore";
 
 // storage utilities
 import useClickSound from "@/audio/useClickSound";
+import Level from "@/components/Level";
 import { addSolvedWord, getSolvedWords } from "@/utils/storage";
 type Level = "Easy" | "medium" | "hard";
 const MAX_ERRORS = 6;
@@ -170,6 +171,23 @@ const GamePage = () => {
       end={{ x: 0.5, y: 1 }}
       style={Style.container}
     >
+      <Text
+        style={[
+          Style.Level,
+          {
+            backgroundColor:
+              selectedLevel === "Easy"
+                ? "#4CAF50"
+                : selectedLevel === "medium"
+                ? "#FFC107"
+                : selectedLevel === "hard"
+                ? "#F44336"
+                : "#ccc",
+          },
+        ]}
+      >
+        {selectedLevel}
+      </Text>
       <View style={Style.container}>
         <CloudGamePage />
         <View style={{ position: "absolute", top: 40, right: 30, zIndex: 50 }}>
@@ -224,6 +242,24 @@ const Style = StyleSheet.create({
     alignItems: "center",
     position: "relative",
     width: "100%",
+  },
+  Level: {
+    marginVertical: 10,
+    paddingVertical: 5,
+    textAlign: "center",
+    color: "#f5f5f5",
+    textShadowColor: "rgba(0, 0, 0, 0.3)",
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
+    fontSize: 12,
+    borderRadius: 10,
+    width: 50,
+    marginHorizontal: "auto",
+    boxShadow: "2px 2px 4px rgba(0,0,0,0.4)",
+    position: "absolute",
+    top: "9%",
+    right: "6%",
+    textTransform: "lowercase",
   },
 });
 

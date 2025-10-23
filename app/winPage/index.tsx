@@ -13,6 +13,7 @@ import HeadphoneButton from "../../audio/HeadphoneButton";
 // storage utilities
 import useClickSound from "@/audio/useClickSound";
 import { getSolvedWords } from "@/utils/storage";
+import Toast from "react-native-toast-message";
 
 type Level = "Easy" | "medium" | "hard";
 export default function Index() {
@@ -80,9 +81,16 @@ export default function Index() {
     } catch (error) {
       console.error("Error updating solved words on restart:", error);
     }
+    Toast.show({
+      type: "success",
+      text1: `The Level ${level} has been reset`,
+      visibilityTime: 2000, // show for 2 seconds
+    });
 
-    console.log(solved, remainingSolved);
-    return navigate.push("/gamePage");
+    // ✅ Delay navigation by 2 seconds
+    setTimeout(() => {
+      navigate.push("/");
+    }, 2000);
   };
 
   return (
@@ -121,6 +129,8 @@ export default function Index() {
           navigate.push("/");
         }}
       >
+        <Toast />
+
         <Text style={Style.buttonText}>Go Home</Text>
       </Pressable>
     </LinearGradient>
