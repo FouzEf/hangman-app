@@ -1,4 +1,4 @@
-import useClickSound from "@/utils/useClickSound";
+import useClickSound from "@/audio/useClickSound";
 import gallow from "@assets/images/gallow.png";
 import grass3 from "@assets/images/grass3.png";
 import Home from "@assets/images/HomButton.png";

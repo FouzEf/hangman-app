@@ -14,8 +14,8 @@ import { StyleSheet, Text, View } from "react-native";
 import { fetchWordsOnce } from "../../FIreStore";
 
 // storage utilities
+import useClickSound from "@/audio/useClickSound";
 import { addSolvedWord, getSolvedWords } from "@/utils/storage";
-import useClickSound from "@/utils/useClickSound";
 type Level = "Easy" | "medium" | "hard";
 const MAX_ERRORS = 6;
 

@@ -3,8 +3,8 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
+import useClickSound from "@/audio/useClickSound";
 import Level from "@/components/Level";
-import useClickSound from "@/utils/useClickSound";
 import Home from "@assets/images/HomeImage.png";
 import Cloud from "@components/Cloud";
 import HowToPlay from "@components/HowToPLay";

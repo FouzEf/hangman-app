@@ -1,4 +1,4 @@
-import useClickSound from "@/utils/useClickSound";
+import useClickSound from "@/audio/useClickSound";
 import { useNavigation, usePathname, useRouter } from "expo-router";
 import React, {
   createContext,

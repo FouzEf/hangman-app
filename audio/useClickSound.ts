@@ -1,6 +1,5 @@
-// app/hooks/useClickSound.ts
 import { useCallback } from "react";
-import { soundManager } from "../audio/SoundManager";
+import { soundManager } from "./SoundManager";
 
 // Plays the global "selectButton" sound via SoundManager.
 // Respects global mute automatically.

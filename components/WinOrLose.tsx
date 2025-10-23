@@ -39,6 +39,16 @@ const WinOrLose = ({
         } catch (error) {
           console.error("Sound playback failed:", error);
         }
+      } else if (modalVisible && wrongGuesses.length >= 6) {
+        try {
+          const { sound } = await Audio.Sound.createAsync(
+            require("../assets/sounds/failLevel.mp3")
+          );
+          soundRef.current = sound;
+          await sound.playAsync(); // And here
+        } catch (error) {
+          console.error("Sound playback failed:", error);
+        }
       }
     };
 

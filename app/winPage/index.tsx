@@ -11,8 +11,8 @@ import { fetchWordsOnce } from "../../FIreStore";
 import HeadphoneButton from "../../audio/HeadphoneButton";
 
 // storage utilities
+import useClickSound from "@/audio/useClickSound";
 import { getSolvedWords } from "@/utils/storage";
-import useClickSound from "@/utils/useClickSound";
 
 type Level = "Easy" | "medium" | "hard";
 export default function Index() {

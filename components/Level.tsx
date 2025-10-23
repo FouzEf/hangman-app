@@ -16,8 +16,8 @@ import { useRouter } from "expo-router";
 import { fetchWordsOnce } from "../FIreStore";
 
 // storage utilities
+import useClickSound from "@/audio/useClickSound";
 import { getSolvedWords } from "@/utils/storage";
-import useClickSound from "@/utils/useClickSound";
 
 type Props = {
   setLevelValue: (value: string) => void;
