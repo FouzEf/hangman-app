@@ -26,7 +26,7 @@ export function useSound(map: Record<string, AVPlaybackSource>) {
       ref.current = {};
       arr.forEach((s) => s.unloadAsync());
     };
-  }, []);
+  }, [map]);
 
   const play = async (key: string, volume = 1) => {
     const s = ref.current[key];

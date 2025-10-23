@@ -29,7 +29,7 @@ const WinOrLose = ({
 
   useEffect(() => {
     const playWinSound = async () => {
-      if (modalVisible && wrongGuesses.length <= 6) {
+      if (modalVisible && wrongGuesses.length < 6) {
         try {
           const { sound } = await Audio.Sound.createAsync(
             require("../assets/sounds/winLevel.mp3")

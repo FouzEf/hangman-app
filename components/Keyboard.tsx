@@ -21,6 +21,8 @@ const Keyboard = ({
   wrongGuesses,
   isGameOver,
 }: CustomKeyboardProps) => {
+  //const play = useSound(soundMap);
+
   const clickSound = useRef<Audio.Sound | null>(null);
 
   useEffect(() => {
