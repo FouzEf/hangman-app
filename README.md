@@ -60,9 +60,9 @@ hangman-app/
 
 ## 📸 Screenshots
 
-| Home Screen                            | Level Selection                          | Win Celebration                                     |
-| -------------------------------------- | ---------------------------------------- | --------------------------------------------------- | -------------------------------------------------- | ---------------------------------------------- |
-| ![Home](./assets/screenshots/Home.png) | ![Level](./assets/screenshots/Level.png) | ![Correct Word](./assets/screenshots/WinScreen.png) | ![Wrong Word](./assets/screenshots/LostScreen.png) | ![Win Level](./assets/screenshots/WinPage.png) |
+| Home Screen                                  | Level Selection                                | Win Celebration                                           |
+| -------------------------------------------- | ---------------------------------------------- | --------------------------------------------------------- | -------------------------------------------------------- | ---------------------------------------------------- |
+| ![Home](/assets/images/screenshots/Home.png) | ![Level](/assets/images/screenshots/Level.png) | ![Correct Word](/assets/images/screenshots/WinScreen.png) | ![Wrong Word](/assets/images/screenshots/LostScreen.png) | ![Win Level](/assets/images/screenshots/WinPage.png) |
 
 > You can place your screenshots in `assets/screenshots/` and update the paths above accordingly.
 
