@@ -6,11 +6,13 @@ import { Nunito_800ExtraBold, useFonts } from "@expo-google-fonts/nunito";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useEffect } from "react";
+import { useCallback } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import Toast from "react-native-toast-message";
 import { fetchWordsOnce } from "../../FIreStore";
 import HeadphoneButton from "../../audio/HeadphoneButton";
+
+import { useFocusEffect } from "@react-navigation/native";
 
 type Level = "Easy" | "medium" | "hard";
 export default function Index() {
@@ -18,28 +20,28 @@ export default function Index() {
   const level = params.selectedLevel as Level;
   const navigate = useRouter();
   const playSound = useClickSound();
-  useEffect(() => {
-    // Loop background "win page" music using the global manager.
-    soundManager.play("winPage");
-    return () => {
-      // Stop it when leaving this screen.
-      soundManager.stopAll();
-    };
-  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      soundManager.playLooping("winPage");
+      return () => {
+        soundManager.stopAll();
+      };
+    }, [])
+  );
+
   const [fontsLoaded] = useFonts({
     Nunito_800ExtraBold,
   });
   if (!fontsLoaded) return null;
+
   const handleRestart = async (level: Level) => {
     playSound();
-    // stopAll looping music before navigating away.
     await soundManager.stopAll();
     const SOLVED_WORDS_KEY = "solved_words";
     const fetched = await fetchWordsOnce(level);
     const solved = await getSolvedWords();
-    // Filter out solved words that belong to this level
     const remainingSolved = solved.filter((word) => !fetched.includes(word));
-    // Update AsyncStorage with the filtered list using the correct key
     try {
       await AsyncStorage.setItem(
         SOLVED_WORDS_KEY,
@@ -57,6 +59,7 @@ export default function Index() {
       navigate.push("/");
     }, 2000);
   };
+
   return (
     <LinearGradient
       colors={["#80C2F3", "#C8E6C9"]}

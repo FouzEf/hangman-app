@@ -1,5 +1,6 @@
 import { Nunito_800ExtraBold, useFonts } from "@expo-google-fonts/nunito";
 import { LinearGradient } from "expo-linear-gradient";
+
 import { useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
@@ -56,6 +57,7 @@ export default function Index() {
         <TouchableOpacity onPress={toggleModal} style={{ zIndex: 10 }}>
           <Text style={Style.btnPlay}>How to Play?</Text>
         </TouchableOpacity>
+
         {modalVisible && <HowToPlay onClose={toggleModal} modalVisible />}
         {levelVisible && (
           <Level

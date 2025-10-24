@@ -1,4 +1,4 @@
-import { Audio, AVPlaybackStatusSuccess } from "expo-av";
+import { Audio } from "expo-av";
 
 export type SoundKey =
   | "failLevel"
@@ -25,11 +25,9 @@ class SoundManager {
     return this._instance;
   }
 
-  /** Public: set mute and immediately apply to all loaded sounds */
   async setMuted(muted: boolean) {
     this._muted = muted;
     if (muted) {
-      // hard stop anything currently playing so the app goes silent now
       await this.stopAll();
       await this.setVolumeForAll(0);
     } else {
@@ -37,7 +35,6 @@ class SoundManager {
     }
   }
 
-  /** Preload all known sounds (respects current mute volume) */
   async preloadAll() {
     await Promise.all(
       (Object.keys(soundFiles) as SoundKey[]).map(async (key) => {
@@ -53,34 +50,69 @@ class SoundManager {
     );
   }
 
-  /** Play by key. No-op if muted. */
-  async play(key: SoundKey) {
-    if (this._muted) return;
+  // ---- helpers -------------------------------------------------------------
+
+  private async getOrCreate(key: SoundKey) {
     let snd = this.cache.get(key);
     if (!snd) {
-      const created = await Audio.Sound.createAsync(soundFiles[key], {
+      const { sound } = await Audio.Sound.createAsync(soundFiles[key], {
         volume: this._muted ? 0 : 1,
+        shouldPlay: false,
+        isLooping: false,
       });
-      snd = created.sound;
+      snd = sound;
       this.cache.set(key, snd);
     }
+    return snd;
+  }
+
+  // ---- playback ------------------------------------------------------------
+
+  /** One-shot play (loops disabled each time). No-op if muted. */
+  async play(key: SoundKey) {
+    if (this._muted) return;
+    const snd = await this.getOrCreate(key);
     try {
+      await snd.setIsLoopingAsync(false);
       await snd.setPositionAsync(0);
-      const status = (await snd.playAsync()) as AVPlaybackStatusSuccess;
-      return status;
+      await snd.playAsync();
     } catch {
-      // ignore play race errors
+      // ignore race errors
     }
   }
+
+  /** Looping play for background tracks (e.g., "winPage"). No-op if muted. */
+  async playLooping(key: SoundKey) {
+    if (this._muted) return;
+    const snd = await this.getOrCreate(key);
+    try {
+      await snd.setIsLoopingAsync(true);
+      await snd.setPositionAsync(0);
+      await snd.playAsync();
+    } catch {
+      // ignore race errors
+    }
+  }
+
+  /** Stop a specific sound if loaded. */
+  async stop(key: SoundKey) {
+    const snd = this.cache.get(key);
+    if (!snd) return;
+    try {
+      await snd.stopAsync();
+    } catch {
+      // ignore if not playing
+    }
+  }
+
+  // ---- bulk ops ------------------------------------------------------------
 
   async stopAll() {
     await Promise.all(
       [...this.cache.values()].map(async (s) => {
         try {
           await s.stopAsync();
-        } catch {
-          // ignore if not playing
-        }
+        } catch {}
       })
     );
   }
