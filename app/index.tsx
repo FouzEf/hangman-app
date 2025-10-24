@@ -18,6 +18,7 @@ export default function Index() {
   const [levelValue, setLevelValue] = useState<string>("");
 
   const startGame = () => {
+    playSound();
     setLevelVisible(true);
   };
   const playSound = useClickSound();

@@ -1,3 +1,4 @@
+import useClickSound from "@/audio/useClickSound";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import React, { JSX, useEffect } from "react";
 import {
@@ -30,11 +31,13 @@ const ExitOrContinue = ({
   continueLabel,
   showEmoji = true,
 }: Props): JSX.Element => {
-  // Close modal if HW back is pressed while modal is open
+  const click = useClickSound();
 
+  // Close modal if HW back is pressed while modal is open
   useEffect(() => {
     const onBackPress = () => {
       if (modalVisible) {
+        click();
         onModalClose();
         return true; // block default
       }
@@ -43,7 +46,7 @@ const ExitOrContinue = ({
 
     const sub = BackHandler.addEventListener("hardwareBackPress", onBackPress);
     return () => sub.remove();
-  }, [modalVisible, onModalClose]);
+  }, [modalVisible, onModalClose, click]);
 
   return (
     <Modal
@@ -51,12 +54,27 @@ const ExitOrContinue = ({
       style={styles.modal}
       transparent
       animationType="slide"
-      onRequestClose={onModalClose}
+      onRequestClose={() => {
+        click();
+        onModalClose();
+      }}
     >
-      <Pressable style={styles.backdrop} onPress={onModalClose} />
+      <Pressable
+        style={styles.backdrop}
+        onPress={() => {
+          click();
+          onModalClose();
+        }}
+      />
 
       <View style={styles.card}>
-        <Pressable onPress={onModalClose} style={styles.closeIconHit}>
+        <Pressable
+          onPress={() => {
+            click();
+            onModalClose();
+          }}
+          style={styles.closeIconHit}
+        >
           <AntDesign name="close" size={16} color="black" />
         </Pressable>
 
@@ -69,12 +87,21 @@ const ExitOrContinue = ({
         <View style={styles.actions}>
           <Pressable
             style={[styles.btn, styles.btnSecondary]}
-            onPress={onContinue}
+            onPress={() => {
+              click();
+              onContinue();
+            }}
           >
             <Text style={styles.btnText}>{continueLabel ?? "Continue"}</Text>
           </Pressable>
 
-          <Pressable style={[styles.btn, styles.btnPrimary]} onPress={onExit}>
+          <Pressable
+            style={[styles.btn, styles.btnPrimary]}
+            onPress={() => {
+              click();
+              onExit();
+            }}
+          >
             <Text style={styles.btnText}>{exitLabel ?? "Exit"}</Text>
           </Pressable>
         </View>
