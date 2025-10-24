@@ -80,8 +80,10 @@ const HowToPlay = ({ modalVisible, onClose }: Props) => {
               />
               <FlatList
                 data={[
-                  { key: "You figure out the whole word (you win), or" },
-                  { key: "The stick figure is fully drawn (you lose)." },
+                  { key: "    i. You figure out the whole word (you win), or" },
+                  {
+                    key: "    ii. The stick figure is fully drawn (you lose).",
+                  },
                 ]}
                 renderItem={({ item }: { item: { key: string } }) => (
                   <View
@@ -91,7 +93,7 @@ const HowToPlay = ({ modalVisible, onClose }: Props) => {
                       marginBottom: 5,
                     }}
                   >
-                    <View style={styles.dot} />
+                    {/* <View style={styles.dot} /> */}
                     <Text style={styles.item2}>{item.key}</Text>
                   </View>
                 )}
