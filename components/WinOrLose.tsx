@@ -80,7 +80,6 @@ const WinOrLose = ({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    //backgroundColor: "rgba(0,0,0,0.2)",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -89,10 +88,11 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 10,
     boxShadow: "2px 4px 8px rgba(0, 0, 0, 0.5)",
+    width: "100%",
+    maxWidth: 400,
+    maxHeight: "80%",
     position: "absolute",
     bottom: "0%",
-    width: "100%",
-    height: "40%",
   },
   text: {
     textAlign: "center",
