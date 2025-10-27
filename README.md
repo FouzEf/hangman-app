@@ -6,7 +6,6 @@ A playful, animated Hangman game built with React Native and Expo Router. Design
 
 ## 📚 Table of Contents
 
-```bash
 - [🚀 Features](#-features)
 - [🛠️ Tech Stack](#️-tech-stack)
 - [📦 Installation](#-installation)
@@ -22,7 +21,6 @@ A playful, animated Hangman game built with React Native and Expo Router. Design
 - [📝 License](#-license)
 - [🙌 Acknowledgments](#-acknowledgments)
 - [✨ Author](#-author)
-```
 
 ---
 
