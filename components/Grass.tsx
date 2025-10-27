@@ -242,8 +242,7 @@ const styles = StyleSheet.create({
     height: 80,
     resizeMode: "contain",
     position: "absolute",
-    // top: -290,
-    top: -140, // Reduced from -290
+    top: -250,
     left: "40%",
     zIndex: 0,
   },
@@ -251,17 +250,15 @@ const styles = StyleSheet.create({
     height: 140,
     resizeMode: "contain",
     position: "absolute",
-    // top: -290,
-    top: -140, // Reduced from -290
-    left: "35%",
+    top: -250,
+    left: "34%",
   },
   imageStage3: {
     height: 160,
     resizeMode: "contain",
     position: "absolute",
-    // top: -290,
-    top: -140, // Reduced from -290
-    left: "35%",
+    top: -250,
+    left: "34%",
   },
 });
 
