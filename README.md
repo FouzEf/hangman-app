@@ -4,6 +4,28 @@ A playful, animated Hangman game built with React Native and Expo Router. Design
 
 ---
 
+## 📚 Table of Contents
+
+```bash
+- [🚀 Features](#-features)
+- [🛠️ Tech Stack](#️-tech-stack)
+- [📦 Installation](#-installation)
+- [📁 Project Structure](#-project-structure)
+- [📸 Screenshots](#-screenshots)
+- [📱 Download the App](#-download-the-app)
+- [🎬 Demo](#-demo)
+- [🧩 Want to Contribute?](#-want-to-contribute)
+- [🔐 Environment Setup](#-environment-setup)
+- [🧪 Testing](#-testing)
+- [📱 Supported Platforms](#-supported-platforms)
+- [🧩 Customization](#-customization)
+- [📝 License](#-license)
+- [🙌 Acknowledgments](#-acknowledgments)
+- [✨ Author](#-author)
+```
+
+---
+
 ## 🚀 Features
 
 ```bash
@@ -35,7 +57,7 @@ A playful, animated Hangman game built with React Native and Expo Router. Design
 
 ```bash
 
-git clone https://github.com/your-username/hangman-app.git
+git clone https://github.com/FouzEf/hangman-app/tree/main
 cd hangman-app
 npm install
 npx expo start
