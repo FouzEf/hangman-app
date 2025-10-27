@@ -60,7 +60,7 @@ hangman-app/
 
 ## 📸 Screenshots
 
-```bash
+<!-- ```bash
 
 !Home
 !Level
@@ -69,16 +69,14 @@ hangman-app/
 !Wrong Word
 !Win Level
 
-```
+``` -->
 
-![Home](assets/images/screenshots/Home.png)
-![Level](assets/images/screenshots/Level.png)
-![Game Screen](assets/images/screenshots/GameScreen.png)
-![Correct Word](assets/images/screenshots/WinScreen.png)
-![Wrong Word](assets/images/screenshots/LostScreen.png)
-![Win Level](assets/images/screenshots/WinPage.png)
-
----
+![Home](assets/images/screenShots/Home.png)
+![Level](assets/images/screenShots/Level.png)
+![Game Screen](assets/images/screenShots/GameScreen.png)
+![Correct Word](assets/images/screenShots/WinScreen.png)
+![Wrong Word](assets/images/screenShots/LostScreen.png)
+![Win Level](assets/images/screenShots/WinPage.png)
 
 ---
 
