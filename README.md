@@ -60,23 +60,23 @@ hangman-app/
 
 ## 📸 Screenshots
 
-<!-- ```bash
+<h3>🏠 Home Screen</h3>
+<img src="assets/images/screenShots/Home.png" alt="Home Screen" width="300" />
 
-!Home
-!Level
-!Game Screen
-!Correct Word
-!Wrong Word
-!Win Level
+<h3>🎯 Level Selection</h3>
+<img src="assets/images/screenShots/Level.png" alt="Level Selection" width="300" />
 
-``` -->
+<h3>🕹️ Game Screen</h3>
+<img src="assets/images/screenShots/GamePage.png" alt="Game Screen" width="300" />
 
-![Home](assets/images/screenShots/Home.png)
-![Level](assets/images/screenShots/Level.png)
-![Game Screen](assets/images/screenShots/GameScreen.png)
-![Correct Word](assets/images/screenShots/WinScreen.png)
-![Wrong Word](assets/images/screenShots/LostScreen.png)
-![Win Level](assets/images/screenShots/WinPage.png)
+<h3>✅ Correct Word</h3>
+<img src="assets/images/screenShots/WinScreen.png" alt="Correct Word" width="300" />
+
+<h3>❌ Wrong Word</h3>
+<img src="assets/images/screenShots/LostScreen.png" alt="Wrong Word" width="300" />
+
+<h3>🏆 Win Level</h3>
+<img src="assets/images/screenShots/WinPage.png" alt="Win Level" width="300" />
 
 ---
 
