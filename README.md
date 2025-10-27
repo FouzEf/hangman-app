@@ -62,11 +62,12 @@ hangman-app/
 
 ```bash
 
-![Home](assets/images/screenshots/Home.png)
-![Level](assets/images/screenshots/Level.png)
-![Correct Word](assets/images/screenshots/WinScreen.png)
-![Wrong Word](assets/images/screenshots/LostScreen.png)
-![Win Level](assets/images/screenshots/WinPage.png)
+![Home](@assets/images/screenshots/Home.png)
+![Level](@assets/images/screenshots/Level.png)
+![Game Screen](@assets/images/screenshots/GameScreen.png)
+![Correct Word](@assets/images/screenshots/WinScreen.png)
+![Wrong Word](@assets/images/screenshots/LostScreen.png)
+![Win Level](@assets/images/screenshots/WinPage.png)
 
 ```
 
