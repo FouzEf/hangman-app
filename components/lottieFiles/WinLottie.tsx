@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
   wincupcontainer: {
     backgroundColor: "transparent",
     position: "absolute",
-    top: "10%",
+    top: "0%",
   },
   wincupanimation: {
     width: 300,

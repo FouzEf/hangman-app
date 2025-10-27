@@ -21,6 +21,7 @@ import { fetchWordsOnce } from "../../FIreStore";
 import useClickSound from "@/audio/useClickSound";
 import Level from "@/components/Level";
 import { addSolvedWord, getSolvedWords } from "@/utils/storage";
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 type Level = "Easy" | "medium" | "hard";
 const MAX_ERRORS = 6;
 
@@ -60,24 +61,30 @@ const GamePage = () => {
       const fetched = await fetchWordsOnce(selectedLevel);
       const solved = await getSolvedWords();
       const unsolved = fetched.filter((w) => !solved.includes(w));
-      console.log(solved);
+      console.log(fetched, solved);
       console.log(
         fetched.every((word) => solved.includes(word)),
         "test"
       );
+
       if (fetched.every((word) => solved.includes(word))) {
-        navigate.push("/winPage");
+        // ✅ CRITICAL FIX: Wrap navigation in setTimeout(0)
+        setTimeout(() => {
+          navigate.push("/winPage");
+        }, 0);
+        return;
       }
+
       if (!active) return;
       setWords(unsolved);
       setCurrentIndex(0);
-      setRoundKey((k) => k + 1); // new round, remount children
+      setRoundKey((k) => k + 1);
     })();
 
     return () => {
       active = false;
     };
-  }, [selectedLevel, navigate]);
+  }, [selectedLevel, navigate]); // Dependencies are correct
 
   // Initialize/reset per-round state when the current WORD changes
   useEffect(() => {
