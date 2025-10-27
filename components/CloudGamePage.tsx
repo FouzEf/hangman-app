@@ -57,10 +57,10 @@ const CloudGamePage = () => {
 const Style = StyleSheet.create({
   sun: {
     position: "absolute",
-    top: -250,
-    left: "30%",
+    top: -150,
+    left: "50%",
     height: "100%",
-    width: "80%",
+    width: 150,
     resizeMode: "contain",
   },
   cloud1: {
@@ -68,15 +68,15 @@ const Style = StyleSheet.create({
     height: "100%",
     width: "20%",
     right: "10%",
-    top: -180,
+    top: -80,
     resizeMode: "contain",
   },
   cloud2: {
     position: "absolute",
     height: "100%",
-    width: "30%",
+    width: "20%",
     left: "10%",
-    top: -200,
+    top: -120,
     resizeMode: "contain",
   },
   cloud3: {
@@ -84,14 +84,15 @@ const Style = StyleSheet.create({
     height: "100%",
     width: "32%",
     left: "40%",
-    top: -150,
+    top: -60,
     resizeMode: "contain",
   },
   container: {
     position: "relative",
     width: "100%",
-    height: 100,
-    marginTop: "-30%",
+    height: 250, // ✅ Increased height to give the clouds more room
+    marginTop: 0, // ✅ REMOVED: "-30%", which was pushing content off-screen
+    // marginBottom: 20, // Added a small margin to separate from other elements
   },
 });
 

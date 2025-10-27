@@ -219,28 +219,31 @@ const styles = StyleSheet.create({
     height: 80,
     resizeMode: "contain",
     position: "absolute",
-    top: -130,
+    // top: -130,
+    top: -100, // Reduced from -130
   },
   line: {
     height: 1,
     width: "100%",
     backgroundColor: "black",
     position: "absolute",
-    top: -50,
+    top: -20,
   },
   gallow: {
     width: "100%",
     height: 250,
     resizeMode: "contain",
     position: "absolute",
-    top: -300,
+    // top: -300,
+    top: -270, // Heavily reduced from -300
     zIndex: 10,
   },
   image: {
     height: 80,
     resizeMode: "contain",
     position: "absolute",
-    top: -290,
+    // top: -290,
+    top: -140, // Reduced from -290
     left: "40%",
     zIndex: 0,
   },
@@ -248,14 +251,16 @@ const styles = StyleSheet.create({
     height: 140,
     resizeMode: "contain",
     position: "absolute",
-    top: -290,
+    // top: -290,
+    top: -140, // Reduced from -290
     left: "35%",
   },
   imageStage3: {
     height: 160,
     resizeMode: "contain",
     position: "absolute",
-    top: -290,
+    // top: -290,
+    top: -140, // Reduced from -290
     left: "35%",
   },
 });

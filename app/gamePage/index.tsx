@@ -1,16 +1,20 @@
-import BirdLottie from "@/components/BirdLottie";
 import CloudGamePage from "@/components/CloudGamePage";
 import Grass from "@/components/Grass";
 import Input from "@/components/Input";
-import LottieLeaves, { LottieLeavesTwo } from "@/components/LottieLeaves";
-import WindMillLottie, { WindMillLottieTwo } from "@/components/WindMillLottie";
+import BirdLottie from "@/components/lottieFiles/BirdLottie";
+import LottieLeaves, {
+  LottieLeavesTwo,
+} from "@/components/lottieFiles/LottieLeaves";
+import WindMillLottie, {
+  WindMillLottieTwo,
+} from "@/components/lottieFiles/WindMillLottie";
 import WinOrLose from "@/components/WinOrLose";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import HeadphoneButton from "../../audio/HeadphoneButton";
 
 import React, { useEffect, useMemo, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { fetchWordsOnce } from "../../FIreStore";
 
 // storage utilities
@@ -170,29 +174,33 @@ const GamePage = () => {
       >
         {selectedLevel}
       </Text>
-      <View style={Style.container}>
-        <CloudGamePage />
-        <View style={{ position: "absolute", top: 40, right: 30, zIndex: 50 }}>
-          <HeadphoneButton />
-        </View>
+      <ScrollView contentContainerStyle={Style.scrollContent}>
+        <View style={Style.gameSceneContainer}>
+          <CloudGamePage />
+          <View
+            style={{ position: "absolute", top: 40, right: 30, zIndex: 50 }}
+          >
+            <HeadphoneButton />
+          </View>
 
-        <WindMillLottie />
-        <WindMillLottieTwo />
-        <BirdLottie />
-        <LottieLeaves />
-        <LottieLeavesTwo />
+          <WindMillLottie />
+          <WindMillLottieTwo />
+          <BirdLottie />
+          <LottieLeaves />
+          <LottieLeavesTwo />
 
-        {isLoading && (
-          <Text style={{ position: "absolute", top: 60 }}>Loading...</Text>
-        )}
+          {isLoading && (
+            <Text style={{ position: "absolute", top: 60 }}>Loading...</Text>
+          )}
 
-        {/* key forces a remount per round so any internal state is cleared */}
-        <Grass key={`grass-${roundKey}`} wrongGuesses={wrongGuesses} />
+          {/* key forces a remount per round so any internal state is cleared */}
+          <Grass key={`grass-${roundKey}`} wrongGuesses={wrongGuesses} />
 
-        {/* 
+          {/* 
           Important: Input must update state immutably. 
           We also give it a changing key so it fully resets when the round changes.
         */}
+        </View>
         <Input
           key={`input-${roundKey}`} // Before: same component instance kept old internal state; Now: remount per round
           wrongGuesses={wrongGuesses}
@@ -212,7 +220,7 @@ const GamePage = () => {
             continueOrRetry={continueOrRetry}
           />
         )}
-      </View>
+      </ScrollView>
     </LinearGradient>
   );
 };
@@ -220,9 +228,15 @@ const GamePage = () => {
 const Style = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
     position: "relative",
+    width: "100%",
+  },
+  scrollContent: {
+    justifyContent: "space-between",
+    paddingTop: 70,
+  },
+
+  gameSceneContainer: {
     width: "100%",
   },
   Level: {
@@ -238,10 +252,11 @@ const Style = StyleSheet.create({
     width: 50,
     marginHorizontal: "auto",
     boxShadow: "2px 2px 4px rgba(0,0,0,0.4)",
-    position: "absolute",
-    top: "9%",
-    right: "6%",
     textTransform: "lowercase",
+    position: "absolute",
+    top: "5%",
+    right: "6%",
+    zIndex: 50,
   },
 });
 

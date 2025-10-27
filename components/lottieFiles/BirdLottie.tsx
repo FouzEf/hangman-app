@@ -22,11 +22,11 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: "transparent",
     position: "absolute",
-    top: "-20%",
+    top: "-10%",
   },
   animation: {
-    width: 500,
-    height: 500,
+    width: 300,
+    height: 300,
     backgroundColor: "transparent", // ensures animation view is transparent
   },
 });

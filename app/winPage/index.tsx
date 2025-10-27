@@ -1,7 +1,7 @@
 import { soundManager } from "@/audio/SoundManager";
 import useClickSound from "@/audio/useClickSound";
+import WinLottie, { WinCup } from "@/components/lottieFiles/WinLottie";
 import { getSolvedWords } from "@/utils/storage";
-import WinLottie, { WinCup } from "@components/WinLottie";
 import { Nunito_800ExtraBold, useFonts } from "@expo-google-fonts/nunito";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient } from "expo-linear-gradient";
