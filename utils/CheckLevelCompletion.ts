@@ -10,7 +10,7 @@ import { DB } from "../fireBaseConfig";
  * @returns A Promise resolving to the word list for that level
  */
 export const fetchWordsOnce = async (
-  level: "Easy" | "medium" | "hard"
+  level: "Easy" | "medium" | "hard" | "Test"
 ): Promise<string[]> => {
   const cacheKey = `words_${level}`;
 

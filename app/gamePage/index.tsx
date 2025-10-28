@@ -20,33 +20,29 @@ import { fetchWordsOnce } from "../../FIreStore";
 // storage utilities
 import useClickSound from "@/audio/useClickSound";
 import Level from "@/components/Level";
-import { addSolvedWord, getSolvedWords } from "@/utils/storage";
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-type Level = "Easy" | "medium" | "hard";
+import { addSolvedWord } from "@/utils/storage";
+
+// --- ADDED: local short word list for testing
+const TEST_WORDS = ["apple", "banana", "grape"];
+
+// --- CHANGED: include "Test" in the level type
+type Level = "Easy" | "medium" | "hard" | "Test";
+
 const MAX_ERRORS = 6;
 
 const GamePage = () => {
   const params = useLocalSearchParams();
   const selectedLevel = params.selectedLevel as Level;
   const navigate = useRouter();
+  console.log(selectedLevel, "selectedLevel", params);
 
-  // all remaining unsolved words for selected level
   const [words, setWords] = useState<string[]>([]);
-
-  // Which word in `words` we are on
-  // Before: always used words[0], making it hard to advance
-  // Now: we track index to step through words and also handle removal
   const [currentIndex, setCurrentIndex] = useState(0);
-
-  // Forces Input/Grass to remount and clear their internal state when the round changes
-  // Before: some components could keep stale internal state between words
-  // Now: bumping roundKey ensures a clean slate for each round
   const [roundKey, setRoundKey] = useState(0);
 
   const WORD = words[currentIndex] ?? "";
   const letters = useMemo(() => (WORD ? WORD.split("") : []), [WORD]);
 
-  // Wrong guesses and visible progress for this round
   const [wrongGuesses, setWrongGuesses] = useState<string[]>([]);
   const [solvedWord, setSolvedWord] = useState<string[]>([]);
 
@@ -84,12 +80,10 @@ const GamePage = () => {
     return () => {
       active = false;
     };
-  }, [selectedLevel, navigate]); // Dependencies are correct
+  }, [selectedLevel, navigate]);
 
   // Initialize/reset per-round state when the current WORD changes
   useEffect(() => {
-    // Before: solvedWord was created before WORD existed, causing early “win”
-    // Now: only initialize for a real word; also hide modal on fresh round
     if (!WORD) {
       setSolvedWord([]);
       setWrongGuesses([]);
@@ -104,54 +98,45 @@ const GamePage = () => {
   const isWin = WORD ? solvedWord.join("") === WORD : false;
   const isLose = wrongGuesses.length >= MAX_ERRORS;
 
-  // show modal after the state actually reflects a win or loss
   useEffect(() => {
     if (!WORD) return;
     if (isWin || isLose) setModalVisible(true);
   }, [isWin, isLose, WORD]);
 
-  // navigate home helper
   const toHome = () => {
     playSound();
     setModalVisible(false);
     navigate.push("./");
   };
 
-  // Continue after win or retry after loss
   const continueOrRetry = async () => {
     playSound();
     setModalVisible(false);
 
     if (isWin) {
-      // Save solved word and remove it from the list right away
-      // Before: advanced index without removing, which could point to the same word again
-      // Now: remove the solved word from `words` and compute a safe next index
-      await addSolvedWord(WORD);
+      // --- CHANGED: don’t pollute storage for Test level
+      if (selectedLevel !== "Test") {
+        await addSolvedWord(WORD);
+      }
 
-      setWords((prev) => {
-        const nextWords = prev.filter((_, i) => i !== currentIndex);
-        // If we removed the last item, next index should move back one (but not below 0)
-        const nextIndex =
-          nextWords.length === 0
-            ? -1
-            : Math.min(currentIndex, nextWords.length - 1);
+      const nextWords = words.filter((_, i) => i !== currentIndex);
+      const nextIndex =
+        nextWords.length === 0
+          ? -1
+          : Math.min(currentIndex, nextWords.length - 1);
 
-        // Update index and bump roundKey in the same tick
-        if (nextIndex >= 0) {
-          setCurrentIndex(nextIndex);
-          setRoundKey((k) => k + 1); // force Input/Grass to remount cleanly
-        } else {
-          // No words left; go home or show a level complete screen
-          navigate.push("./");
-        }
+      setWords(nextWords);
 
-        return nextWords;
-      });
+      if (nextIndex >= 0) {
+        setCurrentIndex(nextIndex);
+        setRoundKey((k) => k + 1);
+      } else {
+        navigate.push({ pathname: "/winPage", params: { selectedLevel } });
+      }
     } else {
-      // Retry same word: reset guesses and progress, and remount Input/Grass
       setWrongGuesses([]);
       setSolvedWord(Array(WORD.length).fill(""));
-      setRoundKey((k) => k + 1); // ensures Input drops any internal state
+      setRoundKey((k) => k + 1);
     }
   };
 
@@ -168,6 +153,7 @@ const GamePage = () => {
         style={[
           Style.Level,
           {
+            // --- CHANGED: purple tag for Test level
             backgroundColor:
               selectedLevel === "Easy"
                 ? "#4CAF50"
@@ -175,6 +161,8 @@ const GamePage = () => {
                 ? "#FFC107"
                 : selectedLevel === "hard"
                 ? "#F44336"
+                : selectedLevel === "Test"
+                ? "#9C27B0"
                 : "#ccc",
           },
         ]}
@@ -202,14 +190,10 @@ const GamePage = () => {
 
           {/* key forces a remount per round so any internal state is cleared */}
           <Grass key={`grass-${roundKey}`} wrongGuesses={wrongGuesses} />
-
-          {/* 
-          Important: Input must update state immutably. 
-          We also give it a changing key so it fully resets when the round changes.
-        */}
         </View>
+
         <Input
-          key={`input-${roundKey}`} // Before: same component instance kept old internal state; Now: remount per round
+          key={`input-${roundKey}`}
           wrongGuesses={wrongGuesses}
           setWrongGuesses={setWrongGuesses}
           WORD={WORD}
@@ -218,7 +202,6 @@ const GamePage = () => {
           setSolvedWord={setSolvedWord}
         />
 
-        {/* Single controlled modal instead of inline win/lose checks in JSX */}
         {modalVisible && (
           <WinOrLose
             modalVisible={modalVisible}

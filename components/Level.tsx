@@ -41,11 +41,19 @@ const Level = ({
   if (!fontsLoaded) {
     return null;
   }
-
-  const handleLevel = async (level: any) => {
+  const handleLevel = async (level: "Easy" | "medium" | "hard" | "Test") => {
     playSound();
     setLevelValue(level);
     setLevelVisible(false);
+
+    // --- CHANGED: skip Firebase + solved check for Test level
+    if (level === "Test") {
+      navigate.push({
+        pathname: "/gamePage",
+        params: { selectedLevel: level },
+      });
+      return;
+    }
 
     const fetched = await fetchWordsOnce(level);
     const solved = await getSolvedWords();
@@ -105,6 +113,19 @@ const Level = ({
             >
               <Text style={style.text}>Hard</Text>
             </Pressable>
+
+            {/* --- ADDED: Test level button (purple) */}
+            <Pressable
+              onPress={() => handleLevel("Test")}
+              style={({ hovered, pressed }) => [
+                style.button,
+                style.test,
+                hovered && style.hovered,
+                pressed && style.pressed,
+              ]}
+            >
+              <Text style={style.text}>Test</Text>
+            </Pressable>
           </View>
         </TouchableWithoutFeedback>
       </View>
@@ -119,18 +140,12 @@ const style = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  //modal: {
-  //backgroundColor: "white",
-  //margin: 20,
-  //position: "relative",
-  //},
   container: {
     backgroundColor: "white",
     marginHorizontal: 20,
-    height: 300,
+    height: 360, // slightly taller to fit the extra button
     width: 300,
     padding: 20,
-
     borderRadius: 10,
     boxShadow: "2px 4px 8px rgba(0, 0, 0, 0.5)",
     position: "absolute",
@@ -144,12 +159,11 @@ const style = StyleSheet.create({
     fontFamily: "Nunito_800ExtraBold",
     color: "#504e4eff",
   },
-  easy: {
-    backgroundColor: "#4CAF50",
-    marginTop: 30,
-  },
+  easy: { backgroundColor: "#4CAF50", marginTop: 30 },
   medium: { backgroundColor: "#FFC107" },
   hard: { backgroundColor: "#F44336" },
+  // --- ADDED
+  test: { backgroundColor: "#9C27B0" },
   button: {
     marginVertical: 10,
     paddingVertical: 5,
@@ -164,12 +178,8 @@ const style = StyleSheet.create({
     marginHorizontal: "auto",
     boxShadow: "2px 2px 4px rgba(0,0,0,0.4)",
   },
-  hovered: {
-    transform: [{ scale: 1.05 }],
-  },
-  pressed: {
-    opacity: 0.7,
-  },
+  hovered: { transform: [{ scale: 1.05 }] },
+  pressed: { opacity: 0.7 },
   text: {
     color: "#FFFFFF",
     fontSize: 18,

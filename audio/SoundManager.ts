@@ -105,7 +105,6 @@ class SoundManager {
     }
   }
 
-  // ---- bulk ops ------------------------------------------------------------
 
   async stopAll() {
     await Promise.all(
