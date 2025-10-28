@@ -13,13 +13,14 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import HeadphoneButton from "../../audio/HeadphoneButton";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { fetchWordsOnce } from "../../FIreStore";
 
 // storage utilities
 import useClickSound from "@/audio/useClickSound";
 // import Level from "@/components/Level";
+import { soundManager } from "@/audio/SoundManager";
 import { addSolvedWord, getSolvedWords } from "@/utils/storage";
 
 // --- CHANGED: include "Test" in the level type
@@ -45,6 +46,15 @@ const GamePage = () => {
 
   const [modalVisible, setModalVisible] = useState(false);
   const playSound = useClickSound();
+
+  //added wind ambience while in GamePage
+  useEffect(() => {
+    soundManager.playLooping("wind");
+    return () => {
+      soundManager.stop("wind");
+      soundManager.stop("rope");
+    };
+  }, []);
 
   useEffect(() => {
     if (!selectedLevel) return;
@@ -103,8 +113,20 @@ const GamePage = () => {
   const toHome = () => {
     playSound();
     setModalVisible(false);
+    //stop wind when leaving via home button
+    soundManager.stop("wind");
+    soundManager.stop("rope");
     navigate.push("./");
   };
+
+  // play rope when a wrong guess is added
+  const prevWrongLen = useRef(0);
+  useEffect(() => {
+    if (wrongGuesses.length > prevWrongLen.current) {
+      soundManager.play("rope");
+    }
+    prevWrongLen.current = wrongGuesses.length;
+  }, [wrongGuesses.length]);
 
   const continueOrRetry = async () => {
     playSound();
@@ -128,6 +150,9 @@ const GamePage = () => {
         setCurrentIndex(nextIndex);
         setRoundKey((k) => k + 1);
       } else {
+        //stop wind as we leave to win page
+        soundManager.stop("wind");
+        soundManager.stop("rope");
         navigate.push({ pathname: "/winPage", params: { selectedLevel } });
       }
     } else {

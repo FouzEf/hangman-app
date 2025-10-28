@@ -5,7 +5,9 @@ export type SoundKey =
   | "selectButton"
   | "singleTap"
   | "winLevel"
-  | "winPage";
+  | "winPage"
+  | "wind"
+  | "rope";
 
 const soundFiles: Record<SoundKey, number> = {
   failLevel: require("../assets/sounds/failLevel.mp3"),
@@ -13,6 +15,8 @@ const soundFiles: Record<SoundKey, number> = {
   singleTap: require("../assets/sounds/singleTap.wav"),
   winLevel: require("../assets/sounds/winLevel.mp3"),
   winPage: require("../assets/sounds/winPage.mp3"),
+  wind: require("../assets/sounds/wind.mp3"),
+  rope: require("../assets/sounds/rope.mp3"),
 };
 
 class SoundManager {
@@ -104,7 +108,6 @@ class SoundManager {
       // ignore if not playing
     }
   }
-
 
   async stopAll() {
     await Promise.all(
