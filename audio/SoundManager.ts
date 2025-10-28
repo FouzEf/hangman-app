@@ -32,7 +32,7 @@ class SoundManager {
   async setMuted(muted: boolean) {
     this._muted = muted;
     if (muted) {
-      await this.stopAll();
+      //await this.stopAll();
       await this.setVolumeForAll(0);
     } else {
       await this.setVolumeForAll(1);
