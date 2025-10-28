@@ -47,13 +47,13 @@ const Level = ({
     setLevelVisible(false);
 
     // --- CHANGED: skip Firebase + solved check for Test level
-    if (level === "Test") {
-      navigate.push({
-        pathname: "/gamePage",
-        params: { selectedLevel: level },
-      });
-      return;
-    }
+    //if (level === "Test") {
+    //navigate.push({
+    //pathname: "/gamePage",
+    //params: { selectedLevel: level },
+    //});
+    //return;
+    //}
 
     const fetched = await fetchWordsOnce(level);
     const solved = await getSolvedWords();
