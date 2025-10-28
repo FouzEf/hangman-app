@@ -19,20 +19,17 @@ import { fetchWordsOnce } from "../../FIreStore";
 
 // storage utilities
 import useClickSound from "@/audio/useClickSound";
-import Level from "@/components/Level";
-import { addSolvedWord } from "@/utils/storage";
-
-// --- ADDED: local short word list for testing
-const TEST_WORDS = ["apple", "banana", "grape"];
+// import Level from "@/components/Level";
+import { addSolvedWord, getSolvedWords } from "@/utils/storage";
 
 // --- CHANGED: include "Test" in the level type
-type Level = "Easy" | "medium" | "hard" | "Test";
+type level = "Easy" | "medium" | "hard" | "Test";
 
 const MAX_ERRORS = 6;
 
 const GamePage = () => {
   const params = useLocalSearchParams();
-  const selectedLevel = params.selectedLevel as Level;
+  const selectedLevel = params.selectedLevel as level;
   const navigate = useRouter();
   console.log(selectedLevel, "selectedLevel", params);
 

@@ -2,13 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { collection, getDocs } from "firebase/firestore";
 import { DB } from "../fireBaseConfig";
 
-/**
- * Fetches words for a given level from Firestore, with smart caching.
- * If Firestore has more words than the cached version, the cache is updated.
- *
- * @param level - The difficulty level ("Easy", "medium", or "hard")
- * @returns A Promise resolving to the word list for that level
- */
+
 export const fetchWordsOnce = async (
   level: "Easy" | "medium" | "hard" | "Test"
 ): Promise<string[]> => {
