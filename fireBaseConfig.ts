@@ -1,13 +1,21 @@
+import {
+  FIREBASE_API_KEY,
+  FIREBASE_APP_ID,
+  FIREBASE_AUTH_DOMAIN,
+  FIREBASE_MESSAGING_SENDER_ID,
+  FIREBASE_PROJECT_ID,
+  FIREBASE_STORAGE_BUCKET,
+} from "@env";
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyB7DwxNsCZak5Tt2M5rufSb2RgjdtXgpXQ",
-  authDomain: "hangman-aeeb2.firebaseapp.com",
-  projectId: "hangman-aeeb2",
-  storageBucket: "hangman-aeeb2.firebasestorage.app",
-  messagingSenderId: "444019570817",
-  appId: "1:444019570817:android:95b9121fd9dddc9695b580",
+  apiKey: FIREBASE_API_KEY,
+  authDomain: FIREBASE_AUTH_DOMAIN,
+  projectId: FIREBASE_PROJECT_ID,
+  storageBucket: FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: FIREBASE_MESSAGING_SENDER_ID,
+  appId: FIREBASE_APP_ID,
 };
 
 const app = initializeApp(firebaseConfig);
