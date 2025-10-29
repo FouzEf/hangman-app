@@ -195,7 +195,7 @@ const GamePage = () => {
         <View style={Style.gameSceneContainer}>
           <CloudGamePage />
           <View
-            style={{ position: "absolute", top: 40, right: 30, zIndex: 50 }}
+            style={{ position: "absolute", top: 10, right: 20, zIndex: 50 }}
           >
             <HeadphoneButton />
           </View>

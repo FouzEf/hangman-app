@@ -129,7 +129,7 @@ const Style = StyleSheet.create({
     textShadowRadius: 10,
     fontSize: 25,
     fontWeight: "bold",
-    marginTop: 80,
+    marginTop: 120,
   },
   secondaryText: {
     fontFamily: "Nunito_800ExtraBold",
