@@ -21,6 +21,7 @@
     ".expo/types/**/*.ts",
     "expo-env.d.ts",
     "src",
-    "src/images.d.ts"
+    "src/images.d.ts",
+    "src/env.d.ts"
   ]
 }
