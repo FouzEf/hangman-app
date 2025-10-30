@@ -51,25 +51,32 @@
     "react-native-worklets": "0.5.1"
   },
   "devDependencies": {
+    "@babel/core": "^7.28.5",
     "@testing-library/jest-native": "^5.4.3",
     "@testing-library/react-native": "^13.3.3",
+    "@types/jest": "^30.0.0",
     "@types/react": "~19.1.0",
     "@types/react-native": "^0.72.8",
+    "babel-jest": "^30.2.0",
     "babel-plugin-module-resolver": "^5.0.2",
     "eslint": "^9.25.0",
     "eslint-config-expo": "~10.0.0",
     "jest": "^30.2.0",
+    "jest-expo": "^54.0.13",
     "prettier": "^3.6.2",
     "typescript": "~5.9.2"
   },
   "private": true,
   "jest": {
-    "preset": "react-native",
+    "preset": "jest-expo",
+    "transform": {
+      "^.+\\.(js|jsx|ts|tsx|mjs)$": "babel-jest"
+    },
+    "transformIgnorePatterns": [
+      "node_modules/(?!(expo|expo-modules-core|firebase|@firebase|@react-native|react-native|@react-native-firebase)/)"
+    ],
     "setupFilesAfterEnv": [
       "./jest/setup.js"
-    ],
-    "transformIgnorePatterns": [
-      "node_modules/(?!(@react-native|react-native|@react-native-firebase)/)"
     ]
   }
 }

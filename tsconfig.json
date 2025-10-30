@@ -12,7 +12,8 @@
     "paths": {
       "@/*": ["./*"],
       "@assets/*": ["assets/*"],
-      "@components/*": ["components/*"]
+      "@components/*": ["components/*"],
+      "types": ["jest", "node"]
     }
   },
   "include": [

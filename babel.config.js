@@ -9,19 +9,8 @@ module.exports = {
           "@assets": "./assets",
           "@components": "./components",
         },
-        extensions: [".js", ".jsx", ".ts", ".tsx", ".png"],
+        extensions: [".js", ".jsx", ".ts", ".tsx", ".png", ".mjs"],
       },
     ],
-    // [
-    //  "module:react-native-dotenv",
-    //  {
-    //   moduleName: "@env",
-    //    path: ".env",
-    //    blocklist: null,
-    //   allowlist: null,
-    //   safe: false,
-    //    allowUndefined: true,
-    //  },
-    //  ],
   ],
 };
