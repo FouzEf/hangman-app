@@ -39,8 +39,8 @@
     "i": "^0.3.7",
     "lottie-react-native": "~7.3.1",
     "npm": "^11.6.1",
-    "react": "^19.2.0",
-    "react-dom": "19.1.0",
+    "react": "19.1.1",
+    "react-dom": "19.1.1",
     "react-native": "^0.82.1",
     "react-native-gesture-handler": "~2.28.0",
     "react-native-reanimated": "~4.1.1",
@@ -64,19 +64,29 @@
     "jest": "^30.2.0",
     "jest-expo": "^54.0.13",
     "prettier": "^3.6.2",
+    "react-test-renderer": "19.1.1",
     "typescript": "~5.9.2"
   },
+  "resolutions": {
+  "react": "19.1.1",
+  "react-test-renderer": "19.1.1"
+},
   "private": true,
-  "jest": {
-    "preset": "jest-expo",
-    "transform": {
-      "^.+\\.(js|jsx|ts|tsx|mjs)$": "babel-jest"
-    },
-    "transformIgnorePatterns": [
-      "node_modules/(?!(expo|expo-modules-core|firebase|@firebase|@react-native|react-native|@react-native-firebase)/)"
-    ],
-    "setupFilesAfterEnv": [
-      "./jest/setup.js"
-    ]
-  }
+"jest": {
+  "preset": "jest-expo",
+  "transform": {
+    "^.+\\.(js|jsx|ts|tsx|mjs)$": "babel-jest"
+  },
+ "transformIgnorePatterns": [
+  "node_modules/(?!(expo(-.*)?|expo-modules-core|@expo/.*|react-native|@react-native(-community)?/.*|@react-navigation/.*|@react-native-async-storage/async-storage|expo-router|firebase|@firebase)/)"
+],
+
+  "moduleNameMapper": {
+    "^@react-native-async-storage/async-storage$": "@react-native-async-storage/async-storage/jest/async-storage-mock",
+    "^@/(.*)$": "<rootDir>/$1"
+  },
+  "setupFilesAfterEnv": [
+    "./jest/setup.js"
+  ]
+}
 }
