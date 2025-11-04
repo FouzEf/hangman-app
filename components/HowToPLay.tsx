@@ -33,7 +33,7 @@ const HowToPlay = ({ modalVisible, onClose }: Props) => {
   return (
     <Modal transparent animationType="slide" visible={modalVisible}>
       <TouchableWithoutFeedback onPress={onClose}>
-        <View style={styles.overlay} testID="how-to-play-backdrop">
+        <View style={styles.overlay}>
           <TouchableWithoutFeedback>
             <View style={styles.container}>
               <Pressable onPress={onClose}>

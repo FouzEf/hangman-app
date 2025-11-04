@@ -7,25 +7,51 @@ import {
 import Index from "../app/index"; // The component under test
 import { fetchWordsOnce } from "../utils/CheckLevelCompletion";
 
+// ----------------------------------------------------------------------
+// 1. Global Mocks and Trackers
+// ----------------------------------------------------------------------
 const mockRouter = {
   push: jest.fn(),
   replace: jest.fn(),
   setParams: jest.fn(),
 };
 
-jest.mock("expo-router", () => ({
-  useRouter: () => mockRouter,
+// This is the sound function that the test will track.
+const mockPlaySound = jest.fn();
+
+// ----------------------------------------------------------------------
+// 2. Mocking Dependencies
+// ----------------------------------------------------------------------
+
+// 🔥 CRITICAL FIX: Explicitly mock LinearGradient as a named export.
+// This local mock ensures the component is defined before Index.tsx imports it.
+jest.mock("expo-linear-gradient", () => ({
+  LinearGradient: "LinearGradientMock",
 }));
 
-const mockPlaySound = jest.fn();
+// Mocking expo-router
+jest.mock("expo-router", () => ({
+  useRouter: () => mockRouter,
+  // ✅ FIX: Provide a mock for the Link component to prevent "invalid element" errors.
+  Link: (props: any) =>
+    require("react").createElement(
+      require("react-native").Text,
+      { ...props },
+      props.children
+    ),
+}));
+
+// Mocking the useClickSound hook to return our tracking function
 jest.mock("@/audio/useClickSound", () => () => mockPlaySound);
 
+// Mocking fonts
 jest.mock("@expo-google-fonts/nunito", () => ({
   useFonts: () => [true, null],
   Nunito_800ExtraBold: "Nunito_800ExtraBold",
   Nunito_400Regular: "Nunito_400Regular",
 }));
 
+// Mocking internal components/utilities
 jest.mock("../audio/HeadphoneButton", () => "HeadphoneButton");
 
 jest.mock("../utils/CheckLevelCompletion", () => ({
@@ -34,57 +60,61 @@ jest.mock("../utils/CheckLevelCompletion", () => ({
 
 jest.mock("@/components/Cloud", () => "Cloud");
 
+// Mocking HowToPLay component
 jest.mock("@/components/HowToPLay", () => {
   const React = require("react");
-  const { Modal, Text, View } = require("react-native");
-  return ({ modalVisible, onClose }: any) => {
-    if (!modalVisible) return null;
-    return (
-      <Modal visible={modalVisible} transparent>
-        <View>
-          <Text>How to Play?</Text>
-          <Text>How to play:</Text>
-          <Text>Your favourite all-time classic game.</Text>
-          <Text onPress={onClose}>Close</Text>
-        </View>
-      </Modal>
-    );
+  // ✅ FIX: Export as a named component to match its usage in the app.
+  return {
+    HowToPLay: ({ modalVisible, onClose }: any) => {
+      if (!modalVisible) return null;
+      return (
+        <React.Fragment>
+          {/* Render text content for querying */}
+          <React.Text testID="HowToPlay-Mock">
+            Your favourite all-time classic game.
+          </React.Text>
+          <React.Text onPress={onClose}>Close Button</React.Text>
+        </React.Fragment>
+      );
+    },
   };
 });
 
+// Mocking Level component
 jest.mock("@/components/Level", () => {
   const React = require("react");
-  const { Text, Pressable, View } = require("react-native");
-
-  const mockedFetchWordsOnce =
-    require("../utils/CheckLevelCompletion").fetchWordsOnce;
-
-  return ({ setLevelVisible, setLevelValue, levelVisible }: any) => {
-    if (!levelVisible) return null;
-    const handleLevel = async (level: string) => {
-      mockPlaySound();
-      setLevelValue(level);
-      setLevelVisible(false);
-      await mockedFetchWordsOnce(level);
-      mockRouter.push({
-        pathname: "/gamePage",
-        params: { selectedLevel: level },
-      });
-    };
-
-    return (
-      <View testID="level-modal">
-        <Pressable onPress={() => handleLevel("Easy")}>
-          <Text>Start Game Easy</Text>
-        </Pressable>
-        <Pressable onPress={() => handleLevel("hard")}>
-          <Text>Start Game Hard</Text>
-        </Pressable>
-      </View>
-    );
+  // ✅ FIX: Export as a named component to match its usage in the app.
+  return {
+    Level: ({ levelVisible, setLevelValue, setLevelVisible }: any) => {
+      if (!levelVisible) return null;
+      return (
+        <React.Fragment>
+          <React.Text>Select Level</React.Text>
+          <React.Text
+            onPress={() => {
+              setLevelValue("Easy");
+              setLevelVisible(false);
+            }}
+          >
+            Start Game Easy
+          </React.Text>
+          <React.Text
+            onPress={() => {
+              setLevelValue("hard");
+              setLevelVisible(false);
+            }}
+          >
+            Start Game Hard
+          </React.Text>
+        </React.Fragment>
+      );
+    },
   };
 });
 
+// ----------------------------------------------------------------------
+// 3. Test Suite
+// ----------------------------------------------------------------------
 describe("Home Screen (index.tsx) Navigation and Modals", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -124,9 +154,11 @@ describe("Home Screen (index.tsx) Navigation and Modals", () => {
     (fetchWordsOnce as jest.Mock).mockResolvedValue(["word1", "word2"]);
 
     const { getByText, findByText } = render(<Index />);
+    // Press 1: Start Game (Sound Call 1)
     fireEvent.press(getByText("Start Game"));
     expect(mockPlaySound).toHaveBeenCalledTimes(1);
 
+    // Press 2: Start Game Easy (Sound Call 2 - from the real Level component)
     const easyButton = await findByText("Start Game Easy");
     fireEvent.press(easyButton);
     expect(mockPlaySound).toHaveBeenCalledTimes(2);
@@ -146,9 +178,11 @@ describe("Home Screen (index.tsx) Navigation and Modals", () => {
     (fetchWordsOnce as jest.Mock).mockResolvedValue(["wordA", "wordB"]);
 
     const { getByText, findByText } = render(<Index />);
+    // Press 1: Start Game (Sound Call 1)
     fireEvent.press(getByText("Start Game"));
     expect(mockPlaySound).toHaveBeenCalledTimes(1);
 
+    // Press 2: Start Game Hard (Sound Call 2 - from the real Level component)
     const hardButton = await findByText("Start Game Hard");
     fireEvent.press(hardButton);
     expect(mockPlaySound).toHaveBeenCalledTimes(2);
