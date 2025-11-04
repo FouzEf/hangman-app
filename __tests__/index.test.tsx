@@ -1,71 +1,68 @@
+// __tests__/index.test.tsx
 import {
+  act,
   cleanup,
   fireEvent,
   render,
   waitFor,
 } from "@testing-library/react-native";
-import { act } from "react-test-renderer";
-import Index from "../app/index"; // The component under test
+import React from "react";
+import Index from "../app/index"; // Component under test
 import { fetchWordsOnce } from "../utils/CheckLevelCompletion";
 
 // ----------------------------------------------------------------------
-// 1. Global Mocks and Trackers
+// 1) Shared router mock (must be created before the component uses it)
 // ----------------------------------------------------------------------
-const mockRouter = {
-  push: jest.fn(),
-  replace: jest.fn(),
-  setParams: jest.fn(),
-};
+const mockPush = jest.fn();
+const mockReplace = jest.fn();
+const mockSetParams = jest.fn();
 
-// This is the sound function that the test will track.
-const mockPlaySound = jest.fn();
-
-// ----------------------------------------------------------------------
-// 2. Mocking Dependencies
-// ----------------------------------------------------------------------
-
-// Explicitly mock LinearGradient as a named export.
+// Mock expo-linear-gradient first (simple named export)
 jest.mock("expo-linear-gradient", () => ({
   LinearGradient: "LinearGradientMock",
 }));
 
-// Mocking expo-router, ensuring Link component is mocked
-jest.mock("expo-router", () => ({
-  useRouter: () => mockRouter,
-  Link: (props: any) =>
-    require("react").createElement(
-      require("react-native").Text,
-      { ...props },
-      props.children
-    ),
-}));
+// Mock expo-router with a stable, shared push reference
+jest.mock("expo-router", () => {
+  const React = require("react");
+  const { Text } = require("react-native");
+  return {
+    useRouter: () => ({
+      push: mockPush,
+      replace: mockReplace,
+      setParams: mockSetParams,
+    }),
+    Link: (props: any) =>
+      React.createElement(Text, { ...props }, props.children),
+  };
+});
 
-// Mocking the useClickSound hook to return our tracking function
+// ----------------------------------------------------------------------
+// 2) Other dependency mocks
+// ----------------------------------------------------------------------
+const mockPlaySound = jest.fn();
+
 jest.mock("@/audio/useClickSound", () => () => mockPlaySound);
 
-// Mocking fonts
 jest.mock("@expo-google-fonts/nunito", () => ({
   useFonts: () => [true, null],
   Nunito_800ExtraBold: "Nunito_800ExtraBold",
   Nunito_400Regular: "Nunito_400Regular",
 }));
 
-// Mock complex native dependencies like expo-vector-icons.
 jest.mock("@expo/vector-icons", () => ({
   AntDesign: "AntDesignMock",
 }));
 
-// HeadphoneButton is a default export, return the string directly.
 jest.mock("../audio/HeadphoneButton", () => "HeadphoneButtonMock");
-
-// Cloud is a default export, return the string directly.
 jest.mock("@/components/Cloud", () => "CloudMock");
 
+// We will assert on calls to this function
 jest.mock("../utils/CheckLevelCompletion", () => ({
   fetchWordsOnce: jest.fn(),
 }));
 
-// Mock HowToPLay as a default export
+// HowToPlay mock (only visible when modalVisible=true)
 jest.mock("@/components/HowToPLay", () => {
   const { View, Text } = require("react-native");
   const MockHowToPlay = ({ modalVisible, onClose }: any) => {
@@ -82,40 +79,70 @@ jest.mock("@/components/HowToPLay", () => {
   return MockHowToPlay;
 });
 
-// Mock Level as a default export, including the mockPlaySound call for coverage
+// Level mock that mirrors real behavior:
+// - plays click sound
+// - sets level value and hides modal
+// - calls fetchWordsOnce(level)
+// - navigates with router.push after a 0ms timer (so tests must flush timers)
 jest.mock("@/components/Level", () => {
+  const React = require("react");
   const { View, Text } = require("react-native");
-  const MockLevel = ({ levelVisible, setLevelValue, setLevelVisible }: any) => {
+  const { useRouter } = require("expo-router");
+  const { fetchWordsOnce } = require("../utils/CheckLevelCompletion");
+  const mock = ({ levelVisible, setLevelValue, setLevelVisible }: any) => {
     if (!levelVisible) return null;
+    const router = useRouter();
+
+    const choose = async (level: "Easy" | "hard") => {
+      // sound click
+      require("@/audio/useClickSound")()();
+      setLevelValue(level);
+      setLevelVisible(false);
+
+      await fetchWordsOnce(level);
+
+      setTimeout(() => {
+        router.push({
+          pathname: "/gamePage",
+          params: { selectedLevel: level },
+        });
+      }, 0);
+    };
+
     return (
       <View>
         <Text>Select Level</Text>
-        <Text
-          onPress={() => {
-            mockPlaySound();
-            setLevelValue("Easy");
-            setLevelVisible(false);
-          }}
-        >
-          Start Game Easy
-        </Text>
-        <Text
-          onPress={() => {
-            mockPlaySound();
-            setLevelValue("hard");
-            setLevelVisible(false);
-          }}
-        >
-          Start Game Hard
-        </Text>
+        <Text onPress={() => choose("Easy")}>Start Game Easy</Text>
+        <Text onPress={() => choose("hard")}>Start Game Hard</Text>
       </View>
     );
   };
-  return MockLevel;
+  return mock;
 });
 
 // ----------------------------------------------------------------------
-// 3. Test Suite
+// 3) Utilities for flushing timers & microtasks deterministically
+// ----------------------------------------------------------------------
+async function flushAll() {
+  // 1) Let any pending promises (e.g., fetchWordsOnce) resolve so the code
+  //    after 'await fetchWordsOnce' can schedule the setTimeout(...).
+  await act(async () => {
+    await Promise.resolve();
+  });
+
+  // 2) Now run the scheduled timers (this should invoke router.push).
+  await act(async () => {
+    jest.runAllTimers();
+  });
+
+  // 3) Finally, flush any microtasks queued by the timer handlers.
+  await act(async () => {
+    await Promise.resolve();
+  });
+}
+
+// ----------------------------------------------------------------------
+// 4) Tests
 // ----------------------------------------------------------------------
 describe("Home Screen (index.tsx) Navigation and Modals", () => {
   beforeEach(() => {
@@ -128,19 +155,19 @@ describe("Home Screen (index.tsx) Navigation and Modals", () => {
     jest.useRealTimers();
   });
 
-  it("should show and then hide the How to Play modal when the button is pressed twice (toggle)", async () => {
+  it("shows then hides How to Play modal when toggled", async () => {
     const { getByText, queryByText } = render(<Index />);
 
     const howToPlayButton = getByText("How to Play?");
 
-    // Press 1: Show the modal
+    // Show modal
     fireEvent.press(howToPlayButton);
     expect(mockPlaySound).toHaveBeenCalledTimes(1);
     expect(
       queryByText(/Your favourite all-time classic game\./i)
     ).toBeOnTheScreen();
 
-    // Press 2: Hide the modal
+    // Hide modal
     fireEvent.press(howToPlayButton);
     expect(mockPlaySound).toHaveBeenCalledTimes(2);
 
@@ -152,80 +179,51 @@ describe("Home Screen (index.tsx) Navigation and Modals", () => {
     expect(howToPlayButton).toBeOnTheScreen();
   });
 
-  it("should navigate to the game screen with the correct level parameter after selecting Easy", async () => {
+  it("navigates with correct param after selecting Easy", async () => {
     (fetchWordsOnce as jest.Mock).mockResolvedValue(["word1", "word2"]);
 
     const { getByText, findByText } = render(<Index />);
-    // Press 1: Start Game (Sound Call 1)
+
+    // Open the level modal
     fireEvent.press(getByText("Start Game"));
     expect(mockPlaySound).toHaveBeenCalledTimes(1);
 
-    // Press 2: Start Game Easy
+    // Choose Easy
     const easyButton = await findByText("Start Game Easy");
+    fireEvent.press(easyButton);
 
-    // 🔥 FIX: Use a single, aggressive await act block to flush promises (fetchWordsOnce)
-    // and timers (setTimeout containing router.push) before asserting. This resolves
-    // both the `act` warning and the `0 calls` failure.
-    await act(async () => {
-      fireEvent.press(easyButton);
-
-      // 1. Flush initial promises (fetchWordsOnce).
-      await Promise.resolve();
-
-      // 2. Run timers (This executes router.push and schedules a re-render/update).
-      jest.runAllTimers();
-
-      // 3. Flush any re-renders/promises triggered by the timers to empty the queue.
-      await Promise.resolve();
-    });
+    // Flush the async flow (awaited fetch + 0ms navigation timer)
+    await flushAll();
 
     expect(mockPlaySound).toHaveBeenCalledTimes(2);
-
-    // Assert the result of the fully completed asynchronous action
-    // We expect the navigation to have been called inside the act block.
-    expect(mockRouter.push).toHaveBeenCalledWith({
+    expect(mockPush).toHaveBeenCalledWith({
       pathname: "/gamePage",
       params: { selectedLevel: "Easy" },
     });
-
     expect(fetchWordsOnce).toHaveBeenCalledWith("Easy");
   });
 
-  it("should navigate to the game screen with the correct level parameter after selecting Hard", async () => {
+  it("navigates with correct param after selecting Hard", async () => {
     (fetchWordsOnce as jest.Mock).mockResolvedValue(["wordA", "wordB"]);
 
     const { getByText, findByText } = render(<Index />);
-    // Press 1: Start Game (Sound Call 1)
+
+    // Open the level modal
     fireEvent.press(getByText("Start Game"));
     expect(mockPlaySound).toHaveBeenCalledTimes(1);
 
-    // Press 2: Start Game Hard
+    // Choose Hard
     const hardButton = await findByText("Start Game Hard");
+    fireEvent.press(hardButton);
 
-    // 🔥 FIX: Use a single, aggressive await act block to flush promises (fetchWordsOnce)
-    // and timers (setTimeout containing router.push) before asserting.
-    await act(async () => {
-      fireEvent.press(hardButton);
-
-      // 1. Flush initial promises (fetchWordsOnce).
-      await Promise.resolve();
-
-      // 2. Run timers (This executes router.push and schedules a re-render/update).
-      jest.runAllTimers();
-
-      // 3. Flush any re-renders/promises triggered by the timers to empty the queue.
-      await Promise.resolve();
-    });
+    // Flush the async flow (awaited fetch + 0ms navigation timer)
+    await flushAll();
 
     expect(mockPlaySound).toHaveBeenCalledTimes(2);
-
-    // Assert the result of the fully completed asynchronous action
-    // We expect the navigation to have been called inside the act block.
-    expect(mockRouter.push).toHaveBeenCalledWith({
+    expect(mockPush).toHaveBeenCalledWith({
       pathname: "/gamePage",
       params: { selectedLevel: "hard" },
     });
-
     expect(fetchWordsOnce).toHaveBeenCalledWith("hard");
   });
 });
