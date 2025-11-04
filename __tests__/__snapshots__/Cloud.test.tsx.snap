@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Cloud.tsx Snapshot Test matches the stored snapshot to lock the component's visual structure 1`] = `null`;

@@ -1,86 +1,166 @@
-import { fireEvent, render, waitFor } from "@testing-library/react-native";
-import { mockRouter } from "../__mocks__/expo-router";
-import Index from "../app/index";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  waitFor,
+} from "@testing-library/react-native";
+import Index from "../app/index"; // The component under test
+import { fetchWordsOnce } from "../utils/CheckLevelCompletion";
 
-// Activate manual mock in __mocks__/expo-router.ts
-jest.mock("expo-router"); // <- CRITICAL
+const mockRouter = {
+  push: jest.fn(),
+  replace: jest.fn(),
+  setParams: jest.fn(),
+};
 
-jest.mock("@/audio/useClickSound", () => ({
-  __esModule: true,
-  default: () => jest.fn(),
+jest.mock("expo-router", () => ({
+  useRouter: () => mockRouter,
 }));
 
-jest.mock("../components/Cloud", () => "Cloud");
-jest.mock("../audio/HeadphoneButton", () => "HeadphoneButton");
+const mockPlaySound = jest.fn();
+jest.mock("@/audio/useClickSound", () => () => mockPlaySound);
+
 jest.mock("@expo-google-fonts/nunito", () => ({
-  useFonts: () => [true],
+  useFonts: () => [true, null],
+  Nunito_800ExtraBold: "Nunito_800ExtraBold",
+  Nunito_400Regular: "Nunito_400Regular",
 }));
+
+jest.mock("../audio/HeadphoneButton", () => "HeadphoneButton");
+
+jest.mock("../utils/CheckLevelCompletion", () => ({
+  fetchWordsOnce: jest.fn(),
+}));
+
+jest.mock("@/components/Cloud", () => "Cloud");
+
+jest.mock("@/components/HowToPLay", () => {
+  const React = require("react");
+  const { Modal, Text, View } = require("react-native");
+  return ({ modalVisible, onClose }: any) => {
+    if (!modalVisible) return null;
+    return (
+      <Modal visible={modalVisible} transparent>
+        <View>
+          <Text>How to Play?</Text>
+          <Text>How to play:</Text>
+          <Text>Your favourite all-time classic game.</Text>
+          <Text onPress={onClose}>Close</Text>
+        </View>
+      </Modal>
+    );
+  };
+});
+
+jest.mock("@/components/Level", () => {
+  const React = require("react");
+  const { Text, Pressable, View } = require("react-native");
+
+  const mockedFetchWordsOnce =
+    require("../utils/CheckLevelCompletion").fetchWordsOnce;
+
+  return ({ setLevelVisible, setLevelValue, levelVisible }: any) => {
+    if (!levelVisible) return null;
+    const handleLevel = async (level: string) => {
+      mockPlaySound();
+      setLevelValue(level);
+      setLevelVisible(false);
+      await mockedFetchWordsOnce(level);
+      mockRouter.push({
+        pathname: "/gamePage",
+        params: { selectedLevel: level },
+      });
+    };
+
+    return (
+      <View testID="level-modal">
+        <Pressable onPress={() => handleLevel("Easy")}>
+          <Text>Start Game Easy</Text>
+        </Pressable>
+        <Pressable onPress={() => handleLevel("hard")}>
+          <Text>Start Game Hard</Text>
+        </Pressable>
+      </View>
+    );
+  };
+});
 
 describe("Home Screen (index.tsx) Navigation and Modals", () => {
-  beforeAll(() => {
-    // Use fake timers in case navigation or effects are scheduled
+  beforeEach(() => {
+    jest.clearAllMocks();
     jest.useFakeTimers();
   });
 
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
   afterEach(() => {
-    // Prevent leaking timers across tests
-    jest.runOnlyPendingTimers();
-    jest.clearAllMocks();
-  });
-
-  afterAll(() => {
+    cleanup();
     jest.useRealTimers();
   });
 
-  it("should show the Level modal when the Start Game button is pressed", () => {
+  it("should show and then hide the How to Play modal when the button is pressed twice (toggle)", async () => {
     const { getByText, queryByText } = render(<Index />);
 
-    // expect(queryByText("Select Level")).toBeNull();
-    expect(queryByText(/level/i)).toBeNull();
+    const howToPlayButton = getByText("How to Play?");
 
-    // const startGameButton = getByText("Start Game");
-    const startGameButton = getByText(/start game/i);
-    fireEvent.press(startGameButton);
-
-    // expect(getByText("Select Level")).toBeOnTheScreen();
-    expect(getByText(/level/i)).toBeOnTheScreen();
-  });
-
-  it("should show/hide the How to Play modal when its button is pressed", () => {
-    const { getByText /*, queryByText */ } = render(<Index />);
-
-    // const howToPlayButton = getByText("How to Play");
-    const howToPlayButton = getByText(/how to play\??/i);
-
+    // Press 1: Show the modal
     fireEvent.press(howToPlayButton);
+    expect(mockPlaySound).toHaveBeenCalledTimes(1);
+    expect(
+      queryByText(/Your favourite all-time classic game\./i)
+    ).toBeOnTheScreen();
 
-    // expect(queryByText("Hey, it's")).toBeOnTheScreen();
-    // Assert against a stable heading/copy instead of fragile text:
-    expect(getByText(/how to play/i)).toBeTruthy();
-  });
-
-  it("should navigate to the game screen with the correct level parameter after selection", async () => {
-    const { getByText } = render(<Index />);
-
-    // fireEvent.press(getByText("Start Game"));
-    fireEvent.press(getByText(/start game/i));
-
-    // const easyButton = getByText("Easy");
-    const easyButton = getByText(/easy/i);
-    fireEvent.press(easyButton);
-
-    // In case navigation is scheduled via timers/effects
-    jest.runAllTimers();
+    // Press 2: Hide the modal
+    fireEvent.press(howToPlayButton);
+    expect(mockPlaySound).toHaveBeenCalledTimes(2);
 
     await waitFor(() => {
+      expect(
+        queryByText(/Your favourite all-time classic game\./i)
+      ).not.toBeOnTheScreen();
+    });
+    expect(howToPlayButton).toBeOnTheScreen();
+  });
+
+  it("should navigate to the game screen with the correct level parameter after selecting Easy", async () => {
+    (fetchWordsOnce as jest.Mock).mockResolvedValue(["word1", "word2"]);
+
+    const { getByText, findByText } = render(<Index />);
+    fireEvent.press(getByText("Start Game"));
+    expect(mockPlaySound).toHaveBeenCalledTimes(1);
+
+    const easyButton = await findByText("Start Game Easy");
+    fireEvent.press(easyButton);
+    expect(mockPlaySound).toHaveBeenCalledTimes(2);
+
+    jest.runAllTimers();
+    await waitFor(() => {
       expect(mockRouter.push).toHaveBeenCalledWith({
-        pathname: "gamePage",
+        pathname: "/gamePage",
         params: { selectedLevel: "Easy" },
       });
     });
+
+    expect(fetchWordsOnce).toHaveBeenCalledWith("Easy");
+  });
+
+  it("should navigate to the game screen with the correct level parameter after selecting Hard", async () => {
+    (fetchWordsOnce as jest.Mock).mockResolvedValue(["wordA", "wordB"]);
+
+    const { getByText, findByText } = render(<Index />);
+    fireEvent.press(getByText("Start Game"));
+    expect(mockPlaySound).toHaveBeenCalledTimes(1);
+
+    const hardButton = await findByText("Start Game Hard");
+    fireEvent.press(hardButton);
+    expect(mockPlaySound).toHaveBeenCalledTimes(2);
+
+    jest.runAllTimers();
+    await waitFor(() => {
+      expect(mockRouter.push).toHaveBeenCalledWith({
+        pathname: "/gamePage",
+        params: { selectedLevel: "hard" },
+      });
+    });
+
+    expect(fetchWordsOnce).toHaveBeenCalledWith("hard");
   });
 });
