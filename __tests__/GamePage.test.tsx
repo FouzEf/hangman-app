@@ -12,7 +12,7 @@ import GamePage from "../app/gamePage/index";
 
 // --- MOCK UTILITIES ---
 // NOTE: Please ensure these paths are correct for your project structure
-import { fetchWordsOnce } from "../FIreStore";
+import { fetchWordsOnce } from "../WordService";
 import { addSolvedWord } from "../utils/storage";
 
 // ----------------------------------------------------------------------

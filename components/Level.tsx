@@ -13,7 +13,7 @@ import {
 } from "react-native";
 
 import { useRouter } from "expo-router";
-import { fetchWordsOnce } from "../FIreStore";
+import { fetchWordsOnce } from "../WordService";
 
 // storage utilities
 import useClickSound from "@/audio/useClickSound";

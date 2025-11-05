@@ -15,7 +15,7 @@ import HeadphoneButton from "../../audio/HeadphoneButton";
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { fetchWordsOnce } from "../../FIreStore";
+import { fetchWordsOnce } from "../../WordService";
 
 // storage utilities
 import useClickSound from "@/audio/useClickSound";

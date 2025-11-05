@@ -9,7 +9,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { useCallback } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import Toast from "react-native-toast-message";
-import { fetchWordsOnce } from "../../FIreStore";
+import { fetchWordsOnce } from "../../WordService";
 import HeadphoneButton from "../../audio/HeadphoneButton";
 
 import { Ionicons } from "@expo/vector-icons"; // NEW IMPORT

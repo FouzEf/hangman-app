@@ -8,7 +8,7 @@ import {
 } from "@testing-library/react-native";
 import React from "react";
 import Index from "../app/index"; // Component under test
-import { fetchWordsOnce } from "../utils/CheckLevelCompletion";
+import { fetchWordsOnce } from "../WordService";
 
 // ----------------------------------------------------------------------
 // 1) Shared router mock (must be created before the component uses it)
