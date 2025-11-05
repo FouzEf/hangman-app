@@ -32,7 +32,7 @@ const GamePage = () => {
   const params = useLocalSearchParams();
   const selectedLevel = params.selectedLevel as level;
   const navigate = useRouter();
-  console.log(selectedLevel, "selectedLevel", params);
+  // console.log(selectedLevel, "selectedLevel", params);
 
   const [words, setWords] = useState<string[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -64,11 +64,11 @@ const GamePage = () => {
       const fetched = await fetchWordsOnce(selectedLevel);
       const solved = await getSolvedWords();
       const unsolved = fetched.filter((w) => !solved.includes(w));
-      console.log(fetched, solved);
-      console.log(
-        fetched.every((word) => solved.includes(word)),
-        "test"
-      );
+      // console.log(fetched, solved);
+      // console.log(
+      //   fetched.every((word) => solved.includes(word)),
+      //   "test"
+      // );
 
       if (fetched.every((word) => solved.includes(word))) {
         // ✅ CRITICAL FIX: Wrap navigation in setTimeout(0)
@@ -180,12 +180,12 @@ const GamePage = () => {
               selectedLevel === "Easy"
                 ? "#4CAF50"
                 : selectedLevel === "medium"
-                ? "#FFC107"
-                : selectedLevel === "hard"
-                ? "#F44336"
-                : selectedLevel === "Test"
-                ? "#9C27B0"
-                : "#ccc",
+                  ? "#FFC107"
+                  : selectedLevel === "hard"
+                    ? "#F44336"
+                    : selectedLevel === "Test"
+                      ? "#9C27B0"
+                      : "#ccc",
           },
         ]}
       >
