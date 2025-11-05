@@ -18,7 +18,7 @@ import type {
   QuerySnapshot,
 } from "firebase/firestore";
 import { getDocs } from "firebase/firestore";
-import { fetchWordsOnce } from "../utils/CheckLevelCompletion";
+import { fetchWordsOnce } from "../WordService";
 
 describe("fetchWordsOnce", () => {
   const getItemMock = AsyncStorage.getItem as jest.MockedFunction<

@@ -40,7 +40,7 @@ jest.mock("expo-router", () => ({
 }));
 
 // Mock Utility Functions
-jest.mock("../FIreStore", () => ({
+jest.mock("../WordService", () => ({
   fetchWordsOnce: jest.fn(),
 }));
 jest.mock("../utils/storage", () => ({

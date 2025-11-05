@@ -58,7 +58,7 @@ jest.mock("../audio/HeadphoneButton", () => "HeadphoneButtonMock");
 jest.mock("@/components/Cloud", () => "CloudMock");
 
 // We will assert on calls to this function
-jest.mock("../utils/CheckLevelCompletion", () => ({
+jest.mock("../WordService", () => ({
   fetchWordsOnce: jest.fn(),
 }));
 
@@ -88,7 +88,7 @@ jest.mock("@/components/Level", () => {
   const React = require("react");
   const { View, Text } = require("react-native");
   const { useRouter } = require("expo-router");
-  const { fetchWordsOnce } = require("../utils/CheckLevelCompletion");
+  const { fetchWordsOnce } = require("../WordService");
   const mock = ({ levelVisible, setLevelValue, setLevelVisible }: any) => {
     if (!levelVisible) return null;
     const router = useRouter();
