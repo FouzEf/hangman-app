@@ -27,6 +27,40 @@ jest.mock("../utils/storage", () => ({
   getSolvedWords: jest.fn().mockResolvedValue([]),
 }));
 
+// --- NATIVE MODULE MOCKS TO PREVENT CRASHES ---
+
+// Mock for expo-linear-gradient (prevents the initial import warning/crash)
+jest.mock("expo-linear-gradient", () => ({
+  LinearGradient: "LinearGradient", // Mock it as a simple string component
+}));
+
+// Mock for expo-av (essential for HeadphoneButton/audio components)
+jest.mock("expo-av", () => {
+  const mockSound = {
+    loadAsync: jest.fn().mockResolvedValue({ status: {} }),
+    playAsync: jest.fn(),
+    pauseAsync: jest.fn(),
+    stopAsync: jest.fn(),
+    unloadAsync: jest.fn(),
+    getStatusAsync: jest.fn().mockResolvedValue({
+      isLoaded: true,
+      isPlaying: false,
+      didJustFinish: false,
+    }),
+    setOnPlaybackStatusUpdate: jest.fn(),
+  };
+  return {
+    Audio: {
+      Sound: jest.fn(() => mockSound),
+      setAudioModeAsync: jest.fn(),
+    },
+    useForegroundPermissions: jest
+      .fn()
+      .mockReturnValue([{ granted: true }, jest.fn()]),
+    usePermissions: jest.fn().mockReturnValue([{ granted: true }, jest.fn()]),
+  };
+});
+
 // ----------------------------------------------------------------------
 // 2. ROUTER MOCKS
 // ----------------------------------------------------------------------
@@ -39,79 +73,65 @@ const mockSearchParams = { selectedLevel: "Easy" };
 
 jest.mock("expo-router", () => {
   const React = require("react");
-  const { Text } = require("react-native");
+  const ActualModule = jest.requireActual("expo-router");
+
   return {
+    ...ActualModule,
     useRouter: () => mockRouter,
     useLocalSearchParams: () => mockSearchParams,
-    Link: ({ children, href, ...props }: any) =>
-      React.createElement(Text, { ...props, testID: `Link-${href}` }, children),
+    // Mock for Link component to prevent navigation errors
+    Link: ({ href, children, onPress, ...rest }: any) => (
+      <ActualModule.Link href={href} onPress={onPress} {...rest}>
+        {children}
+      </ActualModule.Link>
+    ),
   };
 });
 
 // ----------------------------------------------------------------------
-// 3. MOCKING POST-GAME MODAL (for consistent button finding)
+// 3. TEST SETUP & CONSTANTS
 // ----------------------------------------------------------------------
-// Mock the WinOrLose component to expose buttons by text instead of relying on images/testIDs
-jest.mock("@/components/WinOrLose", () => {
-  const React = require("react");
-  const { Pressable, Text } = require("react-native");
-  return ({ modalVisible, wrongGuesses, toHome, continueOrRetry }: any) => {
-    if (!modalVisible) return null;
-    const lost = wrongGuesses.length >= 6;
-    return (
-      <React.Fragment>
-        <Text testID="win-or-lose-modal">
-          {lost ? "You Lost!" : "You Won!"}
-        </Text>
-        <Pressable onPress={continueOrRetry} testID="continue-retry-btn">
-          <Text>{lost ? "Retry Level" : "Continue"}</Text>
-        </Pressable>
-        <Pressable onPress={toHome} testID="to-home-btn">
-          <Text>To Home</Text>
-        </Pressable>
-      </React.Fragment>
-    );
-  };
-});
 
-// ----------------------------------------------------------------------
-// 4. TEST DATA
-// ----------------------------------------------------------------------
+// Mocked words
 const SECRET_WORD_1 = "HANGMAN";
 const CORRECT_LETTERS_1 = ["H", "A", "N", "G", "M"];
-const INCORRECT_LETTERS_1 = ["B", "C", "D", "E", "F", "I"]; // 6 letters for a loss
+const INCORRECT_LETTERS_1 = ["B", "C", "D", "E", "F", "I"]; // 6 letters
 
 const SECRET_WORD_2 = "NEXT";
+const CORRECT_LETTERS_2 = ["N", "E", "X", "T"];
+const INCORRECT_LETTERS_2 = ["Q", "W", "S", "D", "Z", "X"];
+
+// Reset mocks before each test
+beforeEach(() => {
+  cleanup();
+  jest.clearAllMocks();
+
+  // Mock the word service to return two words sequentially
+  mockFetchWordsOnce
+    .mockResolvedValueOnce(SECRET_WORD_1) // First call returns HANGMAN
+    .mockResolvedValueOnce(SECRET_WORD_2); // Second call returns NEXT
+});
 
 // ----------------------------------------------------------------------
-// 5. TEST SUITE
+// 4. TESTS
 // ----------------------------------------------------------------------
-describe("GamePage", () => {
-  beforeEach(() => {
-    mockRouter.push.mockClear();
-    mockAddSolvedWord.mockClear();
 
-    // 🔥 FIX: Use the centrally defined mock function to set resolved values
-    // 1st call (Initial Load) returns both words (to allow for a second round)
-    mockFetchWordsOnce.mockResolvedValueOnce([SECRET_WORD_1, SECRET_WORD_2]);
-    // 2nd call (Continue/Retry pressed) returns only the second word
-    mockFetchWordsOnce.mockResolvedValueOnce([SECRET_WORD_2]);
-  });
-
-  afterEach(() => {
-    cleanup();
-  });
-
+describe("GamePage (Core Logic)", () => {
   it("should initialize with the correct level and fetch a word", async () => {
     render(<GamePage />);
 
     // 1. Wait for word fetch (SECRET_WORD_1) to complete
     await waitFor(() => {
-      expect(mockFetchWordsOnce).toHaveBeenCalledWith("Easy");
+      // Expect 7 underscores for "HANGMAN"
+      expect(screen.getAllByText("_").length).toBe(7);
     });
 
-    // 2. Check if the initial state is rendered (Hangman with 7 letters)
-    expect(screen.getByText(/Wrong Guesses: 0/i)).toBeOnTheScreen();
+    // 2. ASSERT: The correct word was fetched
+    expect(mockFetchWordsOnce).toHaveBeenCalledWith("Easy", []);
+    expect(screen.queryByText(SECRET_WORD_1)).toBeNull(); // Should not be visible
+
+    // 3. ASSERT: The current wrong guesses counter is 0
+    expect(screen.getByText("0/6")).toBeOnTheScreen();
   });
 
   it("should increase wrongGuesses on incorrect guess and disable the key", async () => {
@@ -119,38 +139,55 @@ describe("GamePage", () => {
     await act(async () => {}); // Wait for load
 
     const incorrectLetter = INCORRECT_LETTERS_1[0]; // 'B'
+
+    // 1. ACT: Guess an incorrect letter
     await act(async () => {
-      // Find the 'B' key and press it
       fireEvent.press(screen.getByText(incorrectLetter));
     });
 
-    // 1. Wrong guess count increases and letter is listed
-    await waitFor(() => {
-      expect(screen.getByText(/Wrong Guesses: 1/i)).toBeOnTheScreen();
-      expect(
-        screen.getByText(new RegExp(incorrectLetter.toLowerCase()))
-      ).toBeOnTheScreen();
+    // 2. ASSERT: Wrong guesses updated
+    expect(screen.getByText("1/6")).toBeOnTheScreen();
+
+    // 3. ASSERT: The key is disabled (check for its presence, but expect the parent button to be disabled)
+    // Checking for the text content on screen is usually sufficient
+    expect(screen.getByText(incorrectLetter)).toBeOnTheScreen(); // Text is visible
+
+    // 4. ACT: Try pressing the key again
+    await act(async () => {
+      fireEvent.press(screen.getByText(incorrectLetter));
     });
+
+    // 5. ASSERT: Wrong guesses did not change (guess was ignored)
+    expect(screen.getByText("1/6")).toBeOnTheScreen();
   });
 
   it("should handle a correct letter guess, revealing letters and disabling the key", async () => {
     render(<GamePage />);
     await act(async () => {}); // Wait for load
 
-    const correctLetter = CORRECT_LETTERS_1[0]; // 'H'
+    const correctLetter = CORRECT_LETTERS_1[0]; // 'H' - appears once
+
+    // 1. ACT: Guess a correct letter
     await act(async () => {
-      // Find the 'H' key and press it
       fireEvent.press(screen.getByText(correctLetter));
     });
 
-    // 1. Correct letter 'H' should be displayed
-    await waitFor(() => {
-      // The letter 'H' should be visible on the screen
-      expect(screen.getAllByText(correctLetter).length).toBe(1);
+    // 2. ASSERT: Letter is revealed, underscores are reduced/replaced
+    expect(screen.getByText(correctLetter)).toBeOnTheScreen();
+    // 7 total letters, 'H' is one, so 6 underscores left
+    expect(screen.getAllByText("_").length).toBe(6);
+
+    // 3. ASSERT: Wrong guesses did not increase
+    expect(screen.getByText("0/6")).toBeOnTheScreen();
+
+    // 4. ACT: Try pressing the key again
+    await act(async () => {
+      fireEvent.press(screen.getByText(correctLetter));
     });
 
-    // 2. Wrong guess count should remain 0
-    expect(screen.getByText(/Wrong Guesses: 0/i)).toBeOnTheScreen();
+    // 5. ASSERT: State is unchanged
+    expect(screen.getAllByText("_").length).toBe(6);
+    expect(screen.getByText("0/6")).toBeOnTheScreen();
   });
 
   it("should show WIN modal when solving the word", async () => {
@@ -160,16 +197,19 @@ describe("GamePage", () => {
     // 1. ACT: Guess all correct letters
     for (const letter of CORRECT_LETTERS_1) {
       await act(async () => {
-        // Find the key (which uses the uppercase letter) and press it
         fireEvent.press(screen.getByText(letter));
       });
     }
 
-    // 2. ASSERT: Win modal is shown
+    // 2. ASSERT: WIN modal is shown
     await waitFor(() => {
-      expect(screen.getByTestId("win-or-lose-modal")).toBeOnTheScreen();
       expect(screen.getByText("You Won!")).toBeOnTheScreen();
+      // Expect the solved word to be visible in the modal
+      expect(screen.getByText(SECRET_WORD_1)).toBeOnTheScreen();
     });
+
+    // 3. ASSERT: addSolvedWord called once for the solved word
+    expect(mockAddSolvedWord).toHaveBeenCalledWith(SECRET_WORD_1, "Easy");
   });
 
   it("should show LOSE modal after 6 wrong guesses", async () => {
@@ -177,17 +217,23 @@ describe("GamePage", () => {
     await act(async () => {}); // Wait for load
 
     // 1. ACT: Make 6 incorrect guesses
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < INCORRECT_LETTERS_1.length; i++) {
       await act(async () => {
         fireEvent.press(screen.getByText(INCORRECT_LETTERS_1[i]));
       });
     }
 
-    // 2. ASSERT: Lose modal is shown
+    // 2. ASSERT: Wrong guesses counter is 6/6
+    expect(screen.getByText("6/6")).toBeOnTheScreen();
+
+    // 3. ASSERT: LOSE modal is shown
     await waitFor(() => {
-      expect(screen.getByTestId("win-or-lose-modal")).toBeOnTheScreen();
       expect(screen.getByText("You Lost!")).toBeOnTheScreen();
+      // Expect the secret word to be revealed in the modal
+      expect(screen.getByText(SECRET_WORD_1)).toBeOnTheScreen();
     });
+    // 4. ASSERT: addSolvedWord is NOT called on a loss
+    expect(mockAddSolvedWord).not.toHaveBeenCalled();
   });
 
   it("should disable the keyboard and prevent further guesses when the game is over (loss)", async () => {
@@ -201,19 +247,23 @@ describe("GamePage", () => {
       });
     }
 
-    // Wait for modal to appear and keyboard to disable
+    // Wait for the loss modal to show
     await waitFor(() => {
       expect(screen.getByText("You Lost!")).toBeOnTheScreen();
     });
 
-    // 2. ASSERT: A letter key that was not yet guessed should now be disabled
-    const unusedLetter = "J"; // Assuming 'J' is not in HANGMAN or the incorrect list
-    const jKeyButton = screen.getByText(unusedLetter).parent;
-    expect(jKeyButton).toBeDisabled();
+    // 2. ACT: Try to press one more incorrect key (the 7th key)
+    const seventhIncorrectLetter = "J";
+    await act(async () => {
+      fireEvent.press(screen.getByText(seventhIncorrectLetter));
+    });
+
+    // 3. ASSERT: The wrong guesses count remains at 6/6
+    expect(screen.getByText("6/6")).toBeOnTheScreen();
   });
 
   // ----------------------------------------------------------------------
-  // ✅ NEW TEST: Reset state and load a new word when 'Continue' is pressed after a win
+  // Test game continuation after a win/loss
   // ----------------------------------------------------------------------
   it("should reset state and load a new word when 'Continue' is pressed after a win", async () => {
     render(<GamePage />);
@@ -226,54 +276,43 @@ describe("GamePage", () => {
       });
     }
 
-    // ASSERT: Win modal is shown
+    // 3. ASSERT: Win modal is shown
     await waitFor(() => {
       expect(screen.getByText("You Won!")).toBeOnTheScreen();
     });
 
-    // 3. ACT: Press the Continue button
+    // 4. ACT: Press 'Continue' (to load SECRET_WORD_2: "NEXT")
     await act(async () => {
       fireEvent.press(screen.getByText("Continue"));
     });
 
-    // 4. ASSERT: Modal hides
-    await waitFor(() => {
-      expect(screen.queryByText("You Won!")).not.toBeOnTheScreen();
-    });
+    // 5. ASSERT: Game state is reset
+    expect(screen.getByText("0/6")).toBeOnTheScreen();
+    expect(screen.getAllByText("_").length).toBe(4); // "NEXT" has 4 letters
 
-    // 5. ASSERT: Game state is reset (WrongGuesses: 0)
-    expect(screen.getByText(/Wrong Guesses: 0/i)).toBeOnTheScreen();
-
-    // 6. ASSERT: A new word was loaded (mockFetchWordsOnce called a second time)
-    await waitFor(() => {
-      expect(mockFetchWordsOnce).toHaveBeenCalledTimes(2);
-    });
+    // 6. ASSERT: The previous word is no longer shown
+    expect(screen.queryByText(SECRET_WORD_1)).toBeNull();
   });
 
-  // ----------------------------------------------------------------------
-  // ✅ NEW TEST: Add Solved Word on Win, NOT on Loss
-  // ----------------------------------------------------------------------
-  it("should call addSolvedWord on win and NOT call it on loss", async () => {
-    mockAddSolvedWord.mockClear(); // Ensure the count is reset for this specific test
-
+  it("should handle Win (Word 1) followed by Loss (Word 2) correctly, only counting the win", async () => {
     render(<GamePage />);
-    await act(async () => {}); // Wait for initial load of SECRET_WORD_1
+    await act(async () => {}); // 1. Wait for initial load of SECRET_WORD_1 ("HANGMAN")
 
-    // --- A. TEST WIN SCENARIO ---
-    // 1. ACT: Force a Win (Guess all letters for SECRET_WORD_1)
+    // --- A. TEST WIN SCENARIO (Word 1) ---
+    // 2. ACT: Force a Win (Guess all letters) on the first word
     for (const letter of CORRECT_LETTERS_1) {
       await act(async () => {
         fireEvent.press(screen.getByText(letter));
       });
     }
 
-    // 2. ASSERT: addSolvedWord is called with the solved word.
+    // 3. ASSERT: addSolvedWord called once for HANGMAN
     await waitFor(() => {
-      expect(mockAddSolvedWord).toHaveBeenCalledWith(SECRET_WORD_1);
+      expect(mockAddSolvedWord).toHaveBeenCalledWith(SECRET_WORD_1, "Easy");
       expect(mockAddSolvedWord).toHaveBeenCalledTimes(1);
     });
 
-    // 3. ACT: Reset the game by pressing continue (to load SECRET_WORD_2)
+    // 4. ACT: Press 'Continue' (to load SECRET_WORD_2)
     await act(async () => {
       fireEvent.press(screen.getByText("Continue"));
     });
@@ -308,17 +347,69 @@ describe("GamePage", () => {
     }
 
     await waitFor(() => {
-      expect(screen.getByText("You Won!")).toBeOnTheScreen();
+      expect(screen.getByText("To Home")).toBeOnTheScreen();
     });
 
-    // Press the To Home button
+    // ACT: Press the navigation button
     await act(async () => {
       fireEvent.press(screen.getByText("To Home"));
     });
 
-    // Verify navigation
+    // ASSERT: Router push was called
+    expect(mockRouter.push).toHaveBeenCalledWith("/");
+  });
+
+  // ----------------------------------------------------------------------
+  // Test Level Completion Check (using the addSolvedWord mock count)
+  // ----------------------------------------------------------------------
+  it("should check level completion status when 10 words are solved", async () => {
+    // 1. Arrange: Mock initial state to simulate 9 words already solved
+    jest.mock("../utils/storage", () => ({
+      addSolvedWord: mockAddSolvedWord,
+      // Simulate 9 solved words
+      getSolvedWords: jest
+        .fn()
+        .mockResolvedValue([
+          "WORD1",
+          "WORD2",
+          "WORD3",
+          "WORD4",
+          "WORD5",
+          "WORD6",
+          "WORD7",
+          "WORD8",
+          "WORD9",
+        ]),
+    }));
+
+    // Ensure the mock is correctly configured for the test
+    mockAddSolvedWord.mockClear(); // Ensure the count is reset for this specific test
+
+    render(<GamePage />);
+    await act(async () => {}); // 1. Wait for initial load of SECRET_WORD_1 ("HANGMAN")
+
+    // 2. ACT: Force a Win (Guess all letters) - This is the 10th solved word
+    for (const letter of CORRECT_LETTERS_1) {
+      await act(async () => {
+        fireEvent.press(screen.getByText(letter));
+      });
+    }
+
+    // 3. ASSERT: Win modal is shown
     await waitFor(() => {
-      expect(mockRouter.push).toHaveBeenCalledWith("/");
+      expect(screen.getByText("You Won!")).toBeOnTheScreen();
     });
+
+    // 4. ASSERT: addSolvedWord was called for the 10th word
+    expect(mockAddSolvedWord).toHaveBeenCalledTimes(1);
+
+    // 5. ASSERT: CheckLevelCompletion.test.ts verifies the navigation to WinPage
+    // Here we can only verify the push to the router happens after the 10th win
+    await act(async () => {
+      fireEvent.press(screen.getByText("Continue"));
+    });
+
+    // Check if WinPage navigation was triggered
+    expect(mockRouter.push).toHaveBeenCalledWith("winPage");
   });
 });
