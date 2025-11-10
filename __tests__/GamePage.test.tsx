@@ -4,6 +4,25 @@
 // 0) Mocks (declare BEFORE imports that use them)
 // -----------------------------
 
+// FIX 1: Mock soundManager to prevent crashes in components like Keyboard.tsx
+// where soundManager.play is called directly.
+jest.mock("../audio/SoundManager", () => ({
+  soundManager: {
+    play: jest.fn(),
+  },
+}));
+
+// FIX 2: Mock all image assets used in Grass.tsx to prevent loading errors.
+jest.mock("@assets/images/gallow.png", () => "test-file-stub");
+jest.mock("@assets/images/grass3.png", () => "test-file-stub");
+jest.mock("@assets/images/HomButton.png", () => "test-file-stub");
+jest.mock("@assets/images/Stage1.png", () => "test-file-stub");
+jest.mock("@assets/images/Stage2.png", () => "test-file-stub");
+jest.mock("@assets/images/Stage3.png", () => "test-file-stub");
+jest.mock("@assets/images/Stage4.png", () => "test-file-stub");
+jest.mock("@assets/images/Stage5.png", () => "test-file-stub");
+jest.mock("@assets/images/Stage6.png", () => "test-file-stub");
+
 // WordService — mock both likely import paths so whichever GamePage uses will match.
 const mockFetchWordsOnce = jest.fn();
 jest.mock("../WordService", () => ({

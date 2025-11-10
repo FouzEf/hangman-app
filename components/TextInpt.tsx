@@ -29,14 +29,13 @@ const TextInpt = ({
           fontWeight: "bold",
         }}
         editable={false}
-        testID="letter-slot"
       />
     );
   }
 
   // If the letter is NOT solved, show the editable input field
   return (
-    <View>
+    <View testID="letter-slot">
       <TextInput
         // ref={inputRef}
         value={currentGuess}
