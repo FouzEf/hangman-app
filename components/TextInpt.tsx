@@ -29,6 +29,7 @@ const TextInpt = ({
           fontWeight: "bold",
         }}
         editable={false}
+        testID="letter-slot"
       />
     );
   }

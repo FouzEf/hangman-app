@@ -175,9 +175,10 @@ beforeEach(() => {
 describe("GamePage (Core Logic)", () => {
   it("should initialize with the correct level and fetch a word", async () => {
     renderWithProviders(<GamePage />);
+    await act(async () => {}); // FIX: Added act to ensure initial async word fetch completes
 
     await waitFor(() => {
-      expect(screen.getAllByText("_").length).toBe(7);
+      expect(screen.getAllByTestId("letter-slot").length).toBe(7);
     });
 
     expect(mockFetchWordsOnce).toHaveBeenCalledWith("Easy", []);
