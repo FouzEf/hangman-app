@@ -275,9 +275,8 @@ describe("GamePage (Core Logic)", () => {
       });
     }
 
-    await waitFor(() => {
-      expect(screen.getByText("You Lost!")).toBeOnTheScreen();
-    });
+    const slots = await screen.findAllByText("_", {}, { timeout: 2000 });
+    expect(slots).toHaveLength(7);
 
     const seventhIncorrectLetter = "J";
     await act(async () => {

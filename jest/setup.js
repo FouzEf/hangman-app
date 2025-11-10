@@ -7,6 +7,10 @@ import "@testing-library/jest-native/extend-expect";
 // @ts-ignore
 global.process.env.EXPO_OS = "ios";
 
+/* =========================
+ * Core React Native mocks
+ * ========================= */
+
 // 1. FIX: Mock TurboModuleRegistry (for newer React Native versions)
 jest.mock("react-native/Libraries/TurboModule/TurboModuleRegistry", () => ({
   // General fallback for feature flag checks
@@ -54,6 +58,51 @@ jest.mock("react-native/Libraries/BatchedBridge/NativeModules", () => ({
   },
 }));
 
+/* =========================
+ * Animated / Reanimated blockers (CRITICAL)
+ * ========================= */
+
+// Prevent RN dev renderer from calling native animated paths
+jest.mock("react-native/Libraries/Animated/NativeAnimatedHelper");
+
+// Mock Reanimated v2+ with official test mock
+jest.mock("react-native-reanimated", () => {
+  const mock = require("react-native-reanimated/mock");
+  // Some versions expect this global to exist
+  global.__reanimatedWorkletInit = () => {};
+  // No-op .call to avoid crashes from layout animations in tests
+  mock.default.call = () => {};
+  return mock;
+});
+
+// Animated(Image) / Image asset lookups needed by Animated refs
+jest.mock("react-native/Libraries/Image/AssetRegistry", () => ({
+  getAssetByID: () => ({
+    httpServerLocation: "",
+    width: 0,
+    height: 0,
+    scales: [1],
+    hash: "",
+    name: "",
+    type: "png",
+  }),
+}));
+
+// Optional: no-op LayoutAnimation to avoid native path
+try {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const { LayoutAnimation } = require("react-native");
+  if (LayoutAnimation && LayoutAnimation.configureNext) {
+    LayoutAnimation.configureNext = () => {};
+  }
+} catch {
+  // ignore in CI
+}
+
+/* =========================
+ * UI / Expo module mocks
+ * ========================= */
+
 // 4. CRITICAL FIX: Mock expo-linear-gradient
 jest.mock("expo-linear-gradient", () => {
   const React = require("react");
@@ -66,8 +115,6 @@ jest.mock("expo-linear-gradient", () => {
 });
 
 // 5. NEW CRITICAL FIX: Mock @expo/vector-icons (e.g., Ionicons)
-// Prevents: "Element type is invalid..." for Icon components
-// Mocking the whole package ensures all icon sets are covered.
 jest.mock("@expo/vector-icons", () => ({
   Ionicons: "Ionicons",
   AntDesign: "AntDesign",
@@ -81,6 +128,10 @@ jest.mock("react-native-toast-message", () => ({
   hide: jest.fn(),
   Toast: "Toast", // Mock component for the root render
 }));
+
+/* =========================
+ * Storage / platform services
+ * ========================= */
 
 // Mock AsyncStorage
 jest.mock("@react-native-async-storage/async-storage", () => ({
@@ -115,6 +166,9 @@ jest.mock("expo-av", () => ({
         isPlaying: false,
         didJustFinish: false,
       }),
+      setOnPlaybackStatusUpdate: jest.fn(),
+      setVolumeAsync: jest.fn().mockResolvedValue(undefined),
+      setIsLoopingAsync: jest.fn().mockResolvedValue(undefined),
     })),
     setAudioModeAsync: jest.fn().mockResolvedValue(undefined),
   },
@@ -128,3 +182,74 @@ jest.mock("expo-constants", () => ({
 jest.mock("expo-font", () => ({
   loadAsync: jest.fn(),
 }));
+
+/* =========================
+ * Test hygiene
+ * ========================= */
+
+afterEach(() => {
+  // Clean up any pending timers/intervals from components (avoids worker force-exit)
+  jest.runOnlyPendingTimers?.();
+  jest.clearAllTimers?.();
+  jest.clearAllMocks();
+  jest.useRealTimers();
+});
+
+// --- Bypass Animated wrapping (prevents ref/setNativeView crashes) ---
+jest.mock("react-native/Libraries/Animated/createAnimatedComponent", () => {
+  return (Component) => Component; // passthrough — removes native animated wrapper
+});
+
+// --- Make TouchableOpacity a plain View (no Pressability internals) ---
+jest.mock(
+  "react-native/Libraries/Components/Touchable/TouchableOpacity",
+  () => {
+    const React = require("react");
+    const { View } = require("react-native");
+    const Mock = React.forwardRef((props, ref) =>
+      React.createElement(View, { ref, ...props }, props.children)
+    );
+    Mock.displayName = "TouchableOpacity";
+    return Mock;
+  }
+);
+
+// --- Patch root 'react-native' exports to be test-safe ---
+jest.mock("react-native", () => {
+  const RN = jest.requireActual("react-native");
+  const React = require("react");
+
+  // Make TouchableOpacity a plain View to avoid Pressability/refs internals
+  const TouchableOpacity = React.forwardRef((props, ref) =>
+    React.createElement(RN.View, { ref, ...props }, props.children)
+  );
+  TouchableOpacity.displayName = "TouchableOpacity";
+
+  // Force Animated to be "passthrough" — Animated(Image/View) -> plain component
+  const Animated = {
+    ...RN.Animated,
+    // identity wrapper prevents setNativeView/ref wiring that crashes in tests
+    createAnimatedComponent: (Component) => Component,
+  };
+
+  // No-op LayoutAnimation to stay on JS path
+  const LayoutAnimation = {
+    ...RN.LayoutAnimation,
+    configureNext: () => {},
+  };
+
+  return {
+    ...RN,
+    TouchableOpacity,
+    Animated,
+    LayoutAnimation,
+  };
+});
+
+// keep your timer cleanup
+afterEach(() => {
+  jest.runOnlyPendingTimers?.();
+  jest.clearAllTimers?.();
+  jest.clearAllMocks();
+  jest.useRealTimers();
+});
