@@ -2,8 +2,10 @@ import CloudGamePage from "@/components/CloudGamePage";
 import Grass from "@/components/Grass";
 import Input from "@/components/Input";
 import Keyboard from "@/components/Keyboard";
+
 import BirdLottie from "@/components/lottieFiles/BirdLottie";
 
+import HeadphoneButton from "@/audio/HeadphoneButton";
 import LottieLeaves, {
   LottieLeavesTwo,
 } from "@/components/lottieFiles/LottieLeaves";
@@ -13,7 +15,6 @@ import WindMillLottie, {
 import WinOrLose from "@/components/WinOrLose";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import HeadphoneButton from "../../audio/HeadphoneButton";
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";

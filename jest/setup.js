@@ -137,9 +137,10 @@ jest.mock("expo-font", () => ({
  * Test hygiene
  * ========================= */
 
+// jest/setup.js
 afterEach(() => {
-  jest.runOnlyPendingTimers?.();
-  jest.clearAllTimers?.();
+  // Do NOT advance timers globally. Individual tests that use fake timers should manage them.
+  jest.clearAllTimers();
   jest.clearAllMocks();
   jest.useRealTimers();
 });

@@ -1,47 +1,88 @@
 // __tests__/index.test.tsx
-import {
-  act,
-  cleanup,
-  fireEvent,
-  render,
-  waitFor,
-} from "@testing-library/react-native";
-import React from "react";
-import Index from "../app/index"; // Component under test
-import { fetchWordsOnce } from "../WordService";
 
-// ----------------------------------------------------------------------
-// 1) Shared router mock (must be created before the component uses it)
-// ----------------------------------------------------------------------
-const mockPush = jest.fn();
-const mockReplace = jest.fn();
-const mockSetParams = jest.fn();
+// --- Hard-pin RN iOS internals for THIS spec (before any imports) ---
+const IOS_CONST = () => ({
+  forceTouchAvailable: false,
+  interfaceIdiom: "phone",
+  osVersion: "14.0",
+  systemName: "iOS",
+});
 
-// Mock expo-linear-gradient first (simple named export)
-jest.mock("expo-linear-gradient", () => ({
-  LinearGradient: "LinearGradientMock",
-}));
+jest.mock(
+  "react-native/Libraries/Utilities/NativePlatformConstantsIOS",
+  () => ({ __esModule: true, default: { getConstants: IOS_CONST } }),
+  { virtual: true }
+);
+jest.mock(
+  "react-native/Libraries/Utilities/NativePlatformConstantsIOS.ios.js",
+  () => ({ __esModule: true, default: { getConstants: IOS_CONST } }),
+  { virtual: true }
+);
 
-// Mock expo-router with a stable, shared push reference
+// Some RN paths read Platform.ios (w/ and w/o .js)
+const PLATFORM_IOS = {
+  OS: "ios",
+  select: (o: any) => (o ? (o.ios ?? o.default) : undefined),
+  constants: {}, // AnimatedExports checks this path
+  isDisableAnimations: () => true,
+};
+jest.mock(
+  "react-native/Libraries/Utilities/Platform.ios",
+  () => ({ __esModule: true, default: PLATFORM_IOS }),
+  { virtual: true }
+);
+jest.mock(
+  "react-native/Libraries/Utilities/Platform.ios.js",
+  () => ({ __esModule: true, default: PLATFORM_IOS }),
+  { virtual: true }
+);
+
+// Belt-and-suspenders: AnimatedExports sometimes introspects Platform.*
+// Keep animations disabled to avoid native branches.
+jest.mock(
+  "react-native/Libraries/Animated/AnimatedExports",
+  () => ({ __esModule: true, isDisableAnimations: () => true }),
+  { virtual: true }
+);
+
+// --- Mocks that must be defined before imports ---
+
+// 1) expo-router: expose a router object we can assert on
 jest.mock("expo-router", () => {
   const React = require("react");
   const { Text } = require("react-native");
+
+  const push = jest.fn();
+  const replace = jest.fn();
+  const setParams = jest.fn();
+  const router = { push, replace, setParams, navigate: push, back: jest.fn() };
+
+  const Passthrough = ({ children }: { children?: React.ReactNode }) =>
+    React.createElement("RouterStub", null, children);
+
   return {
-    useRouter: () => ({
-      push: mockPush,
-      replace: mockReplace,
-      setParams: mockSetParams,
-    }),
+    __esModule: true,
+    useRouter: () => router,
+    router, // importable for assertions
     Link: (props: any) =>
       React.createElement(Text, { ...props }, props.children),
+    Stack: Passthrough,
+    Slot: Passthrough,
   };
 });
 
-// ----------------------------------------------------------------------
-// 2) Other dependency mocks
-// ----------------------------------------------------------------------
-const mockPlaySound = jest.fn();
+// 2) expo-linear-gradient: simple passthrough
+jest.mock("expo-linear-gradient", () => {
+  const React = require("react");
+  return {
+    __esModule: true,
+    LinearGradient: ({ children }: { children?: React.ReactNode }) =>
+      React.createElement("LinearGradientStub", null, children),
+  };
+});
 
+// 3) Other dependency mocks
+const mockPlaySound = jest.fn();
 jest.mock("@/audio/useClickSound", () => () => mockPlaySound);
 
 jest.mock("@expo-google-fonts/nunito", () => ({
@@ -64,6 +105,7 @@ jest.mock("../WordService", () => ({
 
 // HowToPlay mock (only visible when modalVisible=true)
 jest.mock("@/components/HowToPLay", () => {
+  const React = require("react");
   const { View, Text } = require("react-native");
   const MockHowToPlay = ({ modalVisible, onClose }: any) => {
     if (!modalVisible) return null;
@@ -79,28 +121,22 @@ jest.mock("@/components/HowToPLay", () => {
   return MockHowToPlay;
 });
 
-// Level mock that mirrors real behavior:
-// - plays click sound
-// - sets level value and hides modal
-// - calls fetchWordsOnce(level)
-// - navigates with router.push after a 0ms timer (so tests must flush timers)
+// Level mock that mirrors real behavior: click -> set state -> await fetch -> timer -> router.push
 jest.mock("@/components/Level", () => {
   const React = require("react");
   const { View, Text } = require("react-native");
   const { useRouter } = require("expo-router");
   const { fetchWordsOnce } = require("../WordService");
-  const mock = ({ levelVisible, setLevelValue, setLevelVisible }: any) => {
+
+  const MockLevel = ({ levelVisible, setLevelValue, setLevelVisible }: any) => {
     if (!levelVisible) return null;
     const router = useRouter();
 
     const choose = async (level: "Easy" | "hard") => {
-      // sound click
       require("@/audio/useClickSound")()();
       setLevelValue(level);
       setLevelVisible(false);
-
       await fetchWordsOnce(level);
-
       setTimeout(() => {
         router.push({
           pathname: "/gamePage",
@@ -117,33 +153,56 @@ jest.mock("@/components/Level", () => {
       </View>
     );
   };
-  return mock;
+
+  return MockLevel;
 });
 
-// ----------------------------------------------------------------------
-// 3) Utilities for flushing timers & microtasks deterministically
-// ----------------------------------------------------------------------
+// ---- Imports (after mocks) ----
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  waitFor,
+} from "@testing-library/react-native";
+import { router } from "expo-router";
+import React from "react";
+import Index from "../app/index";
+import { fetchWordsOnce } from "../WordService";
+
+// ---- Test utilities ----
 async function flushAll() {
-  // 1) Let any pending promises (e.g., fetchWordsOnce) resolve so the code
-  //    after 'await fetchWordsOnce' can schedule the setTimeout(...).
   await act(async () => {
     await Promise.resolve();
   });
-
-  // 2) Now run the scheduled timers (this should invoke router.push).
   await act(async () => {
     jest.runAllTimers();
   });
-
-  // 3) Finally, flush any microtasks queued by the timer handlers.
   await act(async () => {
     await Promise.resolve();
   });
 }
 
-// ----------------------------------------------------------------------
-// 4) Tests
-// ----------------------------------------------------------------------
+class TestErrorBoundary extends React.Component<
+  { onError: (e: unknown) => void; children?: React.ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: any) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidCatch(error: unknown) {
+    this.props.onError(error);
+  }
+  render() {
+    return this.state.hasError ? null : (this.props.children ?? null);
+  }
+}
+
+// ---- Tests ----
 describe("Home Screen (index.tsx) Navigation and Modals", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -156,7 +215,26 @@ describe("Home Screen (index.tsx) Navigation and Modals", () => {
   });
 
   it("shows then hides How to Play modal when toggled", async () => {
-    const { getByText, queryByText } = render(<Index />);
+    let captured: unknown;
+    const onError = (e: unknown) => {
+      captured = e;
+      try {
+        // @ts-ignore
+        console.error("CAPTURED INDEX ERROR:", (e as any)?.message || e);
+      } catch {
+        console.error("CAPTURED INDEX ERROR:", e);
+      }
+    };
+
+    const tree = render(
+      <TestErrorBoundary onError={onError}>
+        <Index />
+      </TestErrorBoundary>
+    );
+
+    if (captured) throw captured;
+
+    const { getByText, queryByText } = tree;
 
     const howToPlayButton = getByText("How to Play?");
 
@@ -184,19 +262,16 @@ describe("Home Screen (index.tsx) Navigation and Modals", () => {
 
     const { getByText, findByText } = render(<Index />);
 
-    // Open the level modal
     fireEvent.press(getByText("Start Game"));
     expect(mockPlaySound).toHaveBeenCalledTimes(1);
 
-    // Choose Easy
     const easyButton = await findByText("Start Game Easy");
     fireEvent.press(easyButton);
 
-    // Flush the async flow (awaited fetch + 0ms navigation timer)
     await flushAll();
 
     expect(mockPlaySound).toHaveBeenCalledTimes(2);
-    expect(mockPush).toHaveBeenCalledWith({
+    expect(router.push).toHaveBeenCalledWith({
       pathname: "/gamePage",
       params: { selectedLevel: "Easy" },
     });
@@ -208,19 +283,16 @@ describe("Home Screen (index.tsx) Navigation and Modals", () => {
 
     const { getByText, findByText } = render(<Index />);
 
-    // Open the level modal
     fireEvent.press(getByText("Start Game"));
     expect(mockPlaySound).toHaveBeenCalledTimes(1);
 
-    // Choose Hard
     const hardButton = await findByText("Start Game Hard");
     fireEvent.press(hardButton);
 
-    // Flush the async flow (awaited fetch + 0ms navigation timer)
     await flushAll();
 
     expect(mockPlaySound).toHaveBeenCalledTimes(2);
-    expect(mockPush).toHaveBeenCalledWith({
+    expect(router.push).toHaveBeenCalledWith({
       pathname: "/gamePage",
       params: { selectedLevel: "hard" },
     });
