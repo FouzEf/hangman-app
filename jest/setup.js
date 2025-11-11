@@ -10,6 +10,9 @@ global.process.env.EXPO_OS = "ios";
 /* =========================
  * Core React Native mocks
  * ========================= */
+// Prevent React Native trying to use native animations during tests
+
+jest.mock("react-native/Libraries/Animated/NativeAnimatedHelper");
 
 // 1. FIX: Mock TurboModuleRegistry (for newer React Native versions)
 jest.mock("react-native/Libraries/TurboModule/TurboModuleRegistry", () => ({
