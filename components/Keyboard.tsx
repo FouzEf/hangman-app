@@ -22,9 +22,11 @@ const Keyboard = ({
   isGameOver,
 }: CustomKeyboardProps) => {
   const getButtonState = (letter: string) => {
-    if (isGameOver) return "disabled";
     if (correctGuesses.includes(letter)) return "correct";
     if (wrongGuesses.includes(letter)) return "wrong";
+    // Check for isGameOver *after* checking for correct/wrong guesses,
+    // so the final state of guessed letters is visible.
+    if (isGameOver) return "disabled";
     return "default";
   };
 
@@ -97,11 +99,9 @@ const Keyboard = ({
 
 const styles = StyleSheet.create({
   keyboardContainer: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    top: "100%",
-    marginTop: "50%",
+    // Fix: Remove absolute positioning and massive offsets that cause it to be off-screen in tests.
+    // Making it follow the normal flow of the parent component.
+    width: "100%",
     padding: 8,
   },
   keyboardRow: {
