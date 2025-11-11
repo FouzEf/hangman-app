@@ -18,6 +18,7 @@ type Props = {
   wrongGuesses: string[];
   toHome: () => void;
   continueOrRetry: () => void;
+  secretWord: string;
 };
 
 const WinOrLose = ({
@@ -25,6 +26,7 @@ const WinOrLose = ({
   wrongGuesses,
   toHome,
   continueOrRetry,
+  secretWord,
 }: Props) => {
   // Play once when the modal opens, using global sound manager
   useEffect(() => {

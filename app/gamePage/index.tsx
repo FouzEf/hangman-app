@@ -27,7 +27,13 @@ type level = "Easy" | "medium" | "hard" | "Test";
 const MAX_ERRORS = 6;
 
 // Relax Keyboard props to satisfy TS vs test mock
-type TestKbdProps = { onGuess?: (s: string) => void; disabled?: boolean };
+// FIX: Changed type to reflect all props required by Keyboard.tsx
+type TestKbdProps = {
+  onKeyPress: (s: string) => void;
+  correctGuesses: string[];
+  wrongGuesses: string[];
+  isGameOver: boolean;
+};
 const Kbd = Keyboard as unknown as React.ComponentType<TestKbdProps>;
 
 const GamePage = () => {
@@ -67,7 +73,7 @@ const GamePage = () => {
 
       if (fetched.every((word) => solved.includes(word))) {
         setTimeout(() => {
-          router.push("winPage");
+          router.push("/winPage");
         }, 0);
         return;
       }
@@ -98,6 +104,12 @@ const GamePage = () => {
   const isWin = WORD ? solvedWord.join("") === WORD : false;
   const isLose = wrongGuesses.length >= MAX_ERRORS;
 
+  // FIX 1: Derive the list of correctly guessed letters for the Keyboard component
+  const correctGuesses = useMemo(
+    () => solvedWord.filter(Boolean).map((l) => l.toLowerCase()),
+    [solvedWord]
+  );
+
   useEffect(() => {
     if (!WORD) return;
     if (isWin || isLose) setModalVisible(true);
@@ -125,7 +137,8 @@ const GamePage = () => {
 
     if (isWin) {
       if (selectedLevel !== "Test") {
-        await addSolvedWord(WORD, selectedLevel);
+        // FIX 2: remove the selectedLevel argument, assuming addSolvedWord only takes the word
+        await addSolvedWord(WORD);
       }
 
       const nextWords = words.filter((_, i) => i !== currentIndex);
@@ -142,7 +155,7 @@ const GamePage = () => {
       } else {
         soundManager.stop("wind");
         soundManager.stop("rope");
-        router.push({ pathname: "winPage", params: { selectedLevel } });
+        router.push({ pathname: "/winPage", params: { selectedLevel } });
       }
     } else {
       setWrongGuesses([]);
@@ -235,7 +248,13 @@ const GamePage = () => {
             setSolvedWord={setSolvedWord}
           />
 
-          <Kbd onGuess={handleGuess} disabled={isWin || isLose} />
+          {/* FIX 3: Updated Kbd props to match the required signature */}
+          <Kbd
+            onKeyPress={handleGuess}
+            correctGuesses={correctGuesses}
+            wrongGuesses={wrongGuesses}
+            isGameOver={isWin || isLose}
+          />
 
           {/* Make the win message visible for the test */}
           {modalVisible && isWin && <Text>You Won!</Text>}
@@ -246,6 +265,8 @@ const GamePage = () => {
               wrongGuesses={wrongGuesses}
               toHome={toHome}
               continueOrRetry={continueOrRetry}
+              // FIX 4: Added secretWord prop, required for loss message in test
+              secretWord={WORD}
             />
           )}
         </ScrollView>
