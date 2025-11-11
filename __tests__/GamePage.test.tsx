@@ -27,6 +27,23 @@ jest.mock("@assets/images/Stage4.png", () => "test-file-stub");
 jest.mock("@assets/images/Stage5.png", () => "test-file-stub");
 jest.mock("@assets/images/Stage6.png", () => "test-file-stub");
 
+// FIX: Stub Input and Keyboard components to prevent TypeError related to Animated/Native code.
+jest.mock("../components/Input", () => {
+  const React = require("react");
+  const { View } = require("react-native");
+  const Stub = (props: any) => React.createElement(View, props, props.children);
+  Stub.displayName = "Input";
+  return Stub;
+});
+
+jest.mock("../components/Keyboard", () => {
+  const React = require("react");
+  const { View } = require("react-native");
+  const Stub = (props: any) => React.createElement(View, props, props.children);
+  Stub.displayName = "Keyboard";
+  return Stub;
+});
+
 // WordService — mock both likely import paths so whichever GamePage uses will match.
 const mockFetchWordsOnce = jest.fn();
 jest.mock("../WordService", () => ({
