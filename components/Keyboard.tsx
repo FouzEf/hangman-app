@@ -79,6 +79,7 @@ const Keyboard = ({
                 style={[styles.keyButton, getButtonStyle(buttonState)]}
                 onPress={() => onPressKey(letter, isDisabled)}
                 disabled={isDisabled}
+                testID={`key-${letter.toUpperCase()}`}
               >
                 <Text style={[styles.keyText, getButtonTextStyle(buttonState)]}>
                   {letter.toUpperCase()}

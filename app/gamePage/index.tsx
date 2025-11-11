@@ -162,7 +162,9 @@ const GamePage = () => {
     >
       <View testID="game-page-container" style={{ flex: 1 }}>
         {/* small HUD bits the tests assert on */}
-        <Text style={Style.Counter}>Wrong Guesses: {wrongGuesses.length}</Text>
+        <Text style={Style.Counter}>
+          Wrong Guesses: {wrongGuesses.length}/6
+        </Text>
 
         <Text
           style={[
