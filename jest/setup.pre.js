@@ -4,8 +4,24 @@
 // Keep Expo OS stable
 process.env.EXPO_OS = process.env.EXPO_OS || "ios";
 
-// 1) Kill Native Animated bridge usage
-jest.mock("react-native/Libraries/Animated/NativeAnimatedHelper");
+// iOS Platform constants expected by RN internals (prevents getConstants() crash)
+jest.mock(
+  "react-native/Libraries/Utilities/NativePlatformConstantsIOS",
+  () => ({
+    getConstants: () => ({
+      forceTouchAvailable: false,
+      interfaceIdiom: "phone",
+      osVersion: "14.0",
+      systemName: "iOS",
+    }),
+  }),
+  { virtual: true }
+);
+
+// Allow Jest to mock it even if the module path doesn't exist in this RN/Expo version
+jest.mock("react-native/Libraries/Animated/NativeAnimatedHelper", () => ({}), {
+  virtual: true,
+});
 
 // 2) Make createAnimatedComponent a passthrough
 jest.mock("react-native/Libraries/Animated/createAnimatedComponent", () => {

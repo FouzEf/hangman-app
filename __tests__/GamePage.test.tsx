@@ -445,9 +445,7 @@ describe("GamePage (Core Logic)", () => {
       });
     }
 
-    await waitFor(() => {
-      expect(screen.getByText("To Home")).toBeOnTheScreen();
-    });
+    expect(await screen.getByText("To Home")).toBeOnTheScreen();
 
     await act(async () => {
       fireEvent.press(screen.getByText("To Home"));
