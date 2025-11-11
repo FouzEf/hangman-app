@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const SOLVED_WORDS_KEY = "solved_words";
 
-export const addSolvedWord = async (word: string) => {
+export const addSolvedWord = async (word: string, _level?: string) => {
   try {
     const existing = await AsyncStorage.getItem(SOLVED_WORDS_KEY);
     const solved = existing ? JSON.parse(existing) : [];
