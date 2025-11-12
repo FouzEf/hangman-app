@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { soundManager } from "../audio/SoundManager";
 
 const KEYBOARD_LAYOUT = [
@@ -24,8 +24,6 @@ const Keyboard = ({
   const getButtonState = (letter: string) => {
     if (correctGuesses.includes(letter)) return "correct";
     if (wrongGuesses.includes(letter)) return "wrong";
-    // Check for isGameOver *after* checking for correct/wrong guesses,
-    // so the final state of guessed letters is visible.
     if (isGameOver) return "disabled";
     return "default";
   };
@@ -58,7 +56,6 @@ const Keyboard = ({
 
   const onPressKey = (letter: string, disabled: boolean) => {
     if (disabled) return;
-    // Global sound (respects mute/preload)
     soundManager.play("singleTap");
     onKeyPress(letter);
   };
@@ -68,15 +65,13 @@ const Keyboard = ({
       {KEYBOARD_LAYOUT.map((row, rowIndex) => (
         <View key={rowIndex} style={styles.keyboardRow}>
           {rowIndex === 1 && <View style={styles.rowSpacer} />}
-
           {row.map((letter) => {
             const buttonState = getButtonState(letter);
             const isGuessed =
               wrongGuesses.includes(letter) || correctGuesses.includes(letter);
             const isDisabled = isGuessed || isGameOver;
-
             return (
-              <TouchableOpacity
+              <Pressable
                 key={letter}
                 style={[styles.keyButton, getButtonStyle(buttonState)]}
                 onPress={() => onPressKey(letter, isDisabled)}
@@ -86,10 +81,9 @@ const Keyboard = ({
                 <Text style={[styles.keyText, getButtonTextStyle(buttonState)]}>
                   {letter.toUpperCase()}
                 </Text>
-              </TouchableOpacity>
+              </Pressable>
             );
           })}
-
           {rowIndex === 1 && <View style={styles.rowSpacer} />}
         </View>
       ))}
@@ -98,20 +92,13 @@ const Keyboard = ({
 };
 
 const styles = StyleSheet.create({
-  keyboardContainer: {
-    // Fix: Remove absolute positioning and massive offsets that cause it to be off-screen in tests.
-    // Making it follow the normal flow of the parent component.
-    width: "100%",
-    padding: 8,
-  },
+  keyboardContainer: { width: "100%", padding: 8 },
   keyboardRow: {
     flexDirection: "row",
     justifyContent: "center",
     marginBottom: 6,
   },
-  rowSpacer: {
-    width: 15,
-  },
+  rowSpacer: { width: 15 },
   keyButton: {
     flex: 1,
     maxWidth: 40,
@@ -126,11 +113,7 @@ const styles = StyleSheet.create({
     shadowRadius: 1,
     elevation: 3,
   },
-  keyText: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#424242",
-  },
+  keyText: { fontSize: 18, fontWeight: "600", color: "#424242" },
 });
 
 export default Keyboard;
