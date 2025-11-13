@@ -9,6 +9,8 @@ module.exports = {
   ],
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/$1",
+    "^@/components/Keyboard$": "<rootDir>/__mocks__/Keyboard.tsx",
+    "^../components/Keyboard$": "<rootDir>/__mocks__/Keyboard.tsx",
   },
   setupFiles: ["<rootDir>/jest/setup.pre.js"], // runs BEFORE env, for RN shims
   setupFilesAfterEnv: ["<rootDir>/jest/setup.after.js"], // testing-library, matchers, etc.
