@@ -92,7 +92,7 @@ const Keyboard = ({
 };
 
 const styles = StyleSheet.create({
-  keyboardContainer: { width: "100%", padding: 8 },
+  keyboardContainer: { width: "100%", padding: 8, marginTop: 50 },
   keyboardRow: {
     flexDirection: "row",
     justifyContent: "center",

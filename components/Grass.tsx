@@ -105,7 +105,7 @@ const Grass = ({ wrongGuesses }: Props) => {
       <TouchableOpacity
         style={{
           position: "absolute",
-          top: 0,
+          top: 60,
           left: 10,
           zIndex: 999,
           boxShadow: "2px 2px 4px rgba(0,0,0,0.5)",
