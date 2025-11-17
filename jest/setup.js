@@ -83,21 +83,6 @@ jest.mock("react-native-toast-message", () => ({
   Toast: "Toast",
 }));
 
-// AsyncStorage
-jest.mock("@react-native-async-storage/async-storage", () => ({
-  getItem: jest.fn(),
-  setItem: jest.fn(),
-  removeItem: jest.fn(),
-  mergeItem: jest.fn(),
-  clear: jest.fn(),
-  getAllKeys: jest.fn(),
-  flushGetRequests: jest.fn(),
-  multiGet: jest.fn(),
-  multiSet: jest.fn(),
-  multiRemove: jest.fn(),
-  multiMerge: jest.fn(),
-}));
-
 // Firebase (app only; expand if needed)
 jest.mock("firebase/app", () => ({
   initializeApp: jest.fn(() => ({ options: { projectId: "test-project-id" } })),
@@ -144,3 +129,4 @@ afterEach(() => {
   jest.clearAllMocks();
   jest.useRealTimers();
 });
+// NOTE: The previous duplicate jest.mock for AsyncStorage at the bottom has been removed.

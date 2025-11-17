@@ -11,18 +11,34 @@ import {
 import React from "react";
 import { act } from "react-test-renderer";
 
+import { SoundSettingsProvider } from "@/audio/SoundSettingsContext";
 import GamePage from "../app/gamePage/index";
-import { SoundSettingsProvider } from "../audio/SoundSettingsContext";
 
 // -----------------------------
-// Word service mock (shared)
+// Word service mock (combined for all exports)
 // -----------------------------
 const mockFetchWordsOnce = jest.fn();
+const mockAddSolvedWord = jest.fn();
+const mockGetSolvedCount = jest.fn();
+
+// Use fake timers to control asynchronous operations explicitly
+jest.useFakeTimers();
+
+// Ensure all timers are cleaned up after each test
+afterEach(() => {
+  jest.runOnlyPendingTimers();
+  jest.useRealTimers();
+});
+// Mock for relative path '../WordService'
 jest.mock("../WordService", () => ({
   fetchWordsOnce: (...args: any[]) => mockFetchWordsOnce(...args),
 }));
+
+// CONSOLIDATED mock for alias '@/WordService'
 jest.mock("@/WordService", () => ({
   fetchWordsOnce: (...args: any[]) => mockFetchWordsOnce(...args),
+  addSolvedWord: (...args: any[]) => mockAddSolvedWord(...args),
+  getSolvedCount: (...args: any[]) => mockGetSolvedCount(...args),
 }));
 
 // -----------------------------
@@ -41,8 +57,6 @@ jest.mock("expo-router", () => ({
 // -----------------------------
 // Storage mocks
 // -----------------------------
-const mockAddSolvedWord = jest.fn();
-const mockGetSolvedCount = jest.fn();
 
 jest.mock("@/WordService", () => ({
   addSolvedWord: (...args: any[]) => mockAddSolvedWord(...args),
@@ -212,7 +226,7 @@ describe("GamePage (Core Logic)", () => {
 
   // ------------------------------------------------------
   it("navigates to winPage when 10th word solved (or advances)", async () => {
-    mockGetSolvedCount.mockResolvedValue(9);
+    mockGetSolvedCount.mockResolvedValueOnce(9).mockResolvedValueOnce(10);
 
     renderWithProviders(<GamePage />);
     await act(async () => {});
@@ -223,7 +237,7 @@ describe("GamePage (Core Logic)", () => {
         fireEvent.press(screen.getByText(L));
       });
     }
-
+    await waitFor(() => expect(mockAddSolvedWord).toHaveBeenCalled());
     await waitFor(() =>
       expect(mockRouter.push).toHaveBeenCalledWith({
         pathname: "/winPage",
