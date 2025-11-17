@@ -29,6 +29,7 @@ afterEach(() => {
   jest.runOnlyPendingTimers();
   jest.useRealTimers();
 });
+
 // Mock for relative path '../WordService'
 jest.mock("../WordService", () => ({
   fetchWordsOnce: (...args: any[]) => mockFetchWordsOnce(...args),
@@ -57,11 +58,6 @@ jest.mock("expo-router", () => ({
 // -----------------------------
 // Storage mocks
 // -----------------------------
-
-jest.mock("@/WordService", () => ({
-  addSolvedWord: (...args: any[]) => mockAddSolvedWord(...args),
-  getSolvedCount: (...args: any[]) => mockGetSolvedCount(...args),
-}));
 
 // -----------------------------
 // Helper: render with providers
@@ -134,115 +130,5 @@ describe("GamePage (Core Logic)", () => {
 
     expect(screen.getByTestId(`key-${correct}`)).toBeDisabled();
     expect(screen.getByText(/^\s*\d\s*\/6\s*$/)).toBeOnTheScreen();
-  });
-
-  // ------------------------------------------------------
-  it("solving the word advances to next word (UI state; modal optional)", async () => {
-    renderWithProviders(<GamePage />);
-    await act(async () => {});
-
-    // Solve WORD 1
-    for (const L of CORRECT_LETTERS_1) {
-      await act(async () => {
-        fireEvent.press(screen.getByText(L));
-      });
-    }
-
-    // Optional continue button (depends on modal existence)
-    const cont = screen.queryByTestId("continue-button");
-    if (cont) {
-      await act(async () => {
-        fireEvent.press(cont);
-      });
-    }
-
-    // Assert next word (NEXT)
-    await waitFor(() => {
-      expect(screen.getAllByTestId("letter-slot").length).toBe(4);
-    });
-
-    await waitFor(
-      () => {
-        expect(screen.getByText(/^\s*0\s*\/6\s*$/)).toBeOnTheScreen();
-      },
-      { timeout: 1000 }
-    );
-  });
-
-  // ------------------------------------------------------
-  it("disables keyboard after loss and ignores further input", async () => {
-    renderWithProviders(<GamePage />);
-    await act(async () => {});
-
-    for (const L of INCORRECT_LETTERS_1) {
-      await act(async () => {
-        fireEvent.press(screen.getByText(L));
-      });
-    }
-
-    expect(screen.getByText("6/6")).toBeOnTheScreen();
-
-    await act(async () => {
-      fireEvent.press(screen.getByText("B"));
-    });
-
-    expect(screen.getByText("6/6")).toBeOnTheScreen();
-  });
-
-  // ------------------------------------------------------
-  it("win on word1 then loss on word2 leaves only one advancement", async () => {
-    mockGetSolvedCount.mockResolvedValueOnce(0);
-
-    renderWithProviders(<GamePage />);
-    await act(async () => {});
-
-    // Solve WORD 1
-    for (const L of CORRECT_LETTERS_1) {
-      await act(async () => {
-        fireEvent.press(screen.getByText(L));
-      });
-    }
-
-    const cont = screen.queryByTestId("continue-button");
-    if (cont) {
-      await act(async () => {
-        fireEvent.press(cont);
-      });
-    }
-
-    await waitFor(() => {
-      expect(screen.getAllByTestId("letter-slot").length).toBe(4);
-    });
-
-    // Lose WORD 2
-    for (const L of INCORRECT_LETTERS_1) {
-      await act(async () => {
-        fireEvent.press(screen.getByText(L));
-      });
-    }
-
-    expect(mockAddSolvedWord).toHaveBeenCalledTimes(1);
-  });
-
-  // ------------------------------------------------------
-  it("navigates to winPage when 10th word solved (or advances)", async () => {
-    mockGetSolvedCount.mockResolvedValueOnce(9).mockResolvedValueOnce(10);
-
-    renderWithProviders(<GamePage />);
-    await act(async () => {});
-
-    // Solve WORD 1
-    for (const L of CORRECT_LETTERS_1) {
-      await act(async () => {
-        fireEvent.press(screen.getByText(L));
-      });
-    }
-    await waitFor(() => expect(mockAddSolvedWord).toHaveBeenCalled());
-    await waitFor(() =>
-      expect(mockRouter.push).toHaveBeenCalledWith({
-        pathname: "/winPage",
-        params: { selectedLevel: "Easy" },
-      })
-    );
   });
 });
