@@ -14,10 +14,6 @@ const TextInpt = ({
   currentGuess,
   setCurrentGuess,
 }: Props) => {
-  // const inputRef = useRef<TextInput>(null);
-  // useEffect(() => {
-  //   inputRef.current?.focus();
-  // }, [displayValue]);
   if (displayValue !== "") {
     return (
       <TextInput

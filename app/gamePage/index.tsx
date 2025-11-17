@@ -265,47 +265,6 @@ const GamePage = () => {
             solvedWord={solvedWord}
             setSolvedWord={setSolvedWord}
           />
-
-          {/* <Kbd
-            onKeyPress={handleGuess}
-            correctGuesses={correctGuesses}
-            wrongGuesses={wrongGuesses}
-            isGameOver={isWin || isLose}
-          /> */}
-
-          {/* Explicit strings/buttons the tests look for */}
-          {/* {modalVisible && isWin && (
-            <>
-              <Text style={{ color: "transparent" }}>You Win!</Text>
-              <Text style={{ color: "transparent" }}>You Won!</Text>
-            </>
-          )}
-          {modalVisible && isLose && (
-            <>
-              <Text style={{ color: "transparent" }}>You Lost!</Text>
-              <Text style={{ color: "transparent" }}>{WORD}</Text>
-            </>
-          )}
-
-          {/* Always show these actions when modal is visible so tests can find them */}
-          {/* {modalVisible && ( 
-            <>
-              <Text
-                style={{ marginTop: 20, color: "transparent" }}
-                onPress={continueOrRetry}
-              >
-                Continue
-              </Text>
-              <Text
-                style={{ marginTop: 10, color: "transparent" }}
-                onPress={toHome}
-              >
-                To Home
-              </Text>
-            </>
-          )} */}
-
-          {/* Keep existing modal (its internal UI can differ; tests target the texts above) */}
           {modalVisible && (
             <WinOrLose
               modalVisible={modalVisible}

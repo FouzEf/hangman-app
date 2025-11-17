@@ -68,7 +68,7 @@ const Level = ({
       <View style={style.overlay}>
         <TouchableWithoutFeedback>
           <View style={style.container}>
-            <Text style={style.title}>Level</Text>
+            <Text style={style.title}>Select Level</Text>
 
             <Pressable
               onPress={() => handleLevel("Easy")}
@@ -105,19 +105,6 @@ const Level = ({
             >
               <Text style={style.text}>Hard</Text>
             </Pressable>
-
-            {/* --- ADDED: Test level button (purple) */}
-            <Pressable
-              onPress={() => handleLevel("Test")}
-              style={({ hovered, pressed }) => [
-                style.button,
-                style.test,
-                hovered && style.hovered,
-                pressed && style.pressed,
-              ]}
-            >
-              <Text style={style.text}>Test</Text>
-            </Pressable>
           </View>
         </TouchableWithoutFeedback>
       </View>
@@ -135,7 +122,7 @@ const style = StyleSheet.create({
   container: {
     backgroundColor: "white",
     marginHorizontal: 20,
-    height: 360, // slightly taller to fit the extra button
+    height: 300,
     width: 300,
     padding: 20,
     borderRadius: 10,
@@ -181,3 +168,20 @@ const style = StyleSheet.create({
 });
 
 export default Level;
+
+{
+  /* --- ADDED: Test level button (purple) */
+}
+{
+  /* <Pressable
+              onPress={() => handleLevel("Test")}
+              style={({ hovered, pressed }) => [
+                style.button,
+                style.test,
+                hovered && style.hovered,
+                pressed && style.pressed,
+              ]}
+            >
+              <Text style={style.text}>Test</Text>
+            </Pressable> */
+}

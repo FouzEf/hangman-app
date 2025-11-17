@@ -90,9 +90,8 @@ const Style = StyleSheet.create({
   container: {
     position: "relative",
     width: "100%",
-    height: 250, // ✅ Increased height to give the clouds more room
-    marginTop: 0, // ✅ REMOVED: "-30%", which was pushing content off-screen
-    // marginBottom: 20, // Added a small margin to separate from other elements
+    height: 250,
+    marginTop: 0,
   },
 });
 

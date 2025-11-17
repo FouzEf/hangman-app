@@ -88,10 +88,6 @@ const Input = ({
           );
         })}
       </View>
-
-      {/* <Text style={styles.guessList}>
-        Guessed Letters: {correctGuesses.join(", ").toUpperCase()}
-      </Text> */}
       <Text style={styles.guessList}>
         Wrong Guesses:{" "}
         <Text style={{ color: "red" }}>
