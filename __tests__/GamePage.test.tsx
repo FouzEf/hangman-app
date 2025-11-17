@@ -26,7 +26,10 @@ jest.useFakeTimers();
 
 // Ensure all timers are cleaned up after each test
 afterEach(() => {
-  jest.runOnlyPendingTimers();
+  // FIX: Using clearAllTimers() clears any lingering timers (like setTimeout/setInterval)
+  // before restoring real timers, which is the proper cleanup sequence and should
+  // resolve both the timer console warning and the "worker process failed" warning.
+  jest.clearAllTimers();
   jest.useRealTimers();
 });
 
@@ -58,6 +61,23 @@ jest.mock("expo-router", () => ({
 // -----------------------------
 // Storage mocks
 // -----------------------------
+
+// FIX: Mock expo-av to resolve TypeError: Cannot read properties of undefined (reading 'setVolumeAsync')
+// The SoundSettingsProvider likely uses functions from this library internally.
+jest.mock("expo-av", () => ({
+  Audio: {
+    Sound: class {
+      static createAsync = jest.fn().mockResolvedValue({
+        sound: { setVolumeAsync: jest.fn(), unloadAsync: jest.fn() },
+      });
+      setVolumeAsync = jest.fn().mockResolvedValue(true);
+      unloadAsync = jest.fn().mockResolvedValue(true);
+      setOnPlaybackStatusUpdate = jest.fn();
+      getStatusAsync = jest.fn().mockResolvedValue({});
+    },
+    setAudioModeAsync: jest.fn().mockResolvedValue(true),
+  },
+}));
 
 // -----------------------------
 // Helper: render with providers
