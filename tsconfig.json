@@ -1,10 +1,17 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
+    "jsx": "react-native",
     "strict": true,
+    "baseUrl": ".",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "paths": {
-      "@/*": ["./*"]
-    }
+      "@/*": ["./*"],
+      "@assets/*": ["assets/*"],
+      "@components/*": ["components/*"]
+    },
+    "types": ["jest", "node"]
   },
   "include": [
     "**/*.ts",
@@ -12,6 +19,7 @@
     ".expo/types/**/*.ts",
     "expo-env.d.ts",
     "src",
-    "src/images.d.ts"
+    "src/images.d.ts",
+    "src/env.d.ts"
   ]
 }

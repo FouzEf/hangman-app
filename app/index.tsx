@@ -1,54 +1,32 @@
-import Cloud from "@/assets/images/Cloud.png";
-import Home from "@/assets/images/HomeImage.png";
-import InvertedCloud from "@/assets/images/InvertedCloud.png";
-import SunWithCloud from "@/assets/images/SunWithCloud.png";
 import { Nunito_800ExtraBold, useFonts } from "@expo-google-fonts/nunito";
 import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router";
-import { useEffect, useRef } from "react";
-import {
-  Animated,
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-// import AppLoading from 'expo-app-loading';
+
+import { useState } from "react";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+
+import useClickSound from "@/audio/useClickSound";
+import Level from "@/components/Level";
+import Home from "@assets/images/HomeImage.png";
+import Cloud from "@components/Cloud";
+import HowToPlay from "@components/HowToPLay";
+import HeadphoneButton from "../audio/HeadphoneButton";
 
 export default function Index() {
-  const router = useRouter();
-  const cloud1X = useRef(new Animated.Value(0)).current;
-  const cloud2X = useRef(new Animated.Value(0)).current;
-  const cloud3X = useRef(new Animated.Value(0)).current;
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
 
-  useEffect(() => {
-    console.log("useEffect called");
-    const animateCloud = (
-      cloudAnim: Animated.Value | Animated.ValueXY,
-      toValue: number,
-      duration: number
-    ) => {
-      Animated.loop(
-        Animated.sequence([
-          Animated.timing(cloudAnim, {
-            toValue,
-            duration,
-            useNativeDriver: true,
-          }),
-          Animated.timing(cloudAnim, {
-            toValue: 0,
-            duration,
-            useNativeDriver: true,
-          }),
-        ])
-      ).start();
-    };
-    animateCloud(cloud1X, 50, 6000);
-    animateCloud(cloud2X, -40, 8000);
-    animateCloud(cloud3X, 30, 7000);
-  }, [cloud1X, cloud2X, cloud3X]);
+  // level selection
+  const [levelVisible, setLevelVisible] = useState<boolean>(false);
+  const [levelValue, setLevelValue] = useState<string>("");
 
+  const startGame = () => {
+    playSound();
+    setLevelVisible(true);
+  };
+  const playSound = useClickSound();
+  const toggleModal = () => {
+    playSound();
+    setModalVisible(!modalVisible);
+  };
   const [fontsLoaded] = useFonts({
     Nunito_800ExtraBold,
   });
@@ -62,33 +40,33 @@ export default function Index() {
       colors={["#80C2F3", "#C8E6C9"]}
       start={{ x: 0.5, y: 0 }}
       end={{ x: 0.5, y: 1 }}
-      style={Style.container}
+      style={[Style.container, { zIndex: 100 }]}
     >
       <View style={Style.container}>
-        <Image source={SunWithCloud} style={Style.sun} />
-        <Animated.Image
-          source={Cloud}
-          style={[Style.cloud1, { transform: [{ translateX: cloud1X }] }]}
-        />
-        <Animated.Image
-          source={InvertedCloud}
-          style={[Style.cloud2, { transform: [{ translateX: cloud2X }] }]}
-        />
-        <Animated.Image
-          source={InvertedCloud}
-          style={[Style.cloud3, { transform: [{ translateX: cloud3X }] }]}
-        />
+        {/* Floating headphone button (top-right corner) */}
+        <View style={{ position: "absolute", top: 40, right: 30, zIndex: 50 }}>
+          <HeadphoneButton />
+        </View>
+
+        <Cloud />
         <Image source={Home} style={Style.img} />
         <Text style={Style.text}>HangMan</Text>
-        <TouchableOpacity
-          style={Style.btn}
-          onPress={() => router.push("/gamePage")}
-        >
+        <TouchableOpacity style={Style.btn} onPress={startGame}>
           <Text style={Style.btnText}>Start Game</Text>
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={toggleModal} style={{ zIndex: 10 }}>
           <Text style={Style.btnPlay}>How to Play?</Text>
         </TouchableOpacity>
+
+        {modalVisible && <HowToPlay onClose={toggleModal} modalVisible />}
+        {levelVisible && (
+          <Level
+            levelValue={levelValue}
+            levelVisible={levelVisible}
+            setLevelValue={setLevelValue}
+            setLevelVisible={setLevelVisible}
+          />
+        )}
       </View>
     </LinearGradient>
   );
@@ -106,41 +84,10 @@ const Style = StyleSheet.create({
   img: {
     position: "absolute",
     width: "100%",
-    height: "100%",
+    height: "50%",
     resizeMode: "contain",
-    top: "-10%",
+    top: 80,
     zIndex: 1,
-  },
-  sun: {
-    position: "absolute",
-    top: "-40%",
-    height: "100%",
-    width: "70%",
-    resizeMode: "contain",
-  },
-  cloud1: {
-    position: "absolute",
-    height: "100%",
-    width: "35%",
-    right: "0%",
-    top: "-28%",
-    resizeMode: "contain",
-  },
-  cloud2: {
-    position: "absolute",
-    height: "100%",
-    width: "40%",
-    left: "0%",
-    top: "-28%",
-    resizeMode: "contain",
-  },
-  cloud3: {
-    position: "absolute",
-    height: "100%",
-    width: "35%",
-    left: "40%",
-    top: "-20%",
-    resizeMode: "contain",
   },
   text: {
     fontFamily: "Nunito_800ExtraBold",
@@ -148,7 +95,7 @@ const Style = StyleSheet.create({
     fontWeight: 800,
     lineHeight: 87,
     textAlign: "center",
-    marginTop: 160,
+    marginTop: 0,
     fontSize: 64,
     color: "#263238",
     textShadowColor: "rgba(0, 0, 0, 0.25)",

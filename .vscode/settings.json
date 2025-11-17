@@ -3,5 +3,33 @@
     "source.fixAll": "explicit",
     "source.organizeImports": "explicit",
     "source.sortMembers": "explicit"
-  }
+  },
+  "cSpell.words": [
+    "aeeb",
+    "appspot",
+    "Ashik",
+    "dotlottie",
+    "estafania",
+    "favourite",
+    "firebaseapp",
+    "firebasestorage",
+    "firestore",
+    "Fouziya",
+    "gallow",
+    "hangmanapp",
+    "inpt",
+    "lottiefiles",
+    "mobileprovision",
+    "naviate",
+    "NPCI",
+    "nunito",
+    "Oopps",
+    "Pressable",
+    "Rgjdt",
+    "unimodules",
+    "wincupanimation",
+    "wincupcontainer",
+    "worklets",
+    "Yaay"
+  ]
 }
