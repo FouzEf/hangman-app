@@ -9,10 +9,7 @@
     "production": {
       "distribution": "store",
       "android": {
-        "buildType": "app-bundle",
-        "debug": {
-          "unobfuscate": true
-        }
+        "buildType": "app-bundle"
       }
     }
   },
