@@ -16,6 +16,7 @@
     },
     "android": {
       "package": "com.fouzef.hangmanapp",
+      "versionCode": 4,
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE"
       },
