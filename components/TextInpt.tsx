@@ -19,10 +19,10 @@ const TextInpt = ({
       <TextInput
         value={displayValue}
         style={{
-          fontSize: 18,
+          fontSize: 24,
           textAlign: "center",
-          color: "green",
-          fontWeight: "bold",
+          color: "#4CAF50", // Brighter green
+          fontFamily: "Nunito_800ExtraBold",
         }}
         editable={false}
       />
@@ -42,7 +42,13 @@ const TextInpt = ({
             onGuess(newText);
           }
         }}
-        style={{ fontSize: 18, textAlign: "center" }}
+        style={{ 
+            fontSize: 24, 
+            textAlign: "center", 
+            fontFamily: "Nunito_800ExtraBold",
+            color: "#333",
+            width: '100%',
+        }}
         maxLength={1}
         autoCapitalize="none"
         keyboardType="default"

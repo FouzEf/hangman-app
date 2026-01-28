@@ -227,6 +227,11 @@ const GamePage = () => {
                       : selectedLevel === "Test"
                         ? "#9C27B0"
                         : "#ccc",
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.25,
+              shadowRadius: 3.84,
+              elevation: 5,
             },
           ]}
         >
@@ -237,7 +242,7 @@ const GamePage = () => {
           <View style={Style.gameSceneContainer}>
             <CloudGamePage />
             <View
-              style={{ position: "absolute", top: 10, right: 20, zIndex: 50 }}
+              style={{ position: "absolute", top: 60, right: 20, zIndex: 50 }}
             >
               <HeadphoneButton />
             </View>
@@ -282,32 +287,39 @@ const GamePage = () => {
 
 const Style = StyleSheet.create({
   container: { flex: 1, position: "relative", width: "100%" },
-  scrollContent: { justifyContent: "space-between", paddingTop: 70 },
+  scrollContent: { 
+    flexGrow: 1,
+    justifyContent: "flex-start", // Changed from space-between to remove large gap
+    paddingTop: 40, 
+    paddingBottom: 40, // Increased bottom padding for scrolling
+    gap: 10, // Small gap between Scene and Input
+  },
   gameSceneContainer: { width: "100%" },
   Level: {
     marginVertical: 10,
     paddingVertical: 5,
     textAlign: "center",
-    color: "#f5f5f5",
-    textShadowColor: "rgba(0, 0, 0, 0.3)",
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
-    fontSize: 12,
-    borderRadius: 10,
-    width: 50,
+    color: "#ffffff",
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 14,
+    borderRadius: 20,
+    width: 80,
     position: "absolute",
     top: "5%",
     right: "6%",
     zIndex: 50,
-    textTransform: "lowercase",
+    textTransform: "capitalize",
+    overflow: 'hidden',
   },
   Counter: {
     position: "absolute",
     left: 16,
     top: 16,
     fontSize: 14,
+    fontFamily: "Nunito_400Regular", // Added font for consistency
   },
 });
 
 export default GamePage;
 export { GamePage };
+

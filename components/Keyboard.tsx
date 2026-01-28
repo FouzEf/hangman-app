@@ -31,13 +31,13 @@ const Keyboard = ({
   const getButtonStyle = (state: string) => {
     switch (state) {
       case "correct":
-        return { backgroundColor: "#5aa02c" };
+        return { backgroundColor: "#81C784", borderColor: "#66BB6A" }; // Soft Green
       case "wrong":
-        return { backgroundColor: "#FFAB91" };
+        return { backgroundColor: "#E57373", borderColor: "#EF5350" }; // Soft Red
       case "disabled":
-        return { backgroundColor: "#EBEBEB" };
+        return { backgroundColor: "#ECEFF1", borderColor: "#CFD8DC" };
       default:
-        return { backgroundColor: "#FFFDE0" };
+        return { backgroundColor: "#FFFFFF", borderColor: "#E0E0E0" }; // Clean White
     }
   };
 
@@ -92,7 +92,7 @@ const Keyboard = ({
 };
 
 const styles = StyleSheet.create({
-  keyboardContainer: { width: "100%", padding: 8, marginTop: 50 },
+  keyboardContainer: { width: "100%", padding: 8, marginTop: 10 },
   keyboardRow: {
     flexDirection: "row",
     justifyContent: "center",
@@ -102,16 +102,19 @@ const styles = StyleSheet.create({
   keyButton: {
     flex: 1,
     maxWidth: 40,
-    height: 48,
-    borderRadius: 12,
+    height: 52, // Taller touch target
+    borderRadius: 12, // Softer corners
     justifyContent: "center",
     alignItems: "center",
-    marginHorizontal: 2.5,
+    marginHorizontal: 3,
+    // Nicer shadow
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
-    shadowRadius: 1,
-    elevation: 3,
+    shadowRadius: 0, // 'Clicky' feel shadow
+    elevation: 4,
+    borderBottomWidth: 3, // Physical key look
+    borderBottomColor: 'rgba(0,0,0,0.1)',
   },
   keyText: { fontSize: 18, fontWeight: "600", color: "#424242" },
 });

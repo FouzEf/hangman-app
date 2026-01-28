@@ -7,7 +7,9 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import useClickSound from "@/audio/useClickSound";
 import Level from "@/components/Level";
 import Home from "@assets/images/HomeImage.png";
+import AnimatedTitle from "@components/AnimatedTitle";
 import Cloud from "@components/Cloud";
+import GradientButton from "@components/GradientButton";
 import HowToPlay from "@components/HowToPLay";
 import HeadphoneButton from "../audio/HeadphoneButton";
 
@@ -50,10 +52,11 @@ export default function Index() {
 
         <Cloud />
         <Image source={Home} style={Style.img} />
-        <Text style={Style.text}>HangMan</Text>
-        <TouchableOpacity style={Style.btn} onPress={startGame}>
-          <Text style={Style.btnText}>Start Game</Text>
-        </TouchableOpacity>
+        <AnimatedTitle />
+        <GradientButton 
+          title="Start Game" 
+          onPress={startGame} 
+        />
         <TouchableOpacity onPress={toggleModal} style={{ zIndex: 10 }}>
           <Text style={Style.btnPlay}>How to Play?</Text>
         </TouchableOpacity>
@@ -89,41 +92,8 @@ const Style = StyleSheet.create({
     top: 80,
     zIndex: 1,
   },
-  text: {
-    fontFamily: "Nunito_800ExtraBold",
-    fontStyle: "normal",
-    fontWeight: 800,
-    lineHeight: 87,
-    textAlign: "center",
-    marginTop: 0,
-    fontSize: 64,
-    color: "#263238",
-    textShadowColor: "rgba(0, 0, 0, 0.25)",
-    textShadowOffset: { width: 4, height: 4 },
-    textShadowRadius: 8,
-  },
-  btn: {
-    backgroundColor: "#FF6F61",
-    textShadowColor: "rgba(0, 0, 0, 0.25)",
-    textShadowOffset: { width: 4, height: 4 },
-    textShadowRadius: 8,
-    borderRadius: 50,
-    width: 150,
-    height: 50,
-    display: "flex",
-    justifyContent: "center",
-    alignContent: "center",
-    marginTop: 10,
-    zIndex: 10,
-  },
-  btnText: {
-    fontFamily: "Nunito",
-    fontStyle: "normal",
-    fontWeight: 400,
-    fontSize: 18,
-    textAlign: "center",
-    color: "#FFFFFF",
-  },
+
+
   btnPlay: {
     fontFamily: "Nunito",
     fontStyle: "normal",
