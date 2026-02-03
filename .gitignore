@@ -45,3 +45,5 @@ app-example
 .env
 
 hangman-202519-92aa7d3d8d31.json
+
+scripts/uploadWords.ts

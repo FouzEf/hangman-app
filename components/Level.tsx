@@ -1,14 +1,14 @@
 import {
-    Nunito_400Regular,
-    Nunito_800ExtraBold,
-    useFonts,
+  Nunito_400Regular,
+  Nunito_800ExtraBold,
+  useFonts,
 } from "@expo-google-fonts/nunito";
 import {
-    Modal,
-    StyleSheet,
-    Text,
-    TouchableWithoutFeedback,
-    View,
+  Modal,
+  StyleSheet,
+  Text,
+  TouchableWithoutFeedback,
+  View,
 } from "react-native";
 
 import { useRouter } from "expo-router";
@@ -102,6 +102,13 @@ const Level = ({
                     title="Hard"
                     onPress={() => handleLevel("hard")}
                     colors={["#F44336", "#FF5252"]}
+                    containerStyle={style.buttonWrapper}
+                />
+                
+                  <GradientButton
+                    title="Test"
+                    onPress={() => handleLevel("Test")}
+                    colors={["#e7f436ff", "#c4d33dff"]}
                     containerStyle={style.buttonWrapper}
                  />
               </View>
