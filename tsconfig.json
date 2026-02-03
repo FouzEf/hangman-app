@@ -6,6 +6,7 @@
     "baseUrl": ".",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
     "paths": {
       "@/*": ["./*"],
       "@assets/*": ["assets/*"],

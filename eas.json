@@ -19,7 +19,8 @@
       // <-- This refers to the 'production' submit profile
       "android": {
         "serviceAccountKeyPath": "./hangman-202519-92aa7d3d8d31.json", // <-- Place it here
-        "track": "internal" // <-- Place it here
+        "track": "internal", // <-- Place it here
+        "releaseStatus": "draft"
       }
     }
   },

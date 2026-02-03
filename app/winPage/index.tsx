@@ -1,6 +1,6 @@
 import { soundManager } from "@/audio/SoundManager";
 import useClickSound from "@/audio/useClickSound";
-import WinLottie, { WinCup } from "@/components/lottieFiles/WinLottie";
+import WinLottie from "@/components/lottieFiles/WinLottie";
 import { getSolvedWords } from "@/utils/storage";
 import { Nunito_800ExtraBold, useFonts } from "@expo-google-fonts/nunito";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -12,8 +12,19 @@ import Toast from "react-native-toast-message";
 import { fetchWordsOnce } from "../../WordService";
 import HeadphoneButton from "../../audio/HeadphoneButton";
 
-import { Ionicons } from "@expo/vector-icons"; // NEW IMPORT
+import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
+import * as Haptics from "expo-haptics";
+import Animated, {
+  FadeInDown,
+  FadeInUp,
+  ZoomIn,
+  useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withSequence,
+  withTiming
+} from "react-native-reanimated";
 
 type Level = "Easy" | "medium" | "hard" | "Test"; // Updated to include "Test" based on previous context
 
@@ -23,15 +34,89 @@ export default function Index() {
   const navigate = useRouter();
   const playSound = useClickSound();
 
+  const scale = useSharedValue(1);
+  const translateY = useSharedValue(0);
+  const balloonY = useSharedValue(0);
+  const balloonRotate = useSharedValue(0);
+  const glowOpacity = useSharedValue(0.6);
+
   useFocusEffect(
     useCallback(() => {
-      // ✅ Sound: Ensure celebratory sound loops
+      // ✅ Sound & Haptics: Celebrate the win!
       soundManager.playLooping("winPage");
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      
+      // Start a subtle pulsing animation for the cup
+      scale.value = withRepeat(
+        withSequence(
+          withTiming(1.05, { duration: 1000 }),
+          withTiming(1, { duration: 1000 })
+        ),
+        -1,
+        true
+      );
+
+      // Add a gentle floating effect to the buttons
+      translateY.value = withRepeat(
+        withSequence(
+          withTiming(-5, { duration: 1500 }),
+          withTiming(0, { duration: 1500 })
+        ),
+        -1,
+        true
+      );
+
+      // Helium Balloon Effect for Victory Text
+      balloonY.value = withRepeat(
+        withSequence(
+          withTiming(-25, { duration: 2500 }),
+          withTiming(0, { duration: 2500 })
+        ),
+        -1,
+        true
+      );
+      balloonRotate.value = withRepeat(
+        withSequence(
+          withTiming(3, { duration: 3000 }),
+          withTiming(-3, { duration: 3000 })
+        ),
+        -1,
+        true
+      );
+
+      // "Soul" Glow Animation
+      glowOpacity.value = withRepeat(
+        withSequence(
+          withTiming(1, { duration: 1200 }),
+          withTiming(0.6, { duration: 1200 })
+        ),
+        -1,
+        true
+      );
+
       return () => {
         soundManager.stopAll();
       };
     }, [])
   );
+
+  const bounceStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  const floatStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: translateY.value }],
+  }));
+
+  const balloonStyle = useAnimatedStyle(() => ({
+    transform: [
+      { translateY: balloonY.value },
+      { rotate: `${balloonRotate.value}deg` },
+      { scale: 1 + (glowOpacity.value - 0.6) * 0.1 } // Subtle "breathing" soul
+    ],
+    textShadowRadius: 10 + glowOpacity.value * 20,
+    textShadowColor: `rgba(255, 235, 59, ${glowOpacity.value})`,
+  }));
 
   const [fontsLoaded] = useFonts({
     Nunito_800ExtraBold,
@@ -65,48 +150,85 @@ export default function Index() {
 
   return (
     <LinearGradient
-      colors={["#80C2F3", "#C8E6C9"]}
-      start={{ x: 0.5, y: 0.1 }}
-      end={{ x: 0.5, y: 1.0 }}
+      colors={["#4facfe", "#00f2fe", "#7ed6df"]}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
       style={Style.container}
     >
       <View style={{ position: "absolute", top: 40, right: 30, zIndex: 50 }}>
         <HeadphoneButton />
       </View>
 
-      <WinLottie />
-      <WinCup />
+      <Animated.View entering={ZoomIn.duration(1000)} style={Style.lottieOverlay}>
+        <WinLottie />
+      </Animated.View>
 
-      <Text style={Style.congrats}>CONGRATULATIONS!</Text>
+      {/* <Animated.View style={[Style.cupWrapper, bounceStyle]} entering={ZoomIn.delay(300).duration(800)}>
+        <WinCup />
+      </Animated.View> */}
 
-      <Text style={Style.secondaryText}>
-        You&apos;ve mastered the <Text style={Style.levelText}>{level}</Text>{" "}
-        level!
-      </Text>
-      <Pressable
-        style={[Style.buttonRestart, Style.button, Style.buttonShadowRestart]}
-        onPress={() => handleRestart(level)}
+      <Animated.View style={balloonStyle} entering={FadeInDown.delay(600).springify()}>
+        <Text style={Style.congrats}>VICTORY!</Text>
+      </Animated.View>
+
+      <Animated.View entering={FadeInDown.delay(800).springify()}>
+        <Text style={Style.secondaryText}>
+          You've mastered the <Text style={Style.levelText}>{level}</Text>{" "}
+          level!
+        </Text>
+      </Animated.View>
+
+      <Animated.View 
+        entering={FadeInUp.delay(1000).springify()} 
+        style={[Style.buttonContainer, floatStyle]}
       >
-        <Text style={Style.buttonText}>Restart Level</Text>
-      </Pressable>
+        <Pressable
+          style={({ pressed }) => [
+            Style.button,
+            Style.buttonRestart,
+            pressed && Style.buttonPressed
+          ]}
+          onPress={() => handleRestart(level)}
+        >
+          <LinearGradient
+            colors={["#4FC3F7", "#29B6F6"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={Style.buttonGradient}
+          >
+            <Ionicons name="refresh-outline" size={24} color="#FFF" style={Style.buttonIcon} />
+            <Text style={Style.buttonText}>Restart Level</Text>
+          </LinearGradient>
+        </Pressable>
 
-      <Pressable
-        style={[Style.buttonHome, Style.button, Style.buttonShadowHome]}
-        onPress={async () => {
-          playSound();
-          await soundManager.stopAll();
-          navigate.push("/");
-        }}
-      >
-        {/* Added Home Icon */}
-        <Ionicons
-          name="home-outline"
-          size={24}
-          color="#FFFFFF"
-          style={Style.buttonIcon}
-        />
-        <Text style={Style.buttonText}>Go Home</Text>
-      </Pressable>
+        <Pressable
+          style={({ pressed }) => [
+            Style.button,
+            Style.buttonHome,
+            pressed && Style.buttonPressed
+          ]}
+          onPress={async () => {
+            playSound();
+            await soundManager.stopAll();
+            navigate.push("/");
+          }}
+        >
+          <LinearGradient
+            colors={["#81C784", "#66BB6A"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={Style.buttonGradient}
+          >
+            <Ionicons
+              name="home-outline"
+              size={24}
+              color="#FFFFFF"
+              style={Style.buttonIcon}
+            />
+            <Text style={Style.buttonText}>Back to Home</Text>
+          </LinearGradient>
+        </Pressable>
+      </Animated.View>
 
       <Toast />
     </LinearGradient>
@@ -118,73 +240,91 @@ const Style = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: 20,
-    position: "relative",
-    width: "100%",
+    padding: 24,
+  },
+  lottieOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: "center",
+    alignItems: "center",
+    pointerEvents: "none",
+  },
+  cupWrapper: {
+    marginTop: -80, // Lifted up further
+    marginBottom: 10,
+    alignItems: "center",
   },
   congrats: {
-    color: "rgb(248, 234, 35)", // Deep gold color for text
-    textShadowColor: "rgba(0, 0, 0, 0.5)",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 10,
-    fontSize: 25,
-    fontWeight: "bold",
-    marginTop: 120,
+    fontFamily: "Nunito_800ExtraBold",
+    color: "#FFEB3B", // Vibrant Golden Yellow
+    fontSize: 52, // Even bigger for more impact
+    fontWeight: "900",
+    textAlign: "center",
+    letterSpacing: 8,
+    marginBottom: 5,
+    // Note: Some shadow properties are animated in balloonStyle
+    textShadowOffset: { width: 0, height: 4 },
   },
   secondaryText: {
     fontFamily: "Nunito_800ExtraBold",
-    color: "#333",
-    fontSize: 20,
+    color: "#FFFFFF",
+    fontSize: 18,
     textAlign: "center",
-    marginBottom: 40,
+    marginBottom: 60,
+    opacity: 0.9,
   },
   levelText: {
-    fontSize: 24,
-    textTransform: "capitalize",
-    color: "#000",
+    fontSize: 22,
+    textTransform: "uppercase",
+    fontWeight: "900",
+    color: "#FFEB3B",
   },
-
+  buttonContainer: {
+    width: "100%",
+    gap: 16,
+    alignItems: "center",
+  },
   button: {
+    width: "85%",
+    maxWidth: 320,
+    borderRadius: 20,
+    overflow: "hidden",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.2,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  buttonGradient: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 12,
-    paddingHorizontal: 25,
-    borderRadius: 30,
-    marginTop: 15,
-    minWidth: 220,
-    borderWidth: 1,
-    borderColor: "#fff",
+    paddingVertical: 18,
+    paddingHorizontal: 32,
+  },
+  buttonPressed: {
+    transform: [{ scale: 0.96 }],
+    opacity: 0.9,
   },
   buttonRestart: {
-    backgroundColor: "#FF6F61",
+    backgroundColor: "#29B6F6",
+    borderBottomWidth: 5,
+    borderBottomColor: "#0288D1",
   },
   buttonHome: {
-    backgroundColor: "#5AA02C",
+    backgroundColor: "#66BB6A",
+    borderBottomWidth: 5,
+    borderBottomColor: "#388E3C",
   },
-
-  buttonShadowRestart: {
-    shadowColor: "#FF6F61",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.7,
-    shadowRadius: 6,
-    elevation: 8,
-  },
-  buttonShadowHome: {
-    shadowColor: "#5AA02C",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.7,
-    shadowRadius: 6,
-    elevation: 8,
-  },
-
   buttonText: {
     color: "#FFFFFF",
-    fontSize: 20, // Slightly larger font
+    fontSize: 20,
     fontFamily: "Nunito_800ExtraBold",
-    fontWeight: "800",
+    letterSpacing: 0.8,
+    textShadowColor: "rgba(0, 0, 0, 0.2)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
   buttonIcon: {
-    marginRight: 10,
+    marginRight: 12,
   },
 });
