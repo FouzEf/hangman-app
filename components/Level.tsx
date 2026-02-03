@@ -105,12 +105,12 @@ const Level = ({
                     containerStyle={style.buttonWrapper}
                 />
                 
-                  <GradientButton
+                  {/* <GradientButton
                     title="Test"
                     onPress={() => handleLevel("Test")}
                     colors={["#e7f436ff", "#c4d33dff"]}
                     containerStyle={style.buttonWrapper}
-                 />
+                 /> */}
               </View>
             </Animated.View>
           </TouchableWithoutFeedback>
