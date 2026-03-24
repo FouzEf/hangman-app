@@ -10,13 +10,14 @@
       "distribution": "store",
       "android": {
         "buildType": "app-bundle"
+      },
+      "env": {
+        "NPM_CONFIG_LEGACY_PEER_DEPS": "true"
       }
     }
   },
   "submit": {
-
     "production": {
-
       "android": {
         "serviceAccountKeyPath": "./hangman-202519-92aa7d3d8d31.json",
         "track": "internal"
