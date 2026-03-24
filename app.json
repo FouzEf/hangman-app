@@ -2,7 +2,8 @@
   "expo": {
     "name": "hangman-app",
     "slug": "hangman-app",
-    "version": "1.0.0",
+    "owner": "fouzefcode",
+    "version": "1.0.1",
     "orientation": "portrait",
     "scheme": "hangmanapp",
     "userInterfaceStyle": "automatic",
@@ -16,7 +17,7 @@
     },
     "android": {
       "package": "com.fouzef.hangmanapp",
-      "versionCode": 5,
+      "versionCode": 6,
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE"
       },
@@ -50,7 +51,7 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "25acdad8-e7b3-498b-93b0-519fbbef4326"
+        "projectId": "7243bab7-37af-45dc-9cfb-1386e8fb10c9"
       }
     }
   }
