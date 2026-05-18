@@ -14,6 +14,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type Props = {
   onClose: () => void;
@@ -21,6 +22,7 @@ type Props = {
 };
 
 const HowToPlay = ({ modalVisible, onClose }: Props) => {
+  const insets = useSafeAreaInsets();
   const [fontsLoaded] = useFonts({
     Nunito_800ExtraBold,
     Nunito_400Regular,
@@ -45,9 +47,8 @@ const HowToPlay = ({ modalVisible, onClose }: Props) => {
                 />
               </Pressable>
               <Text style={styles.title}>
-                Hey, it&#39;s{" "}
-                <Text style={{ fontWeight: "bold" }}>Hangman!</Text> Your
-                favourite all-time classic game.
+                Hey, it's <Text style={{ fontWeight: "bold" }}>Hangman!</Text>{" "}
+                Your favourite all-time classic game.
               </Text>
               <Text
                 style={{
@@ -128,19 +129,22 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     padding: 20,
     borderRadius: 10,
-    boxShadow: "2px 4px 8px rgba(0, 0, 0, 0.5)",
-    position: "absolute",
-    top: "10%",
+    shadowColor: "rgba(0, 0, 0, 0.5)",
+    shadowOffset: { width: 2, height: 4 },
+    shadowOpacity: 1,
+    shadowRadius: 8,
+    elevation: 8,
+    marginTop: "15%",
   },
   closeIcon: {
-    position: "absolute",
+    position: "relative",
     top: -15,
     right: -15,
   },
   title: {
     fontSize: 15,
     marginBottom: 10,
-    fontWeight: 800,
+    fontWeight: "800",
     fontFamily: "Nunito_800ExtraBold",
   },
   item: {

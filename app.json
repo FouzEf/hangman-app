@@ -2,12 +2,11 @@
   "expo": {
     "name": "hangman-app",
     "slug": "hangman-app",
-    "owner": "fouzefcode",
-    "version": "1.0.1",
+    "version": "1.0.0",
+    "icon": "./assets/icon.png",
     "orientation": "portrait",
     "scheme": "hangmanapp",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.fouzef.hangmanapp",
@@ -19,9 +18,9 @@
       "package": "com.fouzef.hangmanapp",
       "versionCode": 6,
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE"
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#80C2F3"
       },
-      "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false
     },
     "web": {
@@ -51,7 +50,7 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "7243bab7-37af-45dc-9cfb-1386e8fb10c9"
+        "projectId": "25acdad8-e7b3-498b-93b0-519fbbef4326"
       }
     }
   }
