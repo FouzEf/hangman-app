@@ -23,8 +23,9 @@ import Animated, {
   useSharedValue,
   withRepeat,
   withSequence,
-  withTiming
+  withTiming,
 } from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type Level = "Easy" | "medium" | "hard" | "Test"; // Updated to include "Test" based on previous context
 
@@ -33,6 +34,7 @@ export default function Index() {
   const level = params.selectedLevel as Level;
   const navigate = useRouter();
   const playSound = useClickSound();
+  const insets = useSafeAreaInsets();
 
   const scale = useSharedValue(1);
   const translateY = useSharedValue(0);
@@ -45,59 +47,59 @@ export default function Index() {
       // ✅ Sound & Haptics: Celebrate the win!
       soundManager.playLooping("winPage");
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      
+
       // Start a subtle pulsing animation for the cup
       scale.value = withRepeat(
         withSequence(
           withTiming(1.05, { duration: 1000 }),
-          withTiming(1, { duration: 1000 })
+          withTiming(1, { duration: 1000 }),
         ),
         -1,
-        true
+        true,
       );
 
       // Add a gentle floating effect to the buttons
       translateY.value = withRepeat(
         withSequence(
           withTiming(-5, { duration: 1500 }),
-          withTiming(0, { duration: 1500 })
+          withTiming(0, { duration: 1500 }),
         ),
         -1,
-        true
+        true,
       );
 
       // Helium Balloon Effect for Victory Text
       balloonY.value = withRepeat(
         withSequence(
           withTiming(-25, { duration: 2500 }),
-          withTiming(0, { duration: 2500 })
+          withTiming(0, { duration: 2500 }),
         ),
         -1,
-        true
+        true,
       );
       balloonRotate.value = withRepeat(
         withSequence(
           withTiming(3, { duration: 3000 }),
-          withTiming(-3, { duration: 3000 })
+          withTiming(-3, { duration: 3000 }),
         ),
         -1,
-        true
+        true,
       );
 
       // "Soul" Glow Animation
       glowOpacity.value = withRepeat(
         withSequence(
           withTiming(1, { duration: 1200 }),
-          withTiming(0.6, { duration: 1200 })
+          withTiming(0.6, { duration: 1200 }),
         ),
         -1,
-        true
+        true,
       );
 
       return () => {
         soundManager.stopAll();
       };
-    }, [])
+    }, []),
   );
 
   const bounceStyle = useAnimatedStyle(() => ({
@@ -112,7 +114,7 @@ export default function Index() {
     transform: [
       { translateY: balloonY.value },
       { rotate: `${balloonRotate.value}deg` },
-      { scale: 1 + (glowOpacity.value - 0.6) * 0.1 } // Subtle "breathing" soul
+      { scale: 1 + (glowOpacity.value - 0.6) * 0.1 }, // Subtle "breathing" soul
     ],
     textShadowRadius: 10 + glowOpacity.value * 20,
     textShadowColor: `rgba(255, 235, 59, ${glowOpacity.value})`,
@@ -133,7 +135,7 @@ export default function Index() {
     try {
       await AsyncStorage.setItem(
         SOLVED_WORDS_KEY,
-        JSON.stringify(remainingSolved)
+        JSON.stringify(remainingSolved),
       );
     } catch (error) {
       console.error("Error updating solved words on restart:", error);
@@ -155,11 +157,21 @@ export default function Index() {
       end={{ x: 1, y: 1 }}
       style={Style.container}
     >
-      <View style={{ position: "absolute", top: 40, right: 30, zIndex: 50 }}>
+      <View
+        style={{
+          position: "absolute",
+          top: insets.top + 10,
+          right: 30,
+          zIndex: 50,
+        }}
+      >
         <HeadphoneButton />
       </View>
 
-      <Animated.View entering={ZoomIn.duration(1000)} style={Style.lottieOverlay}>
+      <Animated.View
+        entering={ZoomIn.duration(1000)}
+        style={Style.lottieOverlay}
+      >
         <WinLottie />
       </Animated.View>
 
@@ -167,7 +179,10 @@ export default function Index() {
         <WinCup />
       </Animated.View> */}
 
-      <Animated.View style={balloonStyle} entering={FadeInDown.delay(600).springify()}>
+      <Animated.View
+        style={balloonStyle}
+        entering={FadeInDown.delay(600).springify()}
+      >
         <Text style={Style.congrats}>VICTORY!</Text>
       </Animated.View>
 
@@ -178,15 +193,15 @@ export default function Index() {
         </Text>
       </Animated.View>
 
-      <Animated.View 
-        entering={FadeInUp.delay(1000).springify()} 
+      <Animated.View
+        entering={FadeInUp.delay(1000).springify()}
         style={[Style.buttonContainer, floatStyle]}
       >
         <Pressable
           style={({ pressed }) => [
             Style.button,
             Style.buttonRestart,
-            pressed && Style.buttonPressed
+            pressed && Style.buttonPressed,
           ]}
           onPress={() => handleRestart(level)}
         >
@@ -196,7 +211,12 @@ export default function Index() {
             end={{ x: 1, y: 0 }}
             style={Style.buttonGradient}
           >
-            <Ionicons name="refresh-outline" size={24} color="#FFF" style={Style.buttonIcon} />
+            <Ionicons
+              name="refresh-outline"
+              size={24}
+              color="#FFF"
+              style={Style.buttonIcon}
+            />
             <Text style={Style.buttonText}>Restart Level</Text>
           </LinearGradient>
         </Pressable>
@@ -205,7 +225,7 @@ export default function Index() {
           style={({ pressed }) => [
             Style.button,
             Style.buttonHome,
-            pressed && Style.buttonPressed
+            pressed && Style.buttonPressed,
           ]}
           onPress={async () => {
             playSound();

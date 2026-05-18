@@ -14,6 +14,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type Props = {
   onClose: () => void;
@@ -21,6 +22,7 @@ type Props = {
 };
 
 const HowToPlay = ({ modalVisible, onClose }: Props) => {
+  const insets = useSafeAreaInsets();
   const [fontsLoaded] = useFonts({
     Nunito_800ExtraBold,
     Nunito_400Regular,
@@ -132,8 +134,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 1,
     shadowRadius: 8,
     elevation: 8,
-    position: "absolute",
-    top: "10%",
+    marginTop: "15%",
   },
   closeIcon: {
     position: "relative",
