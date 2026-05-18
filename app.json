@@ -2,6 +2,7 @@
   "expo": {
     "name": "hangman-app",
     "slug": "hangman-app",
+    "owner": "fouzef",
     "version": "1.0.0",
     "icon": "./assets/icon.png",
     "orientation": "portrait",
@@ -16,12 +17,11 @@
     },
     "android": {
       "package": "com.fouzef.hangmanapp",
-      "versionCode": 6,
+      "versionCode": 8,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#80C2F3"
-      },
-      "predictiveBackGestureEnabled": false
+      }
     },
     "web": {
       "output": "static"
@@ -39,13 +39,11 @@
             "backgroundColor": "#000000"
           }
         }
-      ],
-      "expo-font",
-      "expo-web-browser"
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
-      "reactCompiler": true
+      "reactCompiler": false
     },
     "extra": {
       "router": {},

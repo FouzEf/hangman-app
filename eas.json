@@ -10,23 +10,22 @@
       "distribution": "store",
       "android": {
         "buildType": "app-bundle"
-      },
-      "env": {
-        "NPM_CONFIG_LEGACY_PEER_DEPS": "true"
-      },
-      "node": "20.18.0"
+      }
     }
   },
   "submit": {
+    // <-- This is the section for submission configurations
     "production": {
+      // <-- This refers to the 'production' submit profile
       "android": {
-        "serviceAccountKeyPath": "./hangman-202519-92aa7d3d8d31.json",
-        "track": "internal"
+        "serviceAccountKeyPath": "./hangman-202519-92aa7d3d8d31.json", // <-- Place it here
+        "track": "internal", // <-- Place it here
+        "releaseStatus": "draft"
       }
     }
   },
   "cli": {
     "version": ">= 3.0.0",
-    "appVersionSource": "remote"
+    "appVersionSource": "local"
   }
 }
