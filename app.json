@@ -3,7 +3,7 @@
     "name": "hangman-app",
     "slug": "hangman-app",
     "owner": "fouzef",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "icon": "./assets/icon.png",
     "orientation": "portrait",
     "scheme": "hangmanapp",
@@ -17,7 +17,7 @@
     },
     "android": {
       "package": "com.fouzef.hangmanapp",
-      "versionCode": 8,
+      "versionCode": 10,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#80C2F3"

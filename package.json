@@ -1,7 +1,7 @@
 {
   "name": "hangman-app",
   "main": "expo-router/entry",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "scripts": {
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
@@ -21,6 +21,7 @@
     "@react-navigation/bottom-tabs": "^7.2.0",
     "@react-navigation/elements": "^2.6.3",
     "@react-navigation/native": "^7.0.14",
+    "ajv": "^8.20.0",
     "expo": "~52.0.25",
     "expo-av": "~15.0.1",
     "expo-constants": "~17.0.8",
