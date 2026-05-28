@@ -66,7 +66,7 @@ export default function GradientButton({
             true
          );
     }
-  }, [animationType]);
+  }, [animationType, rotation, scale, shimmerOpacity]);
 
   const animatedStyle = useAnimatedStyle(() => {
     return {

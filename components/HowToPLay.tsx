@@ -14,7 +14,6 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type Props = {
   onClose: () => void;
@@ -22,7 +21,6 @@ type Props = {
 };
 
 const HowToPlay = ({ modalVisible, onClose }: Props) => {
-  const insets = useSafeAreaInsets();
   const [fontsLoaded] = useFonts({
     Nunito_800ExtraBold,
     Nunito_400Regular,

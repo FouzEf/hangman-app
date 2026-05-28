@@ -1,4 +1,6 @@
 // __tests__/index.test.tsx
+/* eslint-disable import/first */
+// jest.mock() is hoisted by babel-jest regardless of source order
 
 // --- Hard-pin RN iOS internals for THIS spec (before any imports) ---
 const IOS_CONST = () => ({
@@ -97,6 +99,8 @@ jest.mock("@expo/vector-icons", () => ({
 
 jest.mock("../audio/HeadphoneButton", () => "HeadphoneButtonMock");
 jest.mock("@/components/Cloud", () => "CloudMock");
+jest.mock("@/components/AboutModal", () => () => null);
+jest.mock("@/components/OnboardingTutorial", () => () => null);
 
 // We will assert on calls to this function
 jest.mock("../WordService", () => ({
@@ -129,8 +133,8 @@ jest.mock("@/components/Level", () => {
   const { fetchWordsOnce } = require("../WordService");
 
   const MockLevel = ({ levelVisible, setLevelValue, setLevelVisible }: any) => {
-    if (!levelVisible) return null;
     const router = useRouter();
+    if (!levelVisible) return null;
 
     const choose = async (level: "Easy" | "hard") => {
       require("@/audio/useClickSound")()();
@@ -176,7 +180,7 @@ async function flushAll() {
     await Promise.resolve();
   });
   await act(async () => {
-    jest.runAllTimers();
+    jest.runOnlyPendingTimers();
   });
   await act(async () => {
     await Promise.resolve();

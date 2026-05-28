@@ -3,23 +3,23 @@
     "preview": {
       "distribution": "internal",
       "android": {
-        "buildType": "apk"
+        "buildType": "apk",
+        "image": "latest"
       }
     },
     "production": {
       "distribution": "store",
       "android": {
-        "buildType": "app-bundle"
+        "buildType": "app-bundle",
+        "image": "latest"
       }
     }
   },
   "submit": {
-    // <-- This is the section for submission configurations
     "production": {
-      // <-- This refers to the 'production' submit profile
       "android": {
-        "serviceAccountKeyPath": "./hangman-202519-92aa7d3d8d31.json", // <-- Place it here
-        "track": "internal", // <-- Place it here
+        "serviceAccountKeyPath": "./hangman-202519-92aa7d3d8d31.json",
+        "track": "internal",
         "releaseStatus": "draft"
       }
     }

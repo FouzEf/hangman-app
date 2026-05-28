@@ -26,3 +26,22 @@ export const getSolvedWords = async (): Promise<string[]> => {
 export const clearSolvedWords = async () => {
   await AsyncStorage.removeItem(SOLVED_WORDS_KEY);
 };
+
+const ONBOARDING_KEY = "has_seen_onboarding";
+
+export const hasSeenOnboarding = async (): Promise<boolean> => {
+  try {
+    const value = await AsyncStorage.getItem(ONBOARDING_KEY);
+    return value === "true";
+  } catch {
+    return false;
+  }
+};
+
+export const markOnboardingSeen = async (): Promise<void> => {
+  try {
+    await AsyncStorage.setItem(ONBOARDING_KEY, "true");
+  } catch {
+    // ignore
+  }
+};

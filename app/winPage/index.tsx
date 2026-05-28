@@ -7,7 +7,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useCallback } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, Share, StyleSheet, Text, View } from "react-native";
 import Toast from "react-native-toast-message";
 import { fetchWordsOnce } from "../../WordService";
 import HeadphoneButton from "../../audio/HeadphoneButton";
@@ -99,12 +99,8 @@ export default function Index() {
       return () => {
         soundManager.stopAll();
       };
-    }, []),
+    }, [scale, translateY, balloonY, balloonRotate, glowOpacity]),
   );
-
-  const bounceStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-  }));
 
   const floatStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: translateY.value }],
@@ -148,6 +144,17 @@ export default function Index() {
     setTimeout(() => {
       navigate.push("/");
     }, 2000);
+  };
+
+  const handleShare = async () => {
+    playSound();
+    try {
+      await Share.share({
+        message: `🎉 I just conquered the ${level} level in Hangman! Can you beat me? Download the app and give it a try!`,
+      });
+    } catch {
+      // user cancelled or share not supported
+    }
   };
 
   return (
@@ -248,6 +255,30 @@ export default function Index() {
             <Text style={Style.buttonText}>Back to Home</Text>
           </LinearGradient>
         </Pressable>
+
+        <Pressable
+          style={({ pressed }) => [
+            Style.button,
+            Style.buttonShare,
+            pressed && Style.buttonPressed,
+          ]}
+          onPress={handleShare}
+        >
+          <LinearGradient
+            colors={["#CE93D8", "#AB47BC"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={Style.buttonGradient}
+          >
+            <Ionicons
+              name="share-social-outline"
+              size={24}
+              color="#FFFFFF"
+              style={Style.buttonIcon}
+            />
+            <Text style={Style.buttonText}>Share Victory</Text>
+          </LinearGradient>
+        </Pressable>
       </Animated.View>
 
       <Toast />
@@ -334,6 +365,11 @@ const Style = StyleSheet.create({
     backgroundColor: "#66BB6A",
     borderBottomWidth: 5,
     borderBottomColor: "#388E3C",
+  },
+  buttonShare: {
+    backgroundColor: "#AB47BC",
+    borderBottomWidth: 5,
+    borderBottomColor: "#7B1FA2",
   },
   buttonText: {
     color: "#FFFFFF",

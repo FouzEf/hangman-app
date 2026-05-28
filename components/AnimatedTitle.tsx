@@ -39,7 +39,7 @@ const Letter = ({ char, index, fontSize }: LetterProps) => {
       -1,
       true
     ));
-  }, []);
+  }, [index, opacity, rotation, translateY]);
 
   const animatedStyle = useAnimatedStyle(() => {
     return {

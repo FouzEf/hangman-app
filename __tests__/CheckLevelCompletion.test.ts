@@ -1,4 +1,5 @@
-// ✅ Mocks must come before imports to ensure they apply correctly
+/* eslint-disable import/first */
+// jest.mock() is hoisted by babel-jest regardless of source order
 jest.mock("@react-native-async-storage/async-storage", () => ({
   getItem: jest.fn(),
   setItem: jest.fn(),

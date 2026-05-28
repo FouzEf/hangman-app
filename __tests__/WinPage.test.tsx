@@ -139,7 +139,7 @@ describe("WinPage / index", () => {
 
   it("plays win loop on focus and renders congrats for the selected level", () => {
     render(<WinPage />);
-    expect(screen.getByText("CONGRATULATIONS!")).toBeOnTheScreen();
+    expect(screen.getByText("VICTORY!")).toBeOnTheScreen();
     expect(screen.getByText(/mastered the/i)).toBeOnTheScreen();
     expect(
       require("@/audio/SoundManager").soundManager.playLooping
@@ -148,7 +148,7 @@ describe("WinPage / index", () => {
 
   it("navigates home immediately when pressing 'Go Home' and stops all sounds", async () => {
     render(<WinPage />);
-    fireEvent.press(screen.getByText("Go Home"));
+    fireEvent.press(screen.getByText("Back to Home"));
     expect(mockPlayClick).toHaveBeenCalled();
     // stopAll is awaited inside the handler; give it time to resolve before asserting push
     await waitFor(() =>

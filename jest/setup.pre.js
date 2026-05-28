@@ -1,6 +1,15 @@
 // jest/setup.pre.js
 process.env.EXPO_OS = process.env.EXPO_OS || "ios";
 
+jest.mock("react-native-safe-area-context", () => ({
+  useSafeAreaInsets: () => ({ top: 0, right: 0, bottom: 0, left: 0 }),
+  SafeAreaProvider: ({ children }) => children,
+  SafeAreaView: ({ children }) => children,
+  SafeAreaInsetsContext: {
+    Consumer: ({ children }) => children({ top: 0, right: 0, bottom: 0, left: 0 }),
+  },
+}));
+
 // 1) NativePlatformConstantsIOS – provide default.getConstants(), cover both resolver paths
 const makeNPCI = () => ({
   __esModule: true,

@@ -63,7 +63,7 @@ const Grass = ({ wrongGuesses }: Props) => {
     if (wrongGuesses.length >= 5) startSwing(swing5, 5);
     if (wrongGuesses.length >= 6) startSwing(swing6, 6);
 
-  }, [wrongGuesses.length]);
+  }, [wrongGuesses.length, swing1, swing2, swing3, swing4, swing5, swing6]);
 
   const style1 = useAnimatedStyle(() => ({
     transform: [

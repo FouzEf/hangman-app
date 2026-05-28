@@ -1,7 +1,6 @@
 import CloudGamePage from "@/components/CloudGamePage";
 import Grass from "@/components/Grass";
 import Input from "@/components/Input";
-import Keyboard from "@/components/Keyboard";
 
 import BirdLottie from "@/components/lottieFiles/BirdLottie";
 
@@ -26,15 +25,6 @@ import { addSolvedWord, getSolvedWords } from "@/utils/storage";
 
 type level = "Easy" | "medium" | "hard" | "Test";
 const MAX_ERRORS = 6;
-
-// Match your Keyboard props
-type TestKbdProps = {
-  onKeyPress: (s: string) => void;
-  correctGuesses: string[];
-  wrongGuesses: string[];
-  isGameOver: boolean;
-};
-const Kbd = Keyboard as unknown as React.ComponentType<TestKbdProps>;
 
 const GamePage = () => {
   const params = useLocalSearchParams();
@@ -106,12 +96,6 @@ const GamePage = () => {
   const isWin = WORD ? solvedWord.join("") === WORD : false;
   const isLose = wrongGuesses.length >= MAX_ERRORS;
 
-  // compute "correct" letters for Keyboard
-  const correctGuesses = useMemo(
-    () => solvedWord.filter(Boolean).map((l) => l.toLowerCase()),
-    [solvedWord]
-  );
-
   // show modal on win/lose
   useEffect(() => {
     if (!WORD) return;
@@ -180,27 +164,6 @@ const GamePage = () => {
   };
 
   const isLoading = !selectedLevel || (words.length === 0 && !WORD);
-
-  // handle guesses (case-insensitive)
-  const handleGuess = (raw: string) => {
-    if (!WORD || isWin || isLose) return;
-
-    const letter = raw.toUpperCase();
-    const isCorrect = letters.some((l) => l.toUpperCase() === letter);
-
-    if (isCorrect) {
-      setSolvedWord((prev) =>
-        prev.map((ch, i) =>
-          letters[i].toUpperCase() === letter ? letters[i] : ch
-        )
-      );
-      return;
-    }
-
-    setWrongGuesses((prev) =>
-      prev.includes(letter) ? prev : [...prev, letter]
-    );
-  };
 
   return (
     <LinearGradient
